@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "264632942434",
+    "firebase_url": "https://hfmapp-58334.firebaseio.com",
+    "project_id": "hfmapp-58334",
+    "storage_bucket": "hfmapp-58334.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:264632942434:android:9750d55c802f8093b8f63b",
+        "android_client_info": {
+          "package_name": "com.ministry.hfmapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "264632942434-lerv4tva637ic99q6gsaclok9p43jghu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAG0Npbbfmzga60ldaYD84BSF4hVoyLWI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "264632942434-lerv4tva637ic99q6gsaclok9p43jghu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
