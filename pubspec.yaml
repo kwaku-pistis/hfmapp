@@ -34,6 +34,8 @@ dependencies:
   intl_phone_number_input: ^0.3.0
   international_phone_input: ^1.0.3
   shared_preferences: ^0.5.6+3
+  image_picker: ^0.6.3+4
+  firebase_dynamic_links: ^0.4.0+4
 
 dev_dependencies:
   flutter_test:

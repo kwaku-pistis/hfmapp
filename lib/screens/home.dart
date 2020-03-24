@@ -1,14 +1,27 @@
+import 'package:HFM/screens/login_options.dart';
 import 'package:HFM/screens/tabs/first.dart';
+import 'package:HFM/screens/tabs/fourth.dart';
 import 'package:HFM/screens/tabs/second.dart';
 import 'package:HFM/screens/tabs/third.dart';
+import 'package:HFM/themes/colors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _HomeState createState() => _HomeState(user: this.user);
+
+  final FirebaseUser user;
+
+  Home({@required this.user});
 }
 
+final FirebaseAuth auth = FirebaseAuth.instance;
+
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+  FirebaseUser user;
+
+  _HomeState({@required this.user});
 
   TabController controller;
 
@@ -16,8 +29,19 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
 
+    WidgetsBinding.instance
+      .addPostFrameCallback((_) {
+        if (user == null) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (BuildContext context) => LoginOptions()));
+        }
+      });
+
     // Initialize the Tab Controller
-    controller = TabController(length: 3, vsync: this);
+    controller = TabController(
+      length: 4,
+      vsync: this,
+    );
   }
 
   @override
@@ -32,17 +56,33 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       tabs: <Tab>[
         Tab(
           // set icon to the tab
-          icon: Icon(Icons.favorite),
+          icon: Icon(
+            Icons.home,
+            color: Colors.white,
+          ),
         ),
         Tab(
-          icon: Icon(Icons.adb),
+          icon: Icon(
+            Icons.adb,
+            color: Colors.white,
+          ),
         ),
         Tab(
-          icon: Icon(Icons.airport_shuttle),
+          icon: Icon(
+            Icons.airport_shuttle,
+            color: Colors.white,
+          ),
+        ),
+        Tab(
+          icon: Icon(
+            Icons.person,
+            color: Colors.white,
+          ),
         ),
       ],
       // setup the controller
       controller: controller,
+      indicatorColor: colortheme.accentColor,
     );
   }
 
@@ -57,10 +97,27 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+
+    // if (user == null) {
+    //   Navigator.of(context).pushReplacement(
+    //       MaterialPageRoute(builder: (BuildContext context) => LoginOptions()));
+    // }
+
     return Scaffold(
-      body: getTabBarView(<Widget>[First(), Second(), Third()]),
+      appBar: AppBar(
+        title: Text(
+          'HarvestFields',
+          style: TextStyle(color: Colors.white),
+        ),
+        elevation: 4,
+        centerTitle: false,
+        iconTheme: IconThemeData(
+          color: Colors.white,
+        ),
+        backgroundColor: colortheme.primaryColor,
+        bottom: getTabBar(),
+      ),
+      body: getTabBarView(<Widget>[First(), Second(), Third(), Fourth()]),
     );
   }
-
-  
 }

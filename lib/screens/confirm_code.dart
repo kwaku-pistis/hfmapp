@@ -1,7 +1,7 @@
+import 'package:HFM/screens/profile.dart';
 import 'package:HFM/themes/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
@@ -53,11 +53,10 @@ class _ConfirmCodeState extends State<ConfirmCode> {
       body: SingleChildScrollView(
         child: Container(
           decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/images/adinkra_pattern.png'),
-              fit: BoxFit.cover,
-            )
-          ),
+              image: DecorationImage(
+            image: AssetImage('assets/images/adinkra_pattern.png'),
+            fit: BoxFit.cover,
+          )),
           padding: EdgeInsets.only(left: 20, right: 20),
           height: MediaQuery.of(context).size.height,
           child: Column(
@@ -78,7 +77,7 @@ class _ConfirmCodeState extends State<ConfirmCode> {
                 width: double.infinity,
                 margin: EdgeInsets.only(top: 50),
                 child: Text(
-                  'Enter code',
+                  'Enter code:',
                   style: TextStyle(
                     fontSize: 26,
                     color: colortheme.accentColor,
@@ -128,7 +127,7 @@ class _ConfirmCodeState extends State<ConfirmCode> {
                   ),
                 ),
                 onTap: () {
-                  verifyPhone();
+                  resendCode();
                 },
               ),
               Container(
@@ -158,17 +157,17 @@ class _ConfirmCodeState extends State<ConfirmCode> {
   }
 
   verifyPhone() async {
-      await _auth.verifyPhoneNumber(
-          phoneNumber: phoneNumber,
-          timeout: Duration(minutes: 1),
-          verificationCompleted: (authCredentials) =>
-              _verificationComplete(authCredentials, context),
-          verificationFailed: (authException) =>
-              _verificationFailed(authException, context),
-          codeSent: (verificationId, [code]) =>
-              _smsCodeSent(verificationId, [code]),
-          codeAutoRetrievalTimeout: (verificationId) =>
-              _codeAutoRetrievalTimeout(verificationId));
+    await _auth.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        timeout: Duration(minutes: 1),
+        verificationCompleted: (authCredentials) =>
+            _verificationComplete(authCredentials, context),
+        verificationFailed: (authException) =>
+            _verificationFailed(authException, context),
+        codeSent: (verificationId, [code]) =>
+            _smsCodeSent(verificationId, [code]),
+        codeAutoRetrievalTimeout: (verificationId) =>
+            _codeAutoRetrievalTimeout(verificationId));
   }
 
   resendCode() async {
@@ -179,17 +178,17 @@ class _ConfirmCodeState extends State<ConfirmCode> {
     bool runState = (prefs.getBool('disableResend') ?? false);
 
     if (!runState) {
-        await _auth.verifyPhoneNumber(
-            phoneNumber: phoneNumber,
-            timeout: Duration(minutes: 2),
-            verificationCompleted: (authCredentials) =>
-                _verificationComplete(authCredentials, context),
-            verificationFailed: (authException) =>
-                _verificationFailed(authException, context),
-            codeSent: (verificationId, [code]) =>
-                _smsCodeSent(verificationId, [code]),
-            codeAutoRetrievalTimeout: (verificationId) =>
-                _codeAutoRetrievalTimeout(verificationId));
+      await _auth.verifyPhoneNumber(
+          phoneNumber: phoneNumber,
+          timeout: Duration(minutes: 2),
+          verificationCompleted: (authCredentials) =>
+              _verificationComplete(authCredentials, context),
+          verificationFailed: (authException) =>
+              _verificationFailed(authException, context),
+          codeSent: (verificationId, [code]) =>
+              _smsCodeSent(verificationId, [code]),
+          codeAutoRetrievalTimeout: (verificationId) =>
+              _codeAutoRetrievalTimeout(verificationId));
 
       await prefs.setBool('disableResend', true);
     } else {
@@ -208,11 +207,13 @@ class _ConfirmCodeState extends State<ConfirmCode> {
     _user = await _auth.signInWithCredential(credential).then((onValue) {
       Toast.show('Code confirmed', context,
           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-      // Navigator.of(context).push(MaterialPageRoute(
-      //     builder: (BuildContext context) => SignUp(
-      //           emailOrPhone: phoneNumber,
-      //           userId: onValue.user.uid,
-      //         )));
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (BuildContext context) => Profile(
+                    data: phoneNumber,
+                    user: _user,
+                  )),
+          ModalRoute.withName('/'));
       return onValue.user;
     });
   }
@@ -242,11 +243,13 @@ class _ConfirmCodeState extends State<ConfirmCode> {
 
       Toast.show('Code confirmed', context,
           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-      // Navigator.of(context).push(MaterialPageRoute(
-      //     builder: (BuildContext context) => SignUp(
-      //           emailOrPhone: emailOrPhone,
-      //           userId: authResult.user.uid,
-      //         )));
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (BuildContext context) => Profile(
+                    data: phoneNumber,
+                    user: authResult.user,
+                  )),
+          ModalRoute.withName('/'));
     });
   }
 

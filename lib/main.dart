@@ -1,4 +1,4 @@
-import 'package:HFM/screens/login_options.dart';
+import 'package:HFM/screens/home.dart';
 import 'package:HFM/themes/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         primaryColor: colortheme.primaryColor,
       ),
       // home: MyHomePage(title: 'Flutter Demo Home Page'),
-      home: LoginOptions(),
+      home: Home(user: null),
     );
   }
 }
