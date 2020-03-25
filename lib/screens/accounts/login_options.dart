@@ -1,9 +1,12 @@
-import 'package:HFM/screens/confirm_code.dart';
-import 'package:HFM/screens/profile.dart';
+import 'package:HFM/screens/accounts/confirm_code.dart';
+import 'package:HFM/screens/home.dart';
+import 'package:HFM/screens/accounts/profile.dart';
 import 'package:HFM/themes/colors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:international_phone_input/international_phone_input.dart';
 import 'package:material_dialog/material_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,6 +26,12 @@ String _link;
 String emailAdd;
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
+final GoogleSignIn _googleSignIn = GoogleSignIn(
+    // scopes: [
+    //   'email',
+    //   'https://www.googleapis.com/auth/contacts.readonly',
+    // ]
+    );
 // FirebaseUser _user;
 
 class _LoginOptionsState extends State<LoginOptions>
@@ -138,13 +147,15 @@ class _LoginOptionsState extends State<LoginOptions>
                     top: 5,
                   ),
                   child: RaisedButton(
-                    onPressed: () {},
-                    child: Text(
-                      'SIGN IN WITH GOOGLE',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
+                    onPressed: () {
+                      setState(() {
+                        _state = 1;
+                      });
+                      Toast.show('Loading...', context,
+                          gravity: Toast.BOTTOM, duration: Toast.LENGTH_SHORT);
+                      _signInWithGoogle();
+                    },
+                    child: _setUpDialogChild(),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(6),
                     ),
@@ -255,7 +266,15 @@ class _LoginOptionsState extends State<LoginOptions>
       enableFullHeight: true,
       title: Text('Email Sign Up'),
       content: Container(
-        child: _setUpDialogChild(),
+        child: TextField(
+          controller: emailTextController,
+          decoration: InputDecoration(
+            hintText: 'Enter your email address',
+            errorText: _phoneValidate ? 'Please enter an email address' : null,
+          ),
+          onChanged: (text) {},
+          keyboardType: TextInputType.emailAddress,
+        ),
       ),
       actions: <Widget>[
         FlatButton(
@@ -347,7 +366,7 @@ class _LoginOptionsState extends State<LoginOptions>
             .then((authResult) {
           // _user = authResult.user;
           Toast.show('Sign in successful', context,
-            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+              duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
 
           Navigator.of(context).push(MaterialPageRoute(
               builder: (BuildContext context) =>
@@ -364,22 +383,77 @@ class _LoginOptionsState extends State<LoginOptions>
 
   Widget _setUpDialogChild() {
     if (_state == 0) {
-      return TextField(
-        controller: emailTextController,
-        decoration: InputDecoration(
-          hintText: 'Enter your email address',
-          errorText: _phoneValidate ? 'Please enter an email address' : null,
+      return Text(
+        'SIGN IN WITH GOOGLE',
+        style: TextStyle(
+          color: Colors.white,
         ),
-        onChanged: (text) {},
-        keyboardType: TextInputType.emailAddress,
       );
     } else if (_state == 1) {
       return CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
       );
     } else {
       return Text(
           'A verification link has been sent to $_emailAddress. Please go and verify the link to sign in.');
     }
+  }
+
+  _signInWithGoogle() async {
+    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+
+    // final authHeaders = _googleSignIn.currentUser.authHeaders;
+    // final httpClient = GoogleHttpClient(authHeaders);
+
+    // var data = await PeopleApi(httpClient).people.connections.list(
+    //       'people/me',
+    //       personFields: 'names,addresses',
+    //       //pageToken: nextPageToken,
+    //       pageSize: 100,
+    //     );
+
+    //PeopleApi(httpClient).people.get(resourceName)
+
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    //final FirebaseUser user =
+    await _auth.signInWithCredential(credential).then((onValue) {
+      _saveDataToFirebaseDB(onValue);
+    });
+    //print("signed in " + user.displayName);
+  }
+
+  _saveDataToFirebaseDB(AuthResult authResult) async {
+    //String downloadUrl = taskSnapshot != null ? await taskSnapshot.ref.getDownloadURL() : '';
+    DocumentReference storeReference = Firestore.instance
+        .collection('User Info')
+        .document(authResult.user.uid);
+    await storeReference.setData({
+      'Name': authResult.user.displayName,
+      'Email / Phone': authResult.user.email,
+      'Username': authResult.user.displayName,
+      'Gender': '',
+      'Profile Image': authResult.user.photoUrl,
+    }).then((onValue) {
+      _saveUserDetails(authResult.user);   
+    });
+  }
+
+  _saveUserDetails(FirebaseUser user) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setString('name', user.displayName);
+    await preferences.setString('emailOrPhone', user.email);
+    await preferences.setString('username', user.displayName);
+    await preferences.setString('profileImage', user.photoUrl);
+
+    Toast.show('Done', context,
+          gravity: Toast.BOTTOM, duration: Toast.LENGTH_SHORT);
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (BuildContext context) => Home(user: user)));
   }
 }

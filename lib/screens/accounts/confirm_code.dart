@@ -1,4 +1,4 @@
-import 'package:HFM/screens/profile.dart';
+import 'package:HFM/screens/accounts/profile.dart';
 import 'package:HFM/themes/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

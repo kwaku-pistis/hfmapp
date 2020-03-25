@@ -1,4 +1,4 @@
-import 'package:HFM/screens/login_options.dart';
+import 'package:HFM/screens/accounts/login_options.dart';
 import 'package:HFM/screens/tabs/first.dart';
 import 'package:HFM/screens/tabs/fourth.dart';
 import 'package:HFM/screens/tabs/second.dart';
@@ -24,18 +24,37 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   _HomeState({@required this.user});
 
   TabController controller;
+  //GoogleSignIn _googleSignIn;
+  bool isLoggedIn;
 
   @override
   void initState() {
+    isLoggedIn = false;
+    FirebaseAuth.instance.currentUser().then((user) => user != null
+        ? setState(() {
+            isLoggedIn = true;
+          })
+        : Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => LoginOptions())));
+
     super.initState();
 
-    WidgetsBinding.instance
-      .addPostFrameCallback((_) {
-        if (user == null) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (BuildContext context) => LoginOptions()));
-        }
-      });
+    // _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
+    //   setState(() {
+    //     _currentUser = account;
+    //   });
+    //   if (_currentUser != null) {
+    //     _handleGetContact();
+    //   }
+    // });
+    // _googleSignIn.signInSilently();
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   if (user == null) {
+    //     Navigator.of(context).pushReplacement(MaterialPageRoute(
+    //         builder: (BuildContext context) => LoginOptions()));
+    //   }
+    // });
 
     // Initialize the Tab Controller
     controller = TabController(
@@ -75,7 +94,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ),
         Tab(
           icon: Icon(
-            Icons.person,
+            Icons.line_weight,
             color: Colors.white,
           ),
         ),
@@ -97,12 +116,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-
-    // if (user == null) {
-    //   Navigator.of(context).pushReplacement(
-    //       MaterialPageRoute(builder: (BuildContext context) => LoginOptions()));
-    // }
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -120,4 +133,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       body: getTabBarView(<Widget>[First(), Second(), Third(), Fourth()]),
     );
   }
+
+  // _saveUserDetails() async {
+  //   SharedPreferences preferences = await SharedPreferences.getInstance();
+  //   await preferences.setString('name', value)
+  // }
 }

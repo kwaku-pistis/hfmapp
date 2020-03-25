@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
 class Profile extends StatefulWidget {
@@ -423,7 +424,7 @@ class _ProfileState extends State<Profile> {
       });
       _formkey.currentState.save();
 
-      if (image != null){
+      if (image != null) {
         _uploadImage();
       } else {
         _saveDataToFirebaseDB(null);
@@ -438,11 +439,12 @@ class _ProfileState extends State<Profile> {
     StorageUploadTask uploadTask = _storage.child(user.uid).putFile(image);
     StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
     await uploadTask.onComplete
-        .whenComplete(await _saveDataToFirebaseDB(taskSnapshot)); 
+        .whenComplete(await _saveDataToFirebaseDB(taskSnapshot));
   }
 
   _saveDataToFirebaseDB(StorageTaskSnapshot taskSnapshot) async {
-    String downloadUrl = taskSnapshot != null ? await taskSnapshot.ref.getDownloadURL() : '';
+    String downloadUrl =
+        taskSnapshot != null ? await taskSnapshot.ref.getDownloadURL() : '';
     DocumentReference storeReference =
         Firestore.instance.collection('User Info').document(user.uid);
     await storeReference.setData({
@@ -451,19 +453,31 @@ class _ProfileState extends State<Profile> {
       'Username': username,
       'Gender': dropdownValue,
       'Profile Image': downloadUrl,
-    }).whenComplete(await moveToHome());
+    }).whenComplete(await moveToHome(downloadUrl));
   }
 
-
-  moveToHome() async {
+  moveToHome(String downloadUrl) async {
+    _saveUserDetails(downloadUrl);
     setState(() {
       _state = 2;
     });
 
     // Timer(Duration(milliseconds: 3300), () {
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-        builder: (BuildContext context) => Home(user: user,)
-      ), ModalRoute.withName(''));
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+            builder: (BuildContext context) => Home(
+                  user: user,
+                )),
+        ModalRoute.withName(''));
     //});
+  }
+
+  _saveUserDetails(String downloadUrl) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setString('name', '$fname $lname');
+    await preferences.setString('emailOrPhone', data);
+    await preferences.setString('username', username);
+    await preferences.setString('profileImage', downloadUrl);
+    await preferences.setString('gender', gender);
   }
 }
