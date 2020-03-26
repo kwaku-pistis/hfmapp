@@ -5,6 +5,7 @@ import 'package:HFM/models/user.dart';
 import 'package:HFM/resources/repository.dart';
 import 'package:HFM/screens/add_post_screen.dart';
 import 'package:HFM/screens/comments_screen.dart';
+import 'package:HFM/screens/friend_profile_screen.dart';
 import 'package:HFM/screens/likes_screen.dart';
 import 'package:HFM/screens/search_screen.dart';
 import 'package:HFM/screens/upload_photo_screen.dart';
@@ -71,19 +72,25 @@ class _FeedScreenState extends State<FeedScreen> {
         backgroundColor: new Color(0xfff8faf8),
         centerTitle: false,
         elevation: 1.0,
-        leading: new Icon(Icons.camera_alt),
+        leading: new Icon(
+          Icons.people,
+          color: Colors.red,
+        ),
         title: Text(
           'Share & touch a heart from here...',
-          style: TextStyle(fontSize: 16),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
         ),
         actions: <Widget>[
           Padding(
             padding: const EdgeInsets.only(right: 12.0),
             child: IconButton(
-              icon: Icon(Icons.add_a_photo),
+              icon: Icon(
+                Icons.add_a_photo,
+                color: colortheme.accentColor,
+              ),
               onPressed: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: ((context) => AddPostScreen())));
+                    MaterialPageRoute(builder: ((context) => UploadPhotoScreen())));
               },
             ),
           )
@@ -155,12 +162,12 @@ class _FeedScreenState extends State<FeedScreen> {
                 children: <Widget>[
                   InkWell(
                     onTap: () {
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: ((context) => InstaFriendProfileScreen(
-                      //               name: list[index].data['postOwnerName'],
-                      //             ))));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: ((context) => FriendProfileScreen(
+                                    name: list[index].data['postOwnerName'],
+                                  ))));
                     },
                     child: new Container(
                       height: 40.0,
@@ -182,13 +189,12 @@ class _FeedScreenState extends State<FeedScreen> {
                     children: <Widget>[
                       InkWell(
                         onTap: () {
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: ((context) =>
-                          //             InstaFriendProfileScreen(
-                          //               name: list[index].data['postOwnerName'],
-                          //             ))));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: ((context) => FriendProfileScreen(
+                                        name: list[index].data['postOwnerName'],
+                                      ))));
                         },
                         child: new Text(
                           list[index].data['postOwnerName'],
@@ -212,6 +218,26 @@ class _FeedScreenState extends State<FeedScreen> {
             ],
           ),
         ),
+        Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: list[index].data['caption'] != null
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Wrap(
+                        children: <Widget>[
+                          // Text(list[index].data['postOwnerName'],
+                          //     style: TextStyle(fontWeight: FontWeight.bold)),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 0.0),
+                            child: Text(list[index].data['caption']),
+                          )
+                        ],
+                      ),
+                    ],
+                  )
+                : commentWidget(list[index].reference)),
         CachedNetworkImage(
           imageUrl: list[index].data['imgUrl'],
           placeholder: ((context, s) => Center(
@@ -222,140 +248,128 @@ class _FeedScreenState extends State<FeedScreen> {
           fit: BoxFit.cover,
         ),
         Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding:
+              const EdgeInsets.only(left: 50.0, top: 16, right: 50, bottom: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              new Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  GestureDetector(
-                      child: _isLiked
-                          ? Icon(
-                              Icons.favorite,
-                              color: Colors.red,
-                            )
-                          : Icon(
-                              FontAwesomeIcons.heart,
-                              color: null,
-                            ),
-                      onTap: () {
-                        if (!_isLiked) {
-                          setState(() {
-                            _isLiked = true;
-                          });
-                          // saveLikeValue(_isLiked);
-                          postLike(list[index].reference, currentUser);
-                        } else {
-                          setState(() {
-                            _isLiked = false;
-                          });
-                          //saveLikeValue(_isLiked);
-                          postUnlike(list[index].reference, currentUser);
-                        }
+              GestureDetector(
+                  child: _isLiked
+                      ? Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                        )
+                      : Icon(
+                          FontAwesomeIcons.heart,
+                          color: null,
+                        ),
+                  onTap: () {
+                    if (!_isLiked) {
+                      setState(() {
+                        _isLiked = true;
+                      });
+                      // saveLikeValue(_isLiked);
+                      postLike(list[index].reference, currentUser);
+                    } else {
+                      setState(() {
+                        _isLiked = false;
+                      });
+                      //saveLikeValue(_isLiked);
+                      postUnlike(list[index].reference, currentUser);
+                    }
 
-                        // _repository.checkIfUserLikedOrNot(_user.uid, snapshot.data[index].reference).then((isLiked) {
-                        //   print("reef : ${snapshot.data[index].reference.path}");
-                        //   if (!isLiked) {
-                        //     setState(() {
-                        //       icon = Icons.favorite;
-                        //       color = Colors.red;
-                        //     });
-                        //     postLike(snapshot.data[index].reference);
-                        //   } else {
+                    // _repository.checkIfUserLikedOrNot(_user.uid, snapshot.data[index].reference).then((isLiked) {
+                    //   print("reef : ${snapshot.data[index].reference.path}");
+                    //   if (!isLiked) {
+                    //     setState(() {
+                    //       icon = Icons.favorite;
+                    //       color = Colors.red;
+                    //     });
+                    //     postLike(snapshot.data[index].reference);
+                    //   } else {
 
-                        //     setState(() {
-                        //       icon =FontAwesomeIcons.heart;
-                        //       color = null;
-                        //     });
-                        //     postUnlike(snapshot.data[index].reference);
-                        //   }
-                        // });
-                        // updateValues(
-                        //     snapshot.data[index].reference);
-                      }),
-                  new SizedBox(
-                    width: 16.0,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: ((context) => CommentsScreen(
-                                    documentReference: list[index].reference,
-                                    user: currentUser,
-                                  ))));
-                    },
-                    child: new Icon(
-                      FontAwesomeIcons.comment,
-                    ),
-                  ),
-                  new SizedBox(
-                    width: 16.0,
-                  ),
-                  new Icon(FontAwesomeIcons.paperPlane),
-                ],
+                    //     setState(() {
+                    //       icon =FontAwesomeIcons.heart;
+                    //       color = null;
+                    //     });
+                    //     postUnlike(snapshot.data[index].reference);
+                    //   }
+                    // });
+                    // updateValues(
+                    //     snapshot.data[index].reference);
+                  }),
+              new SizedBox(
+                width: 16.0,
               ),
-              new Icon(FontAwesomeIcons.bookmark)
-            ],
-          ),
-        ),
-        FutureBuilder(
-          future: _repository.fetchPostLikes(list[index].reference),
-          builder:
-              ((context, AsyncSnapshot<List<DocumentSnapshot>> likesSnapshot) {
-            if (likesSnapshot.hasData) {
-              return GestureDetector(
+              GestureDetector(
                 onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: ((context) => LikesScreen(
-                                user: currentUser,
+                          builder: ((context) => CommentsScreen(
                                 documentReference: list[index].reference,
+                                user: currentUser,
                               ))));
                 },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: likesSnapshot.data.length > 1
-                      ? Text(
-                          "Liked by ${likesSnapshot.data[0].data['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        )
-                      : Text(likesSnapshot.data.length == 1
-                          ? "Liked by ${likesSnapshot.data[0].data['ownerName']}"
-                          : "0 Likes"),
+                child: new Icon(
+                  FontAwesomeIcons.comment,
                 ),
-              );
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          }),
+              ),
+              new SizedBox(
+                width: 16.0,
+              ),
+              new Icon(FontAwesomeIcons.shareSquare),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: <Widget>[
+
+              //   ],
+              // ),
+              // new Icon(FontAwesomeIcons.bookmark)
+            ],
+          ),
         ),
-        Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: list[index].data['caption'] != null
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Wrap(
-                        children: <Widget>[
-                          Text(list[index].data['postOwnerName'],
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text(list[index].data['caption']),
-                          )
-                        ],
-                      ),
-                      Padding(
-                          padding: const EdgeInsets.only(top: 4.0),
-                          child: commentWidget(list[index].reference))
-                    ],
-                  )
-                : commentWidget(list[index].reference)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            FutureBuilder(
+              future: _repository.fetchPostLikes(list[index].reference),
+              builder: ((context,
+                  AsyncSnapshot<List<DocumentSnapshot>> likesSnapshot) {
+                if (likesSnapshot.hasData) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: ((context) => LikesScreen(
+                                    user: currentUser,
+                                    documentReference: list[index].reference,
+                                  ))));
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: likesSnapshot.data.length > 1
+                          ? Text(
+                              "Liked by ${likesSnapshot.data[0].data['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            )
+                          : Text(likesSnapshot.data.length == 1
+                              ? "Liked by ${likesSnapshot.data[0].data['ownerName']}"
+                              : "0 Likes"),
+                    ),
+                  );
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              }),
+            ),
+            Padding(
+                padding: const EdgeInsets.only(top: 4.0, left: 16, right: 16),
+                child: commentWidget(list[index].reference),
+              ),
+          ],
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text("1 Day Ago", style: TextStyle(color: Colors.grey)),

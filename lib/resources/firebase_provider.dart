@@ -189,7 +189,7 @@ class FirebaseProvider {
         await _firestore.collection("User Info").getDocuments();
     for (var i = 0; i < querySnapshot.documents.length; i++) {
       if (querySnapshot.documents[i].documentID != user.uid) {
-        userNameList.add(querySnapshot.documents[i].data['displayName']);
+        userNameList.add(querySnapshot.documents[i].data['name']);
       }
     }
     print("USERNAMES LIST : ${userNameList.length}");
@@ -209,7 +209,7 @@ class FirebaseProvider {
     print("UID LIST : ${uidList.length}");
 
     for (var i = 0; i < uidList.length; i++) {
-      if (uidList[i].data['displayName'] == name) {
+      if (uidList[i].data['name'] == name) {
         uid = uidList[i].documentID;
       }
     }
@@ -290,14 +290,14 @@ class FirebaseProvider {
 
   Future<void> updatePhoto(String photoUrl, String uid) async {
     Map<String, dynamic> map = Map();
-    map['photoUrl'] = photoUrl;
+    map['profileImage'] = photoUrl;
     return _firestore.collection("User Info").document(uid).updateData(map);
   }
 
   Future<void> updateDetails(
       String uid, String name, String bio, String email, String phone) async {
     Map<String, dynamic> map = Map();
-    map['displayName'] = name;
+    map['name'] = name;
     map['bio'] = bio;
     map['email'] = email;
     map['phone'] = phone;
@@ -364,9 +364,9 @@ class FirebaseProvider {
     map['receiverUid'] = _message.receiverUid;
     map['type'] = _message.type;
     map['timestamp'] = _message.timestamp;
-    map['photoUrl'] = _message.photoUrl;
+    map['profileImage'] = _message.photoUrl;
 
-    print("Map : ${map}");
+    print("Map : $map");
     _firestore
         .collection("messages")
         .document(_message.senderUid)

@@ -6,6 +6,7 @@ import 'package:HFM/resources/repository.dart';
 import 'package:HFM/screens/comments_screen.dart';
 import 'package:HFM/screens/likes_screen.dart';
 import 'package:HFM/screens/post_detail_screen.dart';
+import 'package:HFM/themes/colors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -16,21 +17,20 @@ class FriendProfileScreen extends StatefulWidget {
   FriendProfileScreen({this.name});
 
   @override
-  _FriendProfileScreenState createState() =>
-      _FriendProfileScreenState();
+  _FriendProfileScreenState createState() => _FriendProfileScreenState();
 }
 
 class _FriendProfileScreenState extends State<FriendProfileScreen> {
   String currentUserId, followingUserId;
   var _repository = Repository();
-  Color _gridColor = Colors.blue;
+  Color _gridColor = colortheme.accentColor;
   Color _listColor = Colors.grey;
   bool _isGridActive = true;
   User _user, currentuser;
   IconData icon;
   Color color;
   Future<List<DocumentSnapshot>> _future;
-  bool _isLiked = false;
+  //bool _isLiked = false;
   bool isFollowing = false;
   bool followButtonClicked = false;
   int postCount = 0;
@@ -38,7 +38,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
   int followingCount = 0;
 
   fetchUidBySearchedName(String name) async {
-    print("NAME : ${name}");
+    print("NAME : $name");
     String uid = await _repository.fetchUidBySearchedName(name);
     setState(() {
       followingUserId = uid;
@@ -65,7 +65,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
         });
       });
       _repository.checkIsFollowing(widget.name, user.uid).then((value) {
-        print("VALUE : ${value}");
+        print("VALUE : $value");
         setState(() {
           isFollowing = value;
         });
@@ -134,9 +134,9 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
     if (!isFollowing) {
       return buildButton(
         text: "Follow",
-        backgroundcolor: Colors.blue,
+        backgroundcolor: colortheme.accentColor,
         textColor: Colors.white,
-        borderColor: Colors.blue,
+        borderColor: colortheme.accentColor,
         function: followUser,
       );
     }
@@ -153,128 +153,179 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: new Color(0xfff8faf8),
+          backgroundColor: colortheme.primaryColor,
           elevation: 1,
-          title: Text('Profile'),
+          title: Text(
+            'Profile',
+            style: TextStyle(color: Colors.white),
+          ),
+          iconTheme: IconThemeData(color: Colors.white),
         ),
         body: _user != null
             ? ListView(
                 children: <Widget>[
-                  Row(
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20.0, left: 20.0),
-                        child: Container(
-                            width: 110.0,
-                            height: 110.0,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(80.0),
-                              image: DecorationImage(
-                                  image: _user.profileImage.isEmpty
-                                      ? AssetImage('assets/no_image.png')
-                                      : NetworkImage(_user.profileImage),
-                                  fit: BoxFit.cover),
-                            )),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
+                      Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image:
+                                AssetImage('assets/images/adinkra_pattern.png'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                         child: Column(
                           children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                StreamBuilder(
-                                  stream: _repository
-                                      .fetchStats(
-                                          uid: followingUserId, label: 'posts')
-                                      .asStream(),
-                                  builder: ((context,
-                                      AsyncSnapshot<List<DocumentSnapshot>>
-                                          snapshot) {
-                                    if (snapshot.hasData) {
-                                      return detailsWidget(
-                                          snapshot.data.length.toString(),
-                                          'posts');
-                                    } else {
-                                      return Center(child: CircularProgressIndicator(),);
-                                    }
-                                  }),
-                                ),
-
-                                StreamBuilder(
-                                  stream: _repository
-                                      .fetchStats(
-                                          uid: followingUserId,
-                                          label: 'followers')
-                                      .asStream(),
-                                  builder: ((context,
-                                      AsyncSnapshot<List<DocumentSnapshot>>
-                                          snapshot) {
-                                    if (snapshot.hasData) {
-                                      return Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 24.0),
-                                        child: detailsWidget(
-                                            snapshot.data.length.toString(),
-                                            'followers'),
-                                      );
-                                    } else {
-                                      return Center(child: CircularProgressIndicator(),);
-                                    }
-                                  }),
-                                ),
-
-                                StreamBuilder(
-                                  stream: _repository
-                                      .fetchStats(
-                                          uid: followingUserId,
-                                          label: 'following')
-                                      .asStream(),
-                                  builder: ((context,
-                                      AsyncSnapshot<List<DocumentSnapshot>>
-                                          snapshot) {
-                                    if (snapshot.hasData) {
-                                      return Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 20.0),
-                                        child: detailsWidget(
-                                            snapshot.data.length.toString(),
-                                            'following'),
-                                      );
-                                    } else {
-                                      return Center(child: CircularProgressIndicator(),);
-                                    }
-                                  }),
-                                ),
-
-                                //   detailsWidget(_user.posts, 'posts'),
-                              ],
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 20.0, left: 0.0),
+                              child: Container(
+                                  width: 110.0,
+                                  height: 110.0,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(80.0),
+                                    image: DecorationImage(
+                                        image: _user.profileImage.isEmpty
+                                            ? AssetImage(
+                                                'assets/images/profile.png')
+                                            : NetworkImage(_user.profileImage),
+                                        fit: BoxFit.cover),
+                                  )),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 0.0, top: 10.0),
+                              child: Text(_user.name,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20.0)),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
-                                  top: 12.0, left: 20.0, right: 20.0),
-                              child: buildProfileButton(),
+                                  bottom: 20.0, top: 10.0),
+                              child: Text(
+                                  _user.username.isEmpty
+                                      ? '@username'
+                                      : _user.username,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 16.0)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Column(
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: <Widget>[
+                                      StreamBuilder(
+                                        stream: _repository
+                                            .fetchStats(
+                                                uid: followingUserId,
+                                                label: 'posts')
+                                            .asStream(),
+                                        builder: ((context,
+                                            AsyncSnapshot<
+                                                    List<DocumentSnapshot>>
+                                                snapshot) {
+                                          if (snapshot.hasData) {
+                                            return detailsWidget(
+                                                snapshot.data.length.toString(),
+                                                'posts');
+                                          } else {
+                                            return Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            );
+                                          }
+                                        }),
+                                      ),
+
+                                      StreamBuilder(
+                                        stream: _repository
+                                            .fetchStats(
+                                                uid: followingUserId,
+                                                label: 'followers')
+                                            .asStream(),
+                                        builder: ((context,
+                                            AsyncSnapshot<
+                                                    List<DocumentSnapshot>>
+                                                snapshot) {
+                                          if (snapshot.hasData) {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 24.0),
+                                              child: detailsWidget(
+                                                  snapshot.data.length
+                                                      .toString(),
+                                                  'followers'),
+                                            );
+                                          } else {
+                                            return Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            );
+                                          }
+                                        }),
+                                      ),
+
+                                      StreamBuilder(
+                                        stream: _repository
+                                            .fetchStats(
+                                                uid: followingUserId,
+                                                label: 'following')
+                                            .asStream(),
+                                        builder: ((context,
+                                            AsyncSnapshot<
+                                                    List<DocumentSnapshot>>
+                                                snapshot) {
+                                          if (snapshot.hasData) {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 20.0),
+                                              child: detailsWidget(
+                                                  snapshot.data.length
+                                                      .toString(),
+                                                  'following'),
+                                            );
+                                          } else {
+                                            return Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            );
+                                          }
+                                        }),
+                                      ),
+
+                                      //   detailsWidget(_user.posts, 'posts'),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 12.0,
+                                        left: 20.0,
+                                        right: 20.0,
+                                        bottom: 0),
+                                    child: buildProfileButton(),
+                                  )
+                                ],
+                              ),
                             )
                           ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 25.0, top: 30.0),
-                    child: Text(_user.name,
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20.0)),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 25.0, top: 10.0),
+                    padding: const EdgeInsets.only(left: 25.0, top: 0.0),
                     child: _user.bio.isNotEmpty ? Text(_user.bio) : Container(),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 12.0),
+                    padding: const EdgeInsets.only(top: 0.0),
                     child: Divider(),
                   ),
                   Padding(
@@ -290,7 +341,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                           onTap: () {
                             setState(() {
                               _isGridActive = true;
-                              _gridColor = Colors.blue;
+                              _gridColor = colortheme.accentColor;
                               _listColor = Colors.grey;
                             });
                           },
@@ -303,7 +354,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                           onTap: () {
                             setState(() {
                               _isGridActive = false;
-                              _listColor = Colors.blue;
+                              _listColor = colortheme.accentColor;
                               _gridColor = Colors.grey;
                             });
                           },
@@ -383,7 +434,8 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                 ((context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  return SizedBox(
+                  return SingleChildScrollView(
+                    child: SizedBox(
                       height: 600.0,
                       child: ListView.builder(
                           //shrinkWrap: true,
@@ -392,7 +444,8 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                               list: snapshot.data,
                               index: index,
                               user: _user,
-                              currentuser: currentuser))));
+                              currentuser: currentuser)))),
+                  );
                 } else {
                   return Center(
                     child: CircularProgressIndicator(),
@@ -557,13 +610,13 @@ class _ListItemState extends State<ListItem> {
                           setState(() {
                             _isLiked = true;
                           });
-                          
+
                           postLike(widget.list[widget.index].reference);
                         } else {
                           setState(() {
                             _isLiked = false;
                           });
-                         
+
                           postUnlike(widget.list[widget.index].reference);
                         }
                       }),

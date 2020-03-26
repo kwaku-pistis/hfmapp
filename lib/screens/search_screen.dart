@@ -108,7 +108,7 @@ class DataSearch extends SearchDelegate<String> {
       IconButton(
         icon: Icon(Icons.clear),
         onPressed: () {
-          query = "kwaku";
+          query = "";
         },
       )
     ];
@@ -150,8 +150,8 @@ class DataSearch extends SearchDelegate<String> {
               
             },
             leading: CircleAvatar(
-               //backgroundImage: NetworkImage(suggestionsList[index].profileImage),
-               backgroundImage: AssetImage('assets/images/profile.png'),
+              backgroundImage: NetworkImage(suggestionsList[index].profileImage),
+               //backgroundImage: AssetImage('assets/images/profile.png'),
             ),
             title: Text(suggestionsList[index].name),
           )),

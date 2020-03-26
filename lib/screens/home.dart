@@ -6,6 +6,7 @@ import 'package:HFM/screens/tabs/third.dart';
 import 'package:HFM/themes/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -82,7 +83,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ),
         Tab(
           icon: Icon(
-            Icons.adb,
+            FontAwesomeIcons.church,
             color: Colors.white,
           ),
         ),

@@ -20,7 +20,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
     action == 'Gallery'
         ? selectedImage =
             await ImagePicker.pickImage(source: ImageSource.gallery)
-        : await ImagePicker.pickImage(source: ImageSource.camera);
+        : selectedImage =
+            await ImagePicker.pickImage(source: ImageSource.camera);
 
     return selectedImage;
   }
@@ -35,27 +36,36 @@ class _AddPostScreenState extends State<AddPostScreen> {
               SimpleDialogOption(
                 child: Text('Choose from Gallery'),
                 onPressed: () {
+                  //Navigator.pop(context);
                   _pickImage('Gallery').then((selectedImage) {
                     setState(() {
                       imageFile = selectedImage;
                     });
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: ((context) => UploadPhotoScreen(imageFile: imageFile,))
-                    ));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) => UploadPhotoScreen(
+                                  //imageFile: imageFile,
+                                ))));
+                    //Navigator.of(context).pop();
                   });
                 },
               ),
               SimpleDialogOption(
                 child: Text('Take Photo'),
                 onPressed: () {
+                  //Navigator.of(context).pop();
                   _pickImage('Camera').then((selectedImage) {
                     setState(() {
                       imageFile = selectedImage;
                     });
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: ((context) => UploadPhotoScreen(imageFile: imageFile,))
-                    ));
-                  }); 
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) => UploadPhotoScreen(
+                                  //imageFile: imageFile,
+                                ))));
+                  });
                 },
               ),
               SimpleDialogOption(
@@ -74,7 +84,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: colortheme.primaryColor,
-        title: Text('Add Photo', style: TextStyle(color: Colors.white),),
+        title: Text(
+          'Add Photo',
+          style: TextStyle(color: Colors.white),
+        ),
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
