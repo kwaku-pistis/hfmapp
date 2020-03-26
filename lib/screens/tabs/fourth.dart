@@ -1,7 +1,10 @@
+import 'package:HFM/models/user.dart';
+import 'package:HFM/resources/repository.dart';
 import 'package:HFM/screens/accounts/profile_details.dart';
 import 'package:HFM/themes/colors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 
 String name;
 
@@ -11,11 +14,25 @@ class Fourth extends StatefulWidget {
 }
 
 class _FourthState extends State<Fourth> {
+  var _repository = Repository();
+  User _user;
+
   @override
   void initState() {
     super.initState();
 
-    _retrieveLocalData();
+    //_retrieveLocalData();
+    retrieveUserDetails();
+  }
+
+  retrieveUserDetails() async {
+    FirebaseUser currentUser = await _repository.getCurrentUser();
+    User user = await _repository.retrieveUserDetails(currentUser);
+    setState(() {
+      _user = user;
+      name = _user.name;
+    });
+    //_future = _repository.retrieveUserPosts(_user.uid);
   }
 
   @override
@@ -43,7 +60,9 @@ class _FourthState extends State<Fourth> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                        image: AssetImage('assets/images/profile.png'),
+                        image: _user.profileImage == null
+                            ? AssetImage('assets/images/profile.png')
+                            : NetworkImage(_user.profileImage),
                         fit: BoxFit.fill,
                       ),
                     ),
@@ -85,8 +104,7 @@ class _FourthState extends State<Fourth> {
               ),
               title: Text('Profile'),
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => ProfileDetails()
-              )),
+                  builder: (BuildContext context) => ProfileDetails())),
             ),
             ListTile(
               leading: Icon(
@@ -108,10 +126,10 @@ class _FourthState extends State<Fourth> {
     );
   }
 
-  _retrieveLocalData() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    setState(() {
-      name = (preferences.getString('name') ?? null);
-    });
-  }
+  // _retrieveLocalData() async {
+  //   SharedPreferences preferences = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     name = (preferences.getString('name') ?? null);
+  //   });
+  // }
 }

@@ -1,3 +1,4 @@
+import 'package:HFM/resources/repository.dart';
 import 'package:HFM/screens/accounts/confirm_code.dart';
 import 'package:HFM/screens/home.dart';
 import 'package:HFM/screens/accounts/profile.dart';
@@ -24,6 +25,8 @@ int _state = 0;
 String _emailAddress;
 String _link;
 String emailAdd;
+
+var _repository = Repository();
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -423,9 +426,21 @@ class _LoginOptionsState extends State<LoginOptions>
 
     //final FirebaseUser user =
     await _auth.signInWithCredential(credential).then((onValue) {
-      _saveDataToFirebaseDB(onValue);
+      _repository.addDataToDb(onValue.user).then((value) {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) {
+          return Home(user: null);
+        }));
+      });
     });
     //print("signed in " + user.displayName);
+
+    FirebaseUser user = await _auth.currentUser();
+    // _repository.addDataToDb(user).then((value) {
+    //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+    //     return Home(user: null);
+    //   }));
+    // });
   }
 
   _saveDataToFirebaseDB(AuthResult authResult) async {
@@ -440,7 +455,7 @@ class _LoginOptionsState extends State<LoginOptions>
       'Gender': '',
       'Profile Image': authResult.user.photoUrl,
     }).then((onValue) {
-      _saveUserDetails(authResult.user);   
+      _saveUserDetails(authResult.user);
     });
   }
 
@@ -452,8 +467,8 @@ class _LoginOptionsState extends State<LoginOptions>
     await preferences.setString('profileImage', user.photoUrl);
 
     Toast.show('Done', context,
-          gravity: Toast.BOTTOM, duration: Toast.LENGTH_SHORT);
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (BuildContext context) => Home(user: user)));
+        gravity: Toast.BOTTOM, duration: Toast.LENGTH_SHORT);
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (BuildContext context) => Home(user: user)));
   }
 }

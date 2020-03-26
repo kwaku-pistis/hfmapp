@@ -130,7 +130,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         backgroundColor: colortheme.primaryColor,
         bottom: getTabBar(),
       ),
-      body: getTabBarView(<Widget>[First(), Second(), Third(), Fourth()]),
+      body: getTabBarView(<Widget>[FeedScreen(), Second(), Third(), Fourth()]),
     );
   }
 
