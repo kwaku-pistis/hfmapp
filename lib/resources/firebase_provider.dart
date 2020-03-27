@@ -118,7 +118,8 @@ class FirebaseProvider {
         location: location,
         postOwnerName: currentUser.name,
         postOwnerPhotoUrl: currentUser.profileImage,
-        time: FieldValue.serverTimestamp());
+        time: FieldValue.serverTimestamp(),
+        postTime: DateTime.now());
 
     return _collectionRef.add(post.toMap(post));
   }

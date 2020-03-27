@@ -44,6 +44,9 @@ dependencies:
   location:
   geocoder:
   geolocator: ^5.3.0
+  timeago: ^2.0.26
+  date_utils: ^0.1.0+3
+  intl: ^0.16.1
 
 dev_dependencies:
   flutter_test:

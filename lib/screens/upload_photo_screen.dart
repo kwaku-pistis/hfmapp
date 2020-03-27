@@ -207,12 +207,12 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                   const EdgeInsets.only(top: 12.0, left: 12.0, right: 12.0),
               child: Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.5,
+                height: MediaQuery.of(context).size.height * 0.4,
                 decoration: BoxDecoration(
                     image: DecorationImage(
                         fit: BoxFit.cover, 
                         image: imageFile == null
-                        ? AssetImage('assets/images/profile.png') 
+                        ? AssetImage('') 
                         : FileImage(imageFile))),
               ),
             ),

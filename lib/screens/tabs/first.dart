@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:HFM/models/like.dart';
 import 'package:HFM/models/user.dart';
 import 'package:HFM/resources/repository.dart';
-import 'package:HFM/screens/add_post_screen.dart';
 import 'package:HFM/screens/comments_screen.dart';
 import 'package:HFM/screens/friend_profile_screen.dart';
 import 'package:HFM/screens/likes_screen.dart';
@@ -15,11 +14,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class FeedScreen extends StatefulWidget {
   @override
   _FeedScreenState createState() => _FeedScreenState();
 }
+
+var timeDiff;
 
 class _FeedScreenState extends State<FeedScreen> {
   var _repository = Repository();
@@ -89,8 +91,10 @@ class _FeedScreenState extends State<FeedScreen> {
                 color: colortheme.accentColor,
               ),
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: ((context) => UploadPhotoScreen())));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: ((context) => UploadPhotoScreen())));
               },
             ),
           )
@@ -148,6 +152,13 @@ class _FeedScreenState extends State<FeedScreen> {
   Widget listItem(
       {List<DocumentSnapshot> list, User user, User currentUser, int index}) {
     print("dadadadad : ${user.uid}");
+    var temp = list[index].data['postTime'];
+    Duration diff = DateTime.now().difference(temp);
+    var sub = DateTime.now().subtract(diff);
+    setState(() {
+      timeDiff = timeago.format(sub);
+    });
+    //var dateSub = DateTime.now().subtract(FieldValue.serverTimestamp())
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -365,14 +376,15 @@ class _FeedScreenState extends State<FeedScreen> {
               }),
             ),
             Padding(
-                padding: const EdgeInsets.only(top: 4.0, left: 16, right: 16),
-                child: commentWidget(list[index].reference),
-              ),
+              padding: const EdgeInsets.only(top: 4.0, left: 16, right: 16),
+              child: commentWidget(list[index].reference),
+            ),
           ],
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Text("1 Day Ago", style: TextStyle(color: Colors.grey)),
+          child: Text("$timeDiff",
+              style: TextStyle(color: Colors.grey)),
         )
       ],
     );
@@ -430,6 +442,8 @@ class _FeedScreenState extends State<FeedScreen> {
     });
   }
 }
+
+_calculateTimeDifference() {}
 
 // class ListItem extends StatefulWidget {
 //   final List<DocumentSnapshot> list;
