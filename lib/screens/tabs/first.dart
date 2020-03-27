@@ -14,6 +14,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class FeedScreen extends StatefulWidget {
@@ -152,13 +153,15 @@ class _FeedScreenState extends State<FeedScreen> {
   Widget listItem(
       {List<DocumentSnapshot> list, User user, User currentUser, int index}) {
     print("dadadadad : ${user.uid}");
+    print("datetime: ${DateTime.now()}");
     var temp = list[index].data['postTime'];
-    Duration diff = DateTime.now().difference(temp);
-    var sub = DateTime.now().subtract(diff);
-    setState(() {
-      timeDiff = timeago.format(sub);
-    });
-    //var dateSub = DateTime.now().subtract(FieldValue.serverTimestamp())
+    var diff = DateTime.parse(temp);
+    //Duration sub = DateTime.now().difference(diff);
+    //setState(() {
+      timeDiff =  Jiffy(diff).fromNow();;
+   // });
+   
+    // //var dateSub = DateTime.now().subtract(FieldValue.serverTimestamp())
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,

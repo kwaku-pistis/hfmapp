@@ -73,7 +73,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                 _changeVisibility(false);
 
                 _repository.getCurrentUser().then((currentUser) {
-                  if (currentUser != null) {
+                  if (currentUser != null && imageFile != null) {
                     compressImage();
                     _repository.retrieveUserDetails(currentUser).then((user) {
                       _repository
@@ -97,6 +97,24 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                         print("Error uploading image to storage : $e");
                       });
                     });
+                  } else if(currentUser != null && imageFile == null){
+                     _repository.retrieveUserDetails(currentUser).then((user) {
+                        _repository
+                            .addPostToDb(user, '', _captionController.text,
+                                _locationController.text)
+                            .then((value) {
+                          print("Post added to db");
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: ((context) => Home(
+                                        user: null,
+                                      ))),
+                              ModalRoute.withName(''));
+                        }).catchError((e) =>
+                                print("Error adding current post to db : $e"));
+                     });
+                     
                   } else {
                     print("Current User is null");
                   }

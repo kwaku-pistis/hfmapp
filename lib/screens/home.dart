@@ -77,7 +77,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         Tab(
           // set icon to the tab
           icon: Icon(
-            Icons.home,
+            FontAwesomeIcons.home,
             color: Colors.white,
           ),
         ),
@@ -89,7 +89,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ),
         Tab(
           icon: Icon(
-            Icons.airport_shuttle,
+            FontAwesomeIcons.donate,
             color: Colors.white,
           ),
         ),

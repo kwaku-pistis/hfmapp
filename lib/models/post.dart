@@ -8,7 +8,7 @@ class Post {
   FieldValue time;
   String postOwnerName;
   String postOwnerPhotoUrl;
-  DateTime postTime;
+  String postTime;
 
   Post(
       {this.currentUserUid,
