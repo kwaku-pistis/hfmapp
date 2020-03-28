@@ -15,7 +15,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 class FeedScreen extends StatefulWidget {
   @override
@@ -80,7 +79,7 @@ class _FeedScreenState extends State<FeedScreen> {
           color: Colors.red,
         ),
         title: Text(
-          'Share & touch a heart from here...',
+          'Share a post or image from here...',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
         ),
         actions: <Widget>[
@@ -255,7 +254,7 @@ class _FeedScreenState extends State<FeedScreen> {
         CachedNetworkImage(
           imageUrl: list[index].data['imgUrl'],
           placeholder: ((context, s) => Center(
-                child: CircularProgressIndicator(),
+                child: list[index].data['imgUrl'] == null ? CircularProgressIndicator() : Container(),
               )),
           width: 125.0,
           height: 250.0,

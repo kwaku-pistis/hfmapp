@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
+import 'package:HFM/models/user.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -44,6 +45,9 @@ String fname, lname, username, phoneOrEmail, gender;
 
 StorageReference _storage =
     FirebaseStorage.instance.ref().child('User Profile Image');
+
+final Firestore _firestore = Firestore.instance;
+User _user;
 
 class _ProfileState extends State<Profile> {
   String data;
@@ -445,15 +449,40 @@ class _ProfileState extends State<Profile> {
   _saveDataToFirebaseDB(StorageTaskSnapshot taskSnapshot) async {
     String downloadUrl =
         taskSnapshot != null ? await taskSnapshot.ref.getDownloadURL() : '';
-    DocumentReference storeReference =
-        Firestore.instance.collection('User Info').document(user.uid);
-    await storeReference.setData({
-      'Name': '$fname $lname',
-      'Email / Phone': data,
-      'Username': username,
-      'Gender': dropdownValue,
-      'Profile Image': downloadUrl,
-    }).whenComplete(await moveToHome(downloadUrl));
+    // DocumentReference storeReference =
+    //     Firestore.instance.collection('User Info').document(user.uid);
+    // await storeReference.setData({
+    //   'Name': '$fname $lname',
+    //   'Email / Phone': data,
+    //   'Username': username,
+    //   'Gender': dropdownValue,
+    //   'Profile Image': downloadUrl,
+    // }).whenComplete(await moveToHome(downloadUrl));
+
+    _firestore
+        .collection("display_names")
+        .document('$fname $lname')
+        .setData({'displayName': '$fname $lname'});
+
+    _user = User(
+        uid: user.uid,
+        email:data,
+        name: '$fname $lname',
+        profileImage: downloadUrl,
+        followers: '0',
+        following: '0',
+        bio: '',
+        posts: '0',
+        username: username);
+
+    //  Map<String, String> mapdata = Map<String, dynamic>();
+
+    //  mapdata = user.toMap(user);
+
+    _firestore
+        .collection("User Info")
+        .document(user.uid)
+        .setData(_user.toMap(_user)).then(moveToHome(downloadUrl));
   }
 
   moveToHome(String downloadUrl) async {

@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 
-String name;
+String name, profileImage;
 
 class Fourth extends StatefulWidget {
   @override
@@ -19,10 +19,8 @@ class _FourthState extends State<Fourth> {
 
   @override
   void initState() {
-    super.initState();
-
-    //_retrieveLocalData();
     retrieveUserDetails();
+    super.initState();
   }
 
   retrieveUserDetails() async {
@@ -31,6 +29,7 @@ class _FourthState extends State<Fourth> {
     setState(() {
       _user = user;
       name = _user.name;
+      profileImage = _user.profileImage;
     });
     //_future = _repository.retrieveUserPosts(_user.uid);
   }
@@ -60,9 +59,9 @@ class _FourthState extends State<Fourth> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                        image: _user.profileImage == null
+                        image: profileImage == null
                             ? AssetImage('assets/images/profile.png')
-                            : NetworkImage(_user.profileImage),
+                            : NetworkImage(profileImage),
                         fit: BoxFit.fill,
                       ),
                     ),

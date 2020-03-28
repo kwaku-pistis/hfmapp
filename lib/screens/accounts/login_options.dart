@@ -435,7 +435,7 @@ class _LoginOptionsState extends State<LoginOptions>
     });
     //print("signed in " + user.displayName);
 
-    FirebaseUser user = await _auth.currentUser();
+    //FirebaseUser user = await _auth.currentUser();
     // _repository.addDataToDb(user).then((value) {
     //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
     //     return Home(user: null);
@@ -443,32 +443,32 @@ class _LoginOptionsState extends State<LoginOptions>
     // });
   }
 
-  _saveDataToFirebaseDB(AuthResult authResult) async {
-    //String downloadUrl = taskSnapshot != null ? await taskSnapshot.ref.getDownloadURL() : '';
-    DocumentReference storeReference = Firestore.instance
-        .collection('User Info')
-        .document(authResult.user.uid);
-    await storeReference.setData({
-      'Name': authResult.user.displayName,
-      'Email / Phone': authResult.user.email,
-      'Username': authResult.user.displayName,
-      'Gender': '',
-      'Profile Image': authResult.user.photoUrl,
-    }).then((onValue) {
-      _saveUserDetails(authResult.user);
-    });
-  }
+  // _saveDataToFirebaseDB(AuthResult authResult) async {
+  //   //String downloadUrl = taskSnapshot != null ? await taskSnapshot.ref.getDownloadURL() : '';
+  //   DocumentReference storeReference = Firestore.instance
+  //       .collection('User Info')
+  //       .document(authResult.user.uid);
+  //   await storeReference.setData({
+  //     'Name': authResult.user.displayName,
+  //     'Email / Phone': authResult.user.email,
+  //     'Username': authResult.user.displayName,
+  //     'Gender': '',
+  //     'Profile Image': authResult.user.photoUrl,
+  //   }).then((onValue) {
+  //     _saveUserDetails(authResult.user);
+  //   });
+  // }
 
-  _saveUserDetails(FirebaseUser user) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.setString('name', user.displayName);
-    await preferences.setString('emailOrPhone', user.email);
-    await preferences.setString('username', user.displayName);
-    await preferences.setString('profileImage', user.photoUrl);
+  // _saveUserDetails(FirebaseUser user) async {
+  //   SharedPreferences preferences = await SharedPreferences.getInstance();
+  //   await preferences.setString('name', user.displayName);
+  //   await preferences.setString('emailOrPhone', user.email);
+  //   await preferences.setString('username', user.displayName);
+  //   await preferences.setString('profileImage', user.photoUrl);
 
-    Toast.show('Done', context,
-        gravity: Toast.BOTTOM, duration: Toast.LENGTH_SHORT);
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (BuildContext context) => Home(user: user)));
-  }
+  //   Toast.show('Done', context,
+  //       gravity: Toast.BOTTOM, duration: Toast.LENGTH_SHORT);
+  //   Navigator.of(context).pushReplacement(
+  //       MaterialPageRoute(builder: (BuildContext context) => Home(user: user)));
+  // }
 }

@@ -25,6 +25,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
   var _locationController;
   var _captionController;
   final _repository = Repository();
+  String caption, location;
 
   @override
   void initState() {
@@ -134,15 +135,15 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                     padding: const EdgeInsets.only(left: 12.0, right: 8.0),
                     child: TextField(
                       controller: _captionController,
-                      //maxLines: 5,
                       keyboardType: TextInputType.multiline,
+                      textCapitalization: TextCapitalization.sentences,
                       decoration: InputDecoration(
-                          hintText: 'Write a message...',
-                          contentPadding:
-                              EdgeInsets.only(bottom: 100, top: 16)),
+                        hintText: 'Write a message...',
+                        contentPadding: EdgeInsets.only(bottom: 100, top: 16),
+                      ),
                       onChanged: ((value) {
                         setState(() {
-                          _captionController.text = value;
+                          caption = value;
                         });
                       }),
                     ),
@@ -153,10 +154,11 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: TextField(
-                controller: _locationController,
+                controller: _locationController,   
+                textCapitalization: TextCapitalization.words,
                 onChanged: ((value) {
                   setState(() {
-                    _locationController.text = value;
+                    location = value;
                   });
                 }),
                 decoration: InputDecoration(

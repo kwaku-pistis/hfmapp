@@ -18,7 +18,7 @@ class ProfileDetails extends StatefulWidget {
   _ProfileDetailsState createState() => _ProfileDetailsState();
 }
 
-String name, username;
+String name, username, profileImage, uuid;
 User _user;
 bool _isGridActive = true;
 Color _gridColor = colortheme.accentColor;
@@ -43,13 +43,15 @@ class _ProfileDetailsState extends State<ProfileDetails> {
       _user = user;
       name = _user.name;
       username = _user.username;
+      profileImage = _user.profileImage;
+      uuid = _user.uid;
     });
-    _future = _repository.retrieveUserPosts(_user.uid);
+    _future = _repository.retrieveUserPosts(uuid);
   }
 
   @override
   Widget build(BuildContext context) {
-    final _width = MediaQuery.of(context).size.width;
+    //final _width = MediaQuery.of(context).size.width;
     final _height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
@@ -86,9 +88,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
-                            image: _user.profileImage.isEmpty
+                            image: profileImage == null
                                 ? AssetImage('assets/images/profile.png')
-                                : NetworkImage(_user.profileImage),
+                                : NetworkImage(profileImage),
                             fit: BoxFit.fill,
                           ),
                         ),
@@ -156,7 +158,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                 children: <Widget>[
                   StreamBuilder(
                     stream: _repository
-                        .fetchStats(uid: _user.uid, label: 'posts')
+                        .fetchStats(uid: uuid, label: 'posts')
                         .asStream(),
                     builder: ((context,
                         AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
@@ -172,7 +174,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                   ),
                   StreamBuilder(
                     stream: _repository
-                        .fetchStats(uid: _user.uid, label: 'followers')
+                        .fetchStats(uid: uuid, label: 'followers')
                         .asStream(),
                     builder: ((context,
                         AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
@@ -191,7 +193,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                   ),
                   StreamBuilder(
                     stream: _repository
-                        .fetchStats(uid: _user.uid, label: 'following')
+                        .fetchStats(uid: uuid, label: 'following')
                         .asStream(),
                     builder: ((context,
                         AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
