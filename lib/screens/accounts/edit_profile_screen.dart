@@ -11,14 +11,16 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  final String photoUrl, email, bio, name, phone;
+  final String photoUrl, email, bio, name, username;
 
   EditProfileScreen(
-      {this.photoUrl, this.email, this.bio, this.name, this.phone});
+      {this.photoUrl, this.email, this.bio, this.name, this.username});
 
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();
 }
+
+String _name, _bio, _username, _emailorPhone;
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   var _repository = Repository();
@@ -27,7 +29,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _nameController = TextEditingController();
   final _bioController = TextEditingController();
   final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
+  final _usernameController = TextEditingController();
 
   @override
   void initState() {
@@ -35,10 +37,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _nameController.text = widget.name;
     _bioController.text = widget.bio;
     _emailController.text = widget.email;
-    _phoneController.text = widget.phone;
+    _usernameController.text = widget.username;
     _repository.getCurrentUser().then((user) {
       setState(() {
         currentUser = user;
+        //imageFile = widget.photoUrl;
       });
     });
   }
@@ -62,7 +65,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: AppBar(
         backgroundColor: colortheme.primaryColor,
         elevation: 1,
-        title: Text('Edit Profile', style: TextStyle(color: Colors.white),),
+        title: Text(
+          'Edit Profile',
+          style: TextStyle(color: Colors.white),
+        ),
         leading: GestureDetector(
           child: Icon(Icons.close, color: Colors.white),
           onTap: () => Navigator.pop(context),
@@ -80,7 +86,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       _nameController.text,
                       _bioController.text,
                       _emailController.text,
-                      _phoneController.text)
+                      _usernameController.text)
                   .then((v) {
                 Navigator.pop(context);
                 // Navigator.push(context, MaterialPageRoute(
@@ -116,7 +122,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   padding: const EdgeInsets.only(top: 12.0),
                   child: Text('Change Photo',
                       style: TextStyle(
-                          color: Colors.blue[700],
+                          color: colortheme.accentColor,
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold)),
                 ),
@@ -137,7 +143,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                   onChanged: ((value) {
                     setState(() {
-                      _nameController.text = value;
+                      _name = value;
                     });
                   }),
                 ),
@@ -148,14 +154,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 child: TextField(
                   controller: _bioController,
                   maxLines: 3,
-                  decoration:
-                      InputDecoration(hintText: 'Bio', labelText: 'Bio',),
+                  decoration: InputDecoration(
+                    hintText: 'Bio',
+                    labelText: 'Bio',
+                  ),
                   onChanged: ((value) {
                     setState(() {
-                      _bioController.text = value;
+                      _bio = value;
                     });
                   }),
                   textDirection: TextDirection.ltr,
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
+                child: TextField(
+                  controller: _usernameController,
+                  decoration: InputDecoration(
+                      hintText: 'Username', labelText: 'Username'),
+                  onChanged: ((value) {
+                    setState(() {
+                      _username = value;
+                    });
+                  }),
                 ),
               ),
               Divider(),
@@ -175,23 +197,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 child: TextField(
                   controller: _emailController,
                   decoration: InputDecoration(
-                      hintText: 'Email address', labelText: 'Email address'),
+                      hintText: 'Email address or phone number', labelText: 'Email / Phone'),
                   onChanged: ((value) {
                     setState(() {
-                      _emailController.text = value;
-                    });
-                  }),
-                ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
-                child: TextField(
-                  decoration: InputDecoration(
-                      hintText: 'Phone Number', labelText: 'Phone Number'),
-                  onChanged: ((value) {
-                    setState(() {
-                      _phoneController.text = value;
+                      _emailorPhone = value;
                     });
                   }),
                 ),

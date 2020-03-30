@@ -1,5 +1,6 @@
 import 'package:HFM/models/comment.dart';
 import 'package:HFM/models/user.dart';
+import 'package:HFM/themes/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -27,8 +28,12 @@ class _CommentsScreenState extends State<CommentsScreen> {
     return Scaffold(
       appBar: AppBar(
         elevation: 1,
-        backgroundColor: new Color(0xfff8faf8),
-        title: Text('Comments'),
+        backgroundColor: colortheme.primaryColor,
+        title: Text(
+          'Comments',
+          style: TextStyle(color: Colors.white),
+        ),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Form(
         key: _formKey,
@@ -59,8 +64,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
             padding: const EdgeInsets.symmetric(vertical: 4.0),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(40.0),
-                image:
-                    DecorationImage(image: NetworkImage(widget.user.profileImage))),
+                image: DecorationImage(
+                    image: NetworkImage(widget.user.profileImage))),
           ),
           Flexible(
             child: Padding(
@@ -70,6 +75,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   if (input.isEmpty) {
                     return "Please enter comment";
                   }
+                  return null;
                 },
                 controller: _commentController,
                 decoration: InputDecoration(
@@ -84,7 +90,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
           GestureDetector(
             child: Container(
               margin: const EdgeInsets.only(right: 8.0),
-              child: Text('Post', style: TextStyle(color: Colors.blue)),
+              child:
+                  Text('Post', style: TextStyle(color: colortheme.accentColor)),
             ),
             onTap: () {
               if (_formKey.currentState.validate()) {
@@ -107,9 +114,10 @@ class _CommentsScreenState extends State<CommentsScreen> {
     widget.documentReference
         .collection("comments")
         .document()
-        .setData(_comment.toMap(_comment)).whenComplete(() {
-          _commentController.text = "";
-        });
+        .setData(_comment.toMap(_comment))
+        .whenComplete(() {
+      _commentController.text = "";
+    });
   }
 
   Widget commentsListWidget() {
@@ -136,18 +144,17 @@ class _CommentsScreenState extends State<CommentsScreen> {
   }
 
   Widget commentItem(DocumentSnapshot snapshot) {
-  //   var time;
-  //   List<String> dateAndTime;
-  //   print('${snapshot.data['timestamp'].toString()}');
-  //   if (snapshot.data['timestamp'].toString() != null) {
-  //       Timestamp timestamp =snapshot.data['timestamp'];
-  //  // print('${timestamp.seconds}');
-  //  // print('${timestamp.toDate()}');
-  //    time =timestamp.toDate().toString();
-  //    dateAndTime = time.split(" ");
-  //   }
-  
-    
+    //   var time;
+    //   List<String> dateAndTime;
+    //   print('${snapshot.data['timestamp'].toString()}');
+    //   if (snapshot.data['timestamp'].toString() != null) {
+    //       Timestamp timestamp =snapshot.data['timestamp'];
+    //  // print('${timestamp.seconds}');
+    //  // print('${timestamp.toDate()}');
+    //    time =timestamp.toDate().toString();
+    //    dateAndTime = time.split(" ");
+    //   }
+
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Row(

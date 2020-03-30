@@ -53,7 +53,7 @@ class Repository {
 
   Future<void> updatePhoto(String photoUrl, String uid) => _firebaseProvider.updatePhoto(photoUrl, uid);
 
-  Future<void> updateDetails(String uid, String name, String bio, String email, String phone) => _firebaseProvider.updateDetails(uid, name, bio, email, phone);
+  Future<void> updateDetails(String uid, String name, String bio, String email, String username) => _firebaseProvider.updateDetails(uid, name, bio, email, username);
 
   Future<List<String>> fetchUserNames(FirebaseUser user) => _firebaseProvider.fetchUserNames(user);
 

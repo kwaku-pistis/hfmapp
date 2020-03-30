@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../themes/colors.dart';
 
@@ -61,6 +62,7 @@ class _SecondState extends State<Second> {
                     style: TextStyle(fontSize: 16, color: colortheme.accentColor),
                   ),
                 ),
+                onTap: () => launch('tel://+233-205-589220'),
               ),
               GestureDetector(
                child: Container(
@@ -70,6 +72,7 @@ class _SecondState extends State<Second> {
                     style: TextStyle(fontSize: 16, color: colortheme.accentColor),
                   ),
                 ),
+                onTap: () => _launchMapsUrl(),
               ),
               GestureDetector(
                 child: Container(
@@ -101,5 +104,18 @@ class _SecondState extends State<Second> {
         ],
       ),
     );
+  }
+
+  void _launchMapsUrl() async {
+    final url =
+        'https://www.google.com/maps/search/Dansoman+Market,+Accra,+Greater+Accra/@5.541406,-0.265491,19.4z';
+    final appleUrl = 'https://maps.apple.com/?sll=${5.5413251},${-0.2658069}';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else if (await canLaunch(appleUrl)) {
+      await launch(appleUrl);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }

@@ -1,6 +1,8 @@
 import 'package:HFM/models/user.dart';
 import 'package:HFM/resources/repository.dart';
 import 'package:HFM/screens/accounts/profile_details.dart';
+import 'package:HFM/screens/chat_screen.dart';
+import 'package:HFM/screens/settings.dart';
 import 'package:HFM/themes/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -42,59 +44,63 @@ class _FourthState extends State<Fourth> {
         //color: colortheme.primaryColor,
         child: Column(
           children: <Widget>[
-            Container(
-              width: MediaQuery.of(context).size.width,
-              //height: 120,
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                image: AssetImage('assets/images/adinkra_pattern.png'),
-                fit: BoxFit.cover,
-              )),
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: profileImage == null
-                            ? AssetImage('assets/images/profile.png')
-                            : NetworkImage(profileImage),
-                        fit: BoxFit.fill,
+            GestureDetector(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                //height: 120,
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                  image: AssetImage('assets/images/adinkra_pattern.png'),
+                  fit: BoxFit.cover,
+                )),
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: profileImage == null
+                              ? AssetImage('assets/images/profile.png')
+                              : NetworkImage(profileImage),
+                          fit: BoxFit.fill,
+                        ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      margin: EdgeInsets.only(left: 20),
-                      width: MediaQuery.of(context).size.width,
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            child: Text(
-                              name != null ? name : 'name',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.left,
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(left: 20),
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Text(
+                                name != null ? name : 'name',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.left,
+                              ),
                             ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            child: Text(
-                              'member',
-                              style: TextStyle(),
-                              textAlign: TextAlign.left,
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Text(
+                                'member',
+                                style: TextStyle(),
+                                textAlign: TextAlign.left,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => ProfileDetails())),
             ),
             ListTile(
               leading: Icon(
@@ -107,17 +113,21 @@ class _FourthState extends State<Fourth> {
             ),
             ListTile(
               leading: Icon(
-                Icons.person,
+                Icons.message,
                 color: colortheme.accentColor,
               ),
-              title: Text('Profile'),
+              title: Text('Messages'),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => ChatScreen())),
             ),
             ListTile(
               leading: Icon(
-                Icons.person,
+                Icons.settings,
                 color: colortheme.accentColor,
               ),
-              title: Text('Profile'),
+              title: Text('Settings'),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => Settings())),
             ),
           ],
         ),

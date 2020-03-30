@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:HFM/models/like.dart';
 import 'package:HFM/models/user.dart';
 import 'package:HFM/resources/repository.dart';
+import 'package:HFM/screens/chat_screen.dart';
 import 'package:HFM/screens/comments_screen.dart';
 import 'package:HFM/screens/friend_profile_screen.dart';
 import 'package:HFM/screens/likes_screen.dart';
@@ -15,6 +16,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:unicorndial/unicorndial.dart';
 
 class FeedScreen extends StatefulWidget {
   @override
@@ -100,13 +102,19 @@ class _FeedScreenState extends State<FeedScreen> {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) => SearchScreen()));
-        },
-        child: Icon(Icons.search),
-        backgroundColor: colortheme.accentColor,
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     Navigator.of(context).push(MaterialPageRoute(
+      //         builder: (BuildContext context) => SearchScreen()));
+      //   },
+      //   child: Icon(Icons.search),
+      //   backgroundColor: colortheme.accentColor,
+      // ),
+      floatingActionButton: UnicornDialer(
+        parentButtonBackground: colortheme.accentColor,
+        orientation: UnicornOrientation.VERTICAL,
+        parentButton: Icon(Icons.search),
+        childButtons: _getProfileMenu(),
       ),
       body: currentUser != null
           ? Padding(
@@ -117,6 +125,37 @@ class _FeedScreenState extends State<FeedScreen> {
               child: CircularProgressIndicator(),
             ),
     );
+  }
+
+  List<UnicornButton> _getProfileMenu() {
+    List<UnicornButton> children = [];
+
+    // Add Children here
+    children.add(_profileOption(
+        iconData: Icons.people,
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (BuildContext context) => SearchScreen()));
+        }, heroTag: 'btn1'));
+    children.add(_profileOption(
+        iconData: Icons.message,
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (BuildContext context) => ChatScreen()));
+        }, heroTag: 'btn2'));
+
+    return children;
+  }
+
+  Widget _profileOption({IconData iconData, Function onPressed, String heroTag}) {
+    return UnicornButton(
+        currentButton: FloatingActionButton(
+      backgroundColor: Colors.grey[500],
+      mini: true,
+      child: Icon(iconData),
+      onPressed: onPressed,
+      heroTag: heroTag,
+    ));
   }
 
   Widget postImagesWidget() {
@@ -155,12 +194,10 @@ class _FeedScreenState extends State<FeedScreen> {
     print("datetime: ${DateTime.now()}");
     var temp = list[index].data['postTime'];
     var diff = DateTime.parse(temp);
-    //Duration sub = DateTime.now().difference(diff);
-    //setState(() {
-      timeDiff =  Jiffy(diff).fromNow();;
-   // });
-   
-    // //var dateSub = DateTime.now().subtract(FieldValue.serverTimestamp())
+    timeDiff = Jiffy(diff).fromNow();
+
+    //if ()
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -254,7 +291,9 @@ class _FeedScreenState extends State<FeedScreen> {
         CachedNetworkImage(
           imageUrl: list[index].data['imgUrl'],
           placeholder: ((context, s) => Center(
-                child: list[index].data['imgUrl'] == null ? CircularProgressIndicator() : Container(),
+                child: list[index].data['imgUrl'] == null
+                    ? CircularProgressIndicator()
+                    : Container(),
               )),
           width: 125.0,
           height: 250.0,
@@ -268,10 +307,7 @@ class _FeedScreenState extends State<FeedScreen> {
             children: <Widget>[
               GestureDetector(
                   child: _isLiked
-                      ? Icon(
-                          Icons.favorite,
-                          color: Colors.red,
-                        )
+                      ? Icon(Icons.favorite, color: Colors.red)
                       : Icon(
                           FontAwesomeIcons.heart,
                           color: null,
@@ -291,25 +327,25 @@ class _FeedScreenState extends State<FeedScreen> {
                       postUnlike(list[index].reference, currentUser);
                     }
 
-                    // _repository.checkIfUserLikedOrNot(_user.uid, snapshot.data[index].reference).then((isLiked) {
-                    //   print("reef : ${snapshot.data[index].reference.path}");
+                    // _repository.checkIfUserLikedOrNot(currentUser.uid, list[index].data[index].reference).then((isLiked) {
+                    //   print("reef : ${list[index].data[index].reference.path}");
                     //   if (!isLiked) {
                     //     setState(() {
                     //       icon = Icons.favorite;
                     //       color = Colors.red;
                     //     });
-                    //     postLike(snapshot.data[index].reference);
+                    //     postLike(list[index].data[index].reference, currentUser);
                     //   } else {
 
                     //     setState(() {
                     //       icon =FontAwesomeIcons.heart;
                     //       color = null;
                     //     });
-                    //     postUnlike(snapshot.data[index].reference);
+                    //     postUnlike(list[index].data[index].reference, currentUser);
                     //   }
                     // });
                     // updateValues(
-                    //     snapshot.data[index].reference);
+                    //     list[index].data[index].reference);
                   }),
               new SizedBox(
                 width: 16.0,
@@ -350,6 +386,11 @@ class _FeedScreenState extends State<FeedScreen> {
               builder: ((context,
                   AsyncSnapshot<List<DocumentSnapshot>> likesSnapshot) {
                 if (likesSnapshot.hasData) {
+                  // if (likesSnapshot.data[0].data['ownerUid'] == currentUser.uid) {
+                  //   setState(() {
+                  //     _isLiked = true;
+                  //   });
+                  // }
                   return GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -385,8 +426,7 @@ class _FeedScreenState extends State<FeedScreen> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Text("$timeDiff",
-              style: TextStyle(color: Colors.grey)),
+          child: Text("$timeDiff", style: TextStyle(color: Colors.grey)),
         )
       ],
     );
@@ -444,8 +484,6 @@ class _FeedScreenState extends State<FeedScreen> {
     });
   }
 }
-
-_calculateTimeDifference() {}
 
 // class ListItem extends StatefulWidget {
 //   final List<DocumentSnapshot> list;

@@ -1,5 +1,6 @@
 import 'package:HFM/models/user.dart';
 import 'package:HFM/resources/repository.dart';
+import 'package:HFM/themes/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -20,8 +21,9 @@ class _LikesScreenState extends State<LikesScreen> {
     return Scaffold(
       appBar: AppBar(
         elevation: 1,
-        backgroundColor: new Color(0xfff8faf8),
-        title: Text('Likes'),
+        backgroundColor: colortheme.primaryColor,
+        title: Text('Likes', style: TextStyle(color: Colors.white),),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: FutureBuilder(
         future: _repository.fetchPostLikes(widget.documentReference),

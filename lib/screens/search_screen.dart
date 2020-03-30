@@ -52,7 +52,7 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: colortheme.primaryColor,
-        title: Text('Search', style: TextStyle(color: Colors.white),),
+        title: Text('Search Posts or Users', style: TextStyle(color: Colors.white),),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search),

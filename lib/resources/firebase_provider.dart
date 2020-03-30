@@ -296,12 +296,12 @@ class FirebaseProvider {
   }
 
   Future<void> updateDetails(
-      String uid, String name, String bio, String email, String phone) async {
+      String uid, String name, String bio, String email, String username) async {
     Map<String, dynamic> map = Map();
     map['name'] = name;
     map['bio'] = bio;
     map['email'] = email;
-    map['phone'] = phone;
+    map['username'] = username;
     return _firestore.collection("User Info").document(uid).updateData(map);
   }
 
