@@ -2,10 +2,12 @@ import 'package:HFM/models/user.dart';
 import 'package:HFM/resources/repository.dart';
 import 'package:HFM/screens/accounts/profile_details.dart';
 import 'package:HFM/screens/chat_screen.dart';
+import 'package:HFM/screens/giving.dart';
 import 'package:HFM/screens/settings.dart';
 import 'package:HFM/themes/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 
 String name, profileImage;
@@ -119,6 +121,15 @@ class _FourthState extends State<Fourth> {
               title: Text('Messages'),
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) => ChatScreen())),
+            ),
+            ListTile(
+              leading: Icon(
+                FontAwesomeIcons.moneyBill,
+                color: colortheme.accentColor,
+              ),
+              title: Text('Giving'),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => Giving())),
             ),
             ListTile(
               leading: Icon(
