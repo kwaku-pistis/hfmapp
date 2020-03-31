@@ -1,3 +1,4 @@
+import 'package:HFM/screens/pledges.dart';
 import 'package:flutter/material.dart';
 
 import '../../themes/colors.dart';
@@ -38,7 +39,11 @@ class Third extends StatelessWidget {
                         Container(
                           margin: EdgeInsets.only(right: 10),
                           child: RaisedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      Pledges(extra: 'Church Offering',)));
+                            },
                             child: Text(
                               'PLEDGE',
                               style: TextStyle(color: Colors.white),
@@ -60,7 +65,8 @@ class Third extends StatelessWidget {
                 ],
               ),
             ),
-          ),Card(
+          ),
+          Card(
             elevation: 10,
             child: Container(
               width: MediaQuery.of(context).size.width,
@@ -70,7 +76,7 @@ class Third extends StatelessWidget {
                   Container(
                     width: MediaQuery.of(context).size.width,
                     child: Text(
-                      'Give your First Fruit offering...',
+                      'Give your First Fruits offering...',
                       textAlign: TextAlign.left,
                     ),
                   ),
@@ -85,7 +91,11 @@ class Third extends StatelessWidget {
                         Container(
                           margin: EdgeInsets.only(right: 10),
                           child: RaisedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      Pledges(extra: 'First Fruits',)));
+                            },
                             child: Text(
                               'PLEDGE',
                               style: TextStyle(color: Colors.white),
@@ -107,7 +117,8 @@ class Third extends StatelessWidget {
                 ],
               ),
             ),
-          ),Card(
+          ),
+          Card(
             elevation: 10,
             child: Container(
               width: MediaQuery.of(context).size.width,
@@ -132,7 +143,11 @@ class Third extends StatelessWidget {
                         Container(
                           margin: EdgeInsets.only(right: 10),
                           child: RaisedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      Pledges(extra: 'Project Offering',)));
+                            },
                             child: Text(
                               'PLEDGE',
                               style: TextStyle(color: Colors.white),
@@ -154,7 +169,8 @@ class Third extends StatelessWidget {
                 ],
               ),
             ),
-          ),Card(
+          ),
+          Card(
             elevation: 10,
             child: Container(
               width: MediaQuery.of(context).size.width,
@@ -179,7 +195,11 @@ class Third extends StatelessWidget {
                         Container(
                           margin: EdgeInsets.only(right: 10),
                           child: RaisedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      Pledges(extra: 'Special Pledges',)));
+                            },
                             child: Text(
                               'PLEDGE',
                               style: TextStyle(color: Colors.white),
@@ -227,7 +247,11 @@ class Third extends StatelessWidget {
                         Container(
                           margin: EdgeInsets.only(right: 10),
                           child: RaisedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      Pledges(extra: 'Thanksgiving Offering',)));
+                            },
                             child: Text(
                               'PLEDGE',
                               style: TextStyle(color: Colors.white),
