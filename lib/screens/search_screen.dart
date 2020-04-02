@@ -45,19 +45,22 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     print("INSIDE BUILD");
     return Scaffold(
       appBar: AppBar(
         backgroundColor: colortheme.primaryColor,
-        title: Text('Search Posts or Users', style: TextStyle(color: Colors.white),),
+        title: Text(
+          'Search Posts or Users',
+          style: TextStyle(color: Colors.white),
+        ),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () {
-              showSearch(context: context, delegate: DataSearch(userList: usersList));
+              showSearch(
+                  context: context, delegate: DataSearch(userList: usersList));
             },
           )
         ],
@@ -70,16 +73,54 @@ class _SearchScreenState extends State<SearchScreen> {
               crossAxisCount: 3, crossAxisSpacing: 4.0, mainAxisSpacing: 4.0),
           itemBuilder: ((context, index) {
             print("LIST : ${list.length}");
+            // return GestureDetector(
+            //   child: CachedNetworkImage(
+            //     imageUrl: list[index].data['imgUrl'],
+            //     placeholder: ((context, s) => Center(
+            //           child: CircularProgressIndicator(),
+            //         )),
+            //     width: 125.0,
+            //     height: 125.0,
+            //     fit: BoxFit.cover,
+            //   ),
+            //   onTap: () {
+            //     print("SNAPSHOT : ${list[index].reference.path}");
+            //     Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //             builder: ((context) => PostDetailScreen(
+            //                   user: _user,
+            //                   currentuser: currentUser,
+            //                   documentSnapshot: list[index],
+            //                 ))));
+            //   },
+            // );
+
+            var img = list[index].data['imgUrl'];
             return GestureDetector(
-              child: CachedNetworkImage(
-                imageUrl: list[index].data['imgUrl'],
-                placeholder: ((context, s) => Center(
-                      child: CircularProgressIndicator(),
-                    )),
-                width: 125.0,
-                height: 125.0,
-                fit: BoxFit.cover,
-              ),
+              child: img != ""
+                  ? CachedNetworkImage(
+                      imageUrl: list[index].data['imgUrl'],
+                      placeholder: ((context, s) => Center(
+                            child: img != ""
+                                ? CircularProgressIndicator()
+                                : Container(),
+                          )),
+                      width: 125.0,
+                      height: 125.0,
+                      fit: BoxFit.cover,
+                    )
+                  : Container(
+                      width: 125.0,
+                      height: 125.0,
+                      padding: EdgeInsets.all(5),
+                      child: Text(
+                        list[index].data['caption'],
+                        style: TextStyle(color: Colors.black),
+                        textAlign: TextAlign.center,
+                      ),
+                      alignment: Alignment.center,
+                    ),
               onTap: () {
                 print("SNAPSHOT : ${list[index].reference.path}");
                 Navigator.push(
@@ -87,7 +128,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     MaterialPageRoute(
                         builder: ((context) => PostDetailScreen(
                               user: _user,
-                              currentuser: currentUser,
+                              currentuser: _user,
                               documentSnapshot: list[index],
                             ))));
               },
@@ -98,9 +139,8 @@ class _SearchScreenState extends State<SearchScreen> {
 }
 
 class DataSearch extends SearchDelegate<String> {
-
-   List<User> userList;
-   DataSearch({this.userList});
+  List<User> userList;
+  DataSearch({this.userList});
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -130,7 +170,13 @@ class DataSearch extends SearchDelegate<String> {
   @override
   Widget buildResults(BuildContext context) {
     //return null;
-    return Center(child: Container(width: 50.0, height: 50.0, color: Colors.red, child: Text(query),));
+    return Center(
+        child: Container(
+      width: 50.0,
+      height: 50.0,
+      color: Colors.red,
+      child: Text(query),
+    ));
   }
 
   @override
@@ -142,16 +188,17 @@ class DataSearch extends SearchDelegate<String> {
       itemCount: suggestionsList.length,
       itemBuilder: ((context, index) => ListTile(
             onTap: () {
-              
-           //   showResults(context);
-              Navigator.push(context, MaterialPageRoute(
-                builder: ((context) => FriendProfileScreen(name: suggestionsList[index].name)) 
-              ));
-              
+              //   showResults(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: ((context) => FriendProfileScreen(
+                          name: suggestionsList[index].name))));
             },
             leading: CircleAvatar(
-              backgroundImage: NetworkImage(suggestionsList[index].profileImage),
-               //backgroundImage: AssetImage('assets/images/profile.png'),
+              backgroundImage:
+                  NetworkImage(suggestionsList[index].profileImage),
+              //backgroundImage: AssetImage('assets/images/profile.png'),
             ),
             title: Text(suggestionsList[index].name),
           )),
