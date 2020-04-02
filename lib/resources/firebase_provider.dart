@@ -90,7 +90,8 @@ class FirebaseProvider {
       idToken: _signInAuthentication.idToken,
     );
 
-    final FirebaseUser user = (await _auth.signInWithCredential(credential)) as FirebaseUser;
+    final FirebaseUser user =
+        (await _auth.signInWithCredential(credential)) as FirebaseUser;
     return user;
   }
 
@@ -295,8 +296,8 @@ class FirebaseProvider {
     return _firestore.collection("User Info").document(uid).updateData(map);
   }
 
-  Future<void> updateDetails(
-      String uid, String name, String bio, String email, String username) async {
+  Future<void> updateDetails(String uid, String name, String bio, String email,
+      String username) async {
     Map<String, dynamic> map = Map();
     map['name'] = name;
     map['bio'] = bio;
@@ -407,7 +408,7 @@ class FirebaseProvider {
 
   Future<List<DocumentSnapshot>> fetchFeed(FirebaseUser user) async {
     List<String> followingUIDs = List<String>();
-    List<DocumentSnapshot> list =List<DocumentSnapshot>();
+    List<DocumentSnapshot> list = List<DocumentSnapshot>();
 
     QuerySnapshot querySnapshot = await _firestore
         .collection("User Info")
@@ -424,28 +425,69 @@ class FirebaseProvider {
     for (var i = 0; i < followingUIDs.length; i++) {
       print("SDDSSD : ${followingUIDs[i]}");
 
-    //retrievePostByUID(followingUIDs[i]);
-     // fetchUserDetailsById(followingUIDs[i]);
+      //retrievePostByUID(followingUIDs[i]);
+      // fetchUserDetailsById(followingUIDs[i]);
 
       QuerySnapshot postSnapshot = await _firestore
           .collection("User Info")
           .document(followingUIDs[i])
           .collection("posts")
           .getDocuments();
-         // postSnapshot.documents;
+      // postSnapshot.documents;
       for (var i = 0; i < postSnapshot.documents.length; i++) {
         print("dad : ${postSnapshot.documents[i].documentID}");
         list.add(postSnapshot.documents[i]);
         print("ads : ${list.length}");
-      } 
+      }
     }
-   
+
     return list;
   }
 
-   Future<List<String>> fetchFollowingUids(FirebaseUser user) async{
+  Future<List<DocumentSnapshot>> fetchMessaging(FirebaseUser user) async {
     List<String> followingUIDs = List<String>();
-  
+    List<DocumentSnapshot> list = List<DocumentSnapshot>();
+
+    QuerySnapshot querySnapshot = await _firestore
+        .collection("messages")
+        .document(user.uid)
+        .collection("following")
+        .getDocuments();
+
+    // QuerySnapshot querySnapshot =
+    //     await _firestore.collection("messages").document(user.uid).collection().getDocuments();
+
+    for (var i = 0; i < querySnapshot.documents.length; i++) {
+      followingUIDs.add(querySnapshot.documents[i].documentID);
+    }
+
+    print("FOLLOWING UIDS : ${followingUIDs.length}");
+
+    for (var i = 0; i < followingUIDs.length; i++) {
+      print("SDDSSD : ${followingUIDs[i]}");
+
+      //retrievePostByUID(followingUIDs[i]);
+      // fetchUserDetailsById(followingUIDs[i]);
+
+      QuerySnapshot postSnapshot = await _firestore
+          .collection("User Info")
+          .document(followingUIDs[i])
+          .collection("posts")
+          .getDocuments();
+      // postSnapshot.documents;
+      for (var i = 0; i < postSnapshot.documents.length; i++) {
+        print("dad : ${postSnapshot.documents[i].documentID}");
+        list.add(postSnapshot.documents[i]);
+        print("ads : ${list.length}");
+      }
+    }
+
+    return list;
+  }
+
+  Future<List<String>> fetchFollowingUids(FirebaseUser user) async {
+    List<String> followingUIDs = List<String>();
+
     QuerySnapshot querySnapshot = await _firestore
         .collection("User Info")
         .document(user.uid)
