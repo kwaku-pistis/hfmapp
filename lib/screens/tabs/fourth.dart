@@ -3,6 +3,7 @@ import 'package:HFM/resources/repository.dart';
 import 'package:HFM/screens/accounts/profile_details.dart';
 import 'package:HFM/screens/chat_screen.dart';
 import 'package:HFM/screens/giving.dart';
+import 'package:HFM/screens/help_support.dart';
 import 'package:HFM/screens/search_screen.dart';
 import 'package:HFM/screens/settings.dart';
 import 'package:HFM/themes/colors.dart';
@@ -154,6 +155,15 @@ class _FourthState extends State<Fourth> {
               title: Text('Giving'),
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) => Giving())),
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.help,
+                color: colortheme.accentColor,
+              ),
+              title: Text('Help & Support'),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => HelpSupport())),
             ),
             ListTile(
               leading: Icon(
