@@ -1,3 +1,4 @@
+import 'package:HFM/screens/giving.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -91,6 +92,9 @@ class _SecondState extends State<Second> {
                     style: TextStyle(fontSize: 16, color: colortheme.accentColor),
                   ),
                 ),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => Giving()
+                )),
               ),
             ],
           ),

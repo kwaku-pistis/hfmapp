@@ -119,7 +119,7 @@ class _FeedScreenState extends State<FeedScreen> {
       body: currentUser != null
           ? Padding(
               padding: const EdgeInsets.only(top: 4.0),
-              child: postImagesWidget(),
+              child: followingUIDs.length != 0 ? postImagesWidget() : Center(child: Text('You are not following any user yet.'),),
             )
           : Center(
               child: CircularProgressIndicator(),

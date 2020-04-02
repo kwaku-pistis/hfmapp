@@ -3,11 +3,14 @@ import 'package:HFM/resources/repository.dart';
 import 'package:HFM/screens/accounts/profile_details.dart';
 import 'package:HFM/screens/chat_screen.dart';
 import 'package:HFM/screens/giving.dart';
+import 'package:HFM/screens/search_screen.dart';
 import 'package:HFM/screens/settings.dart';
 import 'package:HFM/themes/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:package_info/package_info.dart';
+import 'package:share/share.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 
 String name, profileImage;
@@ -40,6 +43,10 @@ class _FourthState extends State<Fourth> {
 
   @override
   Widget build(BuildContext context) {
+    String packageName;
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      packageName = packageInfo.packageName;
+    });
     //_retrieveLocalData();
     return SingleChildScrollView(
       child: Container(
@@ -121,6 +128,23 @@ class _FourthState extends State<Fourth> {
               title: Text('Messages'),
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) => ChatScreen())),
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.share,
+                color: colortheme.accentColor,
+              ),
+              title: Text('Invite a friend'),
+              onTap: () => Share.share('Join me $name on the HARVESTFIELDS APP and let\'s talk about Jesus. \nGet the app on playstore using this link: https://play.google.com/store/apps/details?id=$packageName'),
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.search,
+                color: colortheme.accentColor,
+              ),
+              title: Text('Search'),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => SearchScreen())),
             ),
             ListTile(
               leading: Icon(
