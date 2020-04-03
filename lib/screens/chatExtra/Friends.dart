@@ -134,7 +134,7 @@ class FriendsScreenState extends State<FriendsScreen> {
               FlatButton(
                 child: Text(
                   'CANCEL',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: colortheme.accentColor),
                 ),
                 onPressed: () => Navigator.pop(context),
               )

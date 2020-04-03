@@ -139,13 +139,14 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                       textCapitalization: TextCapitalization.sentences,
                       decoration: InputDecoration(
                         hintText: 'Write a message...',
-                        contentPadding: EdgeInsets.only(bottom: 100, top: 16),
+                        contentPadding: EdgeInsets.only(bottom: 20, top: 16),
                       ),
                       onChanged: ((value) {
                         setState(() {
                           caption = value;
                         });
                       }),
+                      maxLines: null,
                     ),
                   ),
                 )

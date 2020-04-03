@@ -393,16 +393,54 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                         crossAxisSpacing: 4.0,
                         mainAxisSpacing: 4.0),
                     itemBuilder: ((context, index) {
+                      // return GestureDetector(
+                      //   child: CachedNetworkImage(
+                      //     imageUrl: snapshot.data[index].data['imgUrl'],
+                      //     placeholder: ((context, s) => Center(
+                      //           child: CircularProgressIndicator(),
+                      //         )),
+                      //     width: 125.0,
+                      //     height: 125.0,
+                      //     fit: BoxFit.cover,
+                      //   ),
+                      //   onTap: () {
+                      //     print(
+                      //         "SNAPSHOT : ${snapshot.data[index].reference.path}");
+                      //     Navigator.push(
+                      //         context,
+                      //         MaterialPageRoute(
+                      //             builder: ((context) => PostDetailScreen(
+                      //                   user: _user,
+                      //                   currentuser: currentuser,
+                      //                   documentSnapshot: snapshot.data[index],
+                      //                 ))));
+                      //   },
+                      // );
+                      var img = snapshot.data[index].data['imgUrl'];
                       return GestureDetector(
-                        child: CachedNetworkImage(
-                          imageUrl: snapshot.data[index].data['imgUrl'],
-                          placeholder: ((context, s) => Center(
-                                child: CircularProgressIndicator(),
-                              )),
-                          width: 125.0,
-                          height: 125.0,
-                          fit: BoxFit.cover,
-                        ),
+                        child: img != ""
+                            ? CachedNetworkImage(
+                                imageUrl: snapshot.data[index].data['imgUrl'],
+                                placeholder: ((context, s) => Center(
+                                      child: img != ""
+                                          ? CircularProgressIndicator()
+                                          : Container(),
+                                    )),
+                                width: 125.0,
+                                height: 125.0,
+                                fit: BoxFit.cover,
+                              )
+                            : Container(
+                                width: 125.0,
+                                height: 125.0,
+                                padding: EdgeInsets.all(5),
+                                child: Text(
+                                  snapshot.data[index].data['caption'],
+                                  style: TextStyle(color: Colors.black),
+                                  textAlign: TextAlign.left,
+                                ),
+                                alignment: Alignment.center,
+                              ),
                         onTap: () {
                           print(
                               "SNAPSHOT : ${snapshot.data[index].reference.path}");
@@ -411,7 +449,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                               MaterialPageRoute(
                                   builder: ((context) => PostDetailScreen(
                                         user: _user,
-                                        currentuser: currentuser,
+                                        currentuser: _user,
                                         documentSnapshot: snapshot.data[index],
                                       ))));
                         },

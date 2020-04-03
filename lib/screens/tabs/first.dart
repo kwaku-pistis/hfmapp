@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:HFM/models/like.dart';
 import 'package:HFM/models/user.dart';
 import 'package:HFM/resources/repository.dart';
-import 'package:HFM/screens/chat_screen.dart';
 import 'package:HFM/screens/comments_screen.dart';
 import 'package:HFM/screens/friend_profile_screen.dart';
 import 'package:HFM/screens/likes_screen.dart';
+import 'package:HFM/screens/messages.dart';
 import 'package:HFM/screens/search_screen.dart';
 import 'package:HFM/screens/upload_photo_screen.dart';
 import 'package:HFM/themes/colors.dart';
@@ -14,9 +14,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:package_info/package_info.dart';
+import 'package:share/share.dart';
 import 'package:unicorndial/unicorndial.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FeedScreen extends StatefulWidget {
   @override
@@ -24,6 +28,7 @@ class FeedScreen extends StatefulWidget {
 }
 
 var timeDiff;
+String packageName;
 
 class _FeedScreenState extends State<FeedScreen> {
   var _repository = Repository();
@@ -119,7 +124,12 @@ class _FeedScreenState extends State<FeedScreen> {
       body: currentUser != null
           ? Padding(
               padding: const EdgeInsets.only(top: 4.0),
-              child: followingUIDs.length != 0 ? postImagesWidget() : Center(child: Text('You are not following any user yet.'),),
+              child: followingUIDs.length != 0
+                  ? postImagesWidget()
+                  : Center(
+                      child: Text(
+                          'No posts yet. Follow others to see their posts.'),
+                    ),
             )
           : Center(
               child: CircularProgressIndicator(),
@@ -136,18 +146,21 @@ class _FeedScreenState extends State<FeedScreen> {
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (BuildContext context) => SearchScreen()));
-        }, heroTag: 'btn1'));
+        },
+        heroTag: 'btn1'));
     children.add(_profileOption(
         iconData: Icons.message,
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) => ChatScreen()));
-        }, heroTag: 'btn2'));
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (BuildContext context) => Messages()));
+        },
+        heroTag: 'btn2'));
 
     return children;
   }
 
-  Widget _profileOption({IconData iconData, Function onPressed, String heroTag}) {
+  Widget _profileOption(
+      {IconData iconData, Function onPressed, String heroTag}) {
     return UnicornButton(
         currentButton: FloatingActionButton(
       backgroundColor: Colors.grey[500],
@@ -159,6 +172,9 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   Widget postImagesWidget() {
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      packageName = packageInfo.packageName;
+    });
     return FutureBuilder(
       future: _future,
       builder: ((context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
@@ -277,12 +293,17 @@ class _FeedScreenState extends State<FeedScreen> {
                     children: <Widget>[
                       Wrap(
                         children: <Widget>[
-                          // Text(list[index].data['postOwnerName'],
-                          //     style: TextStyle(fontWeight: FontWeight.bold)),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 0.0),
-                            child: Text(list[index].data['caption']),
-                          )
+                          SelectableLinkify(
+                            text: list[index].data['caption'],
+                            onOpen: (link) async {
+                              if (await canLaunch(link.url)) {
+                                await launch(link.url);
+                              } else {
+                                throw 'Could not launch $link';
+                              }
+                            },
+                            linkStyle: TextStyle(fontStyle: FontStyle.italic),
+                          ),
                         ],
                       ),
                     ],
@@ -367,7 +388,13 @@ class _FeedScreenState extends State<FeedScreen> {
               new SizedBox(
                 width: 16.0,
               ),
-              new Icon(FontAwesomeIcons.shareSquare),
+              GestureDetector(
+                child: new Icon(FontAwesomeIcons.shareSquare),
+                onTap: () {
+                  Share.share(
+                      '${list[index].data['caption']} \n\nShared via the HarvestFields app. Get the app from https://play.google.com/store/apps/details?id=$packageName');
+                },
+              ),
               // Row(
               //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
               //   children: <Widget>[

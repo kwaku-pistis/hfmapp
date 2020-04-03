@@ -323,7 +323,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                 child: Text(
                                   snapshot.data[index].data['caption'],
                                   style: TextStyle(color: Colors.black),
-                                  textAlign: TextAlign.center,
+                                  textAlign: TextAlign.left,
                                 ),
                                 alignment: Alignment.center,
                               ),

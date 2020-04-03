@@ -78,7 +78,7 @@ class ChatSegmentState extends State<ChatSegment> {
                     ? MediaQuery.of(context).size.width*0.7
                     : null,
                 padding: EdgeInsets.all(MESSAGE_PADDING),
-                margin: EdgeInsets.only(right: MESSAGE_MARGIN, top: 5, bottom: 3),
+                margin: EdgeInsets.only(right: MESSAGE_MARGIN, top: 5, bottom: 3, left: MESSAGE_MARGIN),
                 decoration: BoxDecoration(
                     color: colortheme.accentColor,
                     borderRadius: BorderRadius.circular(MESSAGE_RADIUS)),

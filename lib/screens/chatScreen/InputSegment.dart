@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:HFM/Consts.dart';
+import 'package:HFM/resources/repository.dart';
 import 'package:HFM/screens/chatScreen/SendMedia.dart';
 import 'package:HFM/themes/colors.dart';
 import 'package:HFM/utils/Communication.dart';
@@ -34,9 +35,18 @@ class InputSegmentState extends State<InputSegment> {
   final TextEditingController _textEditingController =
       new TextEditingController();
 
+  var _repository = Repository();
+
   @override
   void initState() {
     super.initState();
+
+    _repository.getCurrentUser().then((user) {
+      print("USER : ${user.displayName}");
+      setState(() {
+        //id = user.uid;
+      });
+    });
   }
 
   @override

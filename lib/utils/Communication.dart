@@ -27,11 +27,11 @@ sendMessage(String msg, String groupId, String id, String friendId) {
       .collection(groupId)
       .document(timestamp);
 
-  var documentRef = Firestore.instance
-      .collection("User Info")
-      .document(id)
-      .collection(FRIENDS_COLLECTION)
-      .document(FRIEND_ID);
+  // var documentRef = Firestore.instance
+  //     .collection("User Info")
+  //     .document(id)
+  //     .collection(FRIENDS_COLLECTION)
+  //     .document(FRIEND_ID);
 
   Firestore.instance.runTransaction((transaction) async {
     await transaction.set(documentReference, {
@@ -43,11 +43,11 @@ sendMessage(String msg, String groupId, String id, String friendId) {
     });
   });
 
-  Firestore.instance.runTransaction((transaction) async {
-    await transaction.update(documentRef, {
-      FRIEND_LATEST_MESSAGE : msg,
-    });
-  });
+  // Firestore.instance.runTransaction((transaction) async {
+  //   await transaction.update(documentRef, {
+  //     FRIEND_LATEST_MESSAGE : msg,
+  //   });
+  // });
 }
 
 _deleteMessage(String timestamp, String groupId) async {

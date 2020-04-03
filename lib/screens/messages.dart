@@ -4,7 +4,6 @@ import 'package:HFM/screens/chatScreen/Chat.dart';
 import 'package:flutter/material.dart';
 
 import 'package:HFM/Consts.dart';
-import 'package:HFM/screens/chat_screen.dart';
 import 'package:HFM/themes/colors.dart';
 import 'package:HFM/utils/Communication.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -86,6 +85,9 @@ class _MessagesState extends State<Messages> {
           .collection(FRIENDS_COLLECTION)
           .orderBy(FRIEND_TIME_ADDED)
           .snapshots(),
+      // stream: _firestore
+      //     .collection(MESSAGES_COLLECTION)
+      //     .document(id).,
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError)
           return Center(
@@ -132,9 +134,13 @@ class _MessagesState extends State<Messages> {
           );
         return ListTile(
           title: Text(snapshot.data.data[USER_DISPLAY_NAME]),
-          subtitle: Text(document[FRIEND_LATEST_MESSAGE] == null
-              ? '...'
-              : document[FRIEND_LATEST_MESSAGE]),
+          // subtitle: Text(document[FRIEND_LATEST_MESSAGE] == null
+          //     ? '...'
+          //     : document[FRIEND_LATEST_MESSAGE]),
+          subtitle: Text(
+            'A conversation with ${snapshot.data.data[USER_DISPLAY_NAME]}',
+            style: TextStyle(fontStyle: FontStyle.italic),
+          ),
           leading: Container(
             margin: EdgeInsets.all(MAINSCREEN_FRIEND_PHOTO_MARGIN),
             child: Material(
@@ -158,7 +164,7 @@ class _MessagesState extends State<Messages> {
           //navigate to chatScreen
           onTap: () => Navigator.of(context).push(MaterialPageRoute(
               builder: (context) =>
-                  Chat(friendId: snapshot.data.data[USER_ID]))),
+                  Chat(friendId: snapshot.data.data[USER_ID], id: id,))),
           onLongPress: () => _longPressAlertDialog(
               snapshot.data.data[USER_DISPLAY_NAME],
               snapshot.data.data[USER_ID]),
