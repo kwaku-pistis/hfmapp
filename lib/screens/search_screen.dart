@@ -117,7 +117,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       child: Text(
                         list[index].data['caption'],
                         style: TextStyle(color: Colors.black),
-                        textAlign: TextAlign.center,
+                        textAlign: TextAlign.left,
                       ),
                       alignment: Alignment.center,
                     ),

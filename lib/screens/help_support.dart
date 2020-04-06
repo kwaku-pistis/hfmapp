@@ -1,3 +1,4 @@
+import 'package:HFM/screens/about_hfm.dart';
 import 'package:HFM/themes/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
@@ -145,7 +146,7 @@ class _HelpSupportState extends State<HelpSupport> {
                   ),
                 ),
                 onTap: () {
-                  launch('tel://+233-205-589220');
+                  _showCallDialog();
                 },
               ),
               Container(
@@ -183,6 +184,9 @@ class _HelpSupportState extends State<HelpSupport> {
                     ],
                   ),
                 ),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => AboutHfm()
+                )),
               ),
               Container(
                 width: MediaQuery.of(context).size.width,
@@ -299,7 +303,7 @@ class _HelpSupportState extends State<HelpSupport> {
     final Email mail = Email(
       body: '',
       subject: 'CONTACT HARVESTFIELDS',
-      recipients: ['app.harvestfields@gmail.com'],
+      recipients: ['harvesters4ever@gmail.com'],
     );
 
     await FlutterEmailSender.send(mail).then((onValue) {
@@ -329,5 +333,87 @@ class _HelpSupportState extends State<HelpSupport> {
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  _showCallDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              'Call us with your Local Network',
+              style: TextStyle(
+                  fontSize: 20,
+                  color: colortheme.accentColor,
+                  fontWeight: FontWeight.bold),
+            ),
+            content: Container(
+                height: MediaQuery.of(context).size.height * 0.35,
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      height: 50,
+                      margin: EdgeInsets.only(
+                        top: 20,
+                      ),
+                      child: RaisedButton(
+                        child: Text(
+                          'MTN',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                        color: colortheme.primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(30.0),
+                        ),
+                        onPressed: () {
+                          launch('tel://+233-241-335434');
+                        },
+                      ),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      height: 50,
+                      margin: EdgeInsets.only(
+                        top: 20,
+                      ),
+                      child: RaisedButton(
+                        child: Text(
+                          'VODAFONE',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                        color: colortheme.primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(30.0),
+                        ),
+                        onPressed: () {
+                          launch('tel://+233-205-589220');
+                        },
+                      ),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      height: 50,
+                      margin: EdgeInsets.only(
+                        top: 20,
+                      ),
+                      child: RaisedButton(
+                        child: Text(
+                          'AIRTELTIGO',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                        color: colortheme.primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(30.0),
+                        ),
+                        onPressed: () {
+                          launch('tel://+233-577-296916');
+                        },
+                      ),
+                    ),
+                  ],
+                )),
+          );
+        });
   }
 }

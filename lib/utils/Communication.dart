@@ -1,4 +1,5 @@
-//part of chat_pool;
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:HFM/Consts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<DocumentSnapshot> getFriendById(String id) async {
@@ -43,6 +45,7 @@ sendMessage(String msg, String groupId, String id, String friendId) {
     });
   });
 
+  registerNotification(id);
   // Firestore.instance.runTransaction((transaction) async {
   //   await transaction.update(documentRef, {
   //     FRIEND_LATEST_MESSAGE : msg,
@@ -183,4 +186,64 @@ Future deleteUser(String userId, String id) async {
       .collection(FRIENDS_COLLECTION) //my friends
       .document(userId) //this friend
       .delete(); //delete
+}
+
+FirebaseMessaging firebaseMessaging;
+
+void registerNotification(String currentUserId) {
+  firebaseMessaging.requestNotificationPermissions();
+
+  firebaseMessaging.configure(onMessage: (Map<String, dynamic> message) {
+    print('onMessage: $message');
+    showNotification(message['notification']);
+    return;
+  }, onResume: (Map<String, dynamic> message) {
+    print('onResume: $message');
+    return;
+  }, onLaunch: (Map<String, dynamic> message) {
+    print('onLaunch: $message');
+    return;
+  });
+
+  firebaseMessaging.getToken().then((token) {
+    print('token: $token');
+    Firestore.instance
+        .collection('users')
+        .document(currentUserId)
+        .updateData({'pushToken': token});
+  }).catchError((err) {
+    // Fluttertoast.showToast(msg: err.message.toString());
+    // Toast.show('${err.message.toString()}', context, )
+    print('${err.message.toString()}');
+  });
+}
+
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
+void configLocalNotification() {
+  var initializationSettingsAndroid =
+      new AndroidInitializationSettings('app_icon');
+  var initializationSettingsIOS = new IOSInitializationSettings();
+  var initializationSettings = new InitializationSettings(
+      initializationSettingsAndroid, initializationSettingsIOS);
+  flutterLocalNotificationsPlugin.initialize(initializationSettings);
+}
+
+void showNotification(message) async {
+  var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+    Platform.isAndroid ? 'com.ministry.hfmapp' : 'com.ministry.hfmapp',
+    'HFM',
+    'HarvestFields Ministry App',
+    playSound: true,
+    enableVibration: true,
+    importance: Importance.Max,
+    priority: Priority.High,
+  );
+  var json = JsonCodec();
+  var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+  var platformChannelSpecifics = new NotificationDetails(
+      androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+  await flutterLocalNotificationsPlugin.show(0, message['title'].toString(),
+      message['body'].toString(), platformChannelSpecifics,
+      payload: json.encode(message));
 }
