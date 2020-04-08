@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -7,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -36,6 +38,7 @@ sendMessage(String msg, String groupId, String id, String friendId) {
   //     .document(FRIEND_ID);
 
   Firestore.instance.runTransaction((transaction) async {
+    registerNotification(id);
     await transaction.set(documentReference, {
       MESSAGE_ID_FROM: id,
       MESSAGE_ID_TO: friendId,
@@ -44,8 +47,9 @@ sendMessage(String msg, String groupId, String id, String friendId) {
       MESSAGE_TYPE: MESSAGE_TYPE_TEXT
     });
   });
-
-  registerNotification(id);
+  // .then((onValue) {
+  //   registerNotification(id);
+  // });
   // Firestore.instance.runTransaction((transaction) async {
   //   await transaction.update(documentRef, {
   //     FRIEND_LATEST_MESSAGE : msg,
@@ -188,7 +192,7 @@ Future deleteUser(String userId, String id) async {
       .delete(); //delete
 }
 
-FirebaseMessaging firebaseMessaging;
+FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
 void registerNotification(String currentUserId) {
   firebaseMessaging.requestNotificationPermissions();
@@ -197,7 +201,9 @@ void registerNotification(String currentUserId) {
     print('onMessage: $message');
     showNotification(message['notification']);
     return;
-  }, onResume: (Map<String, dynamic> message) {
+  }, 
+  onBackgroundMessage: myBackgroundMessageHandler,
+  onResume: (Map<String, dynamic> message) {
     print('onResume: $message');
     return;
   }, onLaunch: (Map<String, dynamic> message) {
@@ -208,7 +214,7 @@ void registerNotification(String currentUserId) {
   firebaseMessaging.getToken().then((token) {
     print('token: $token');
     Firestore.instance
-        .collection('users')
+        .collection('User Info')
         .document(currentUserId)
         .updateData({'pushToken': token});
   }).catchError((err) {
@@ -246,4 +252,62 @@ void showNotification(message) async {
   await flutterLocalNotificationsPlugin.show(0, message['title'].toString(),
       message['body'].toString(), platformChannelSpecifics,
       payload: json.encode(message));
+}
+
+Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) {
+  if (message.containsKey('data')) {
+    // Handle data message
+    final dynamic data = message['data'];
+  }
+
+  if (message.containsKey('notification')) {
+    // Handle notification message
+    final dynamic notification = message['notification'];
+  }
+
+  // Or do other work.
+}
+
+final Map<String, Item> _items = <String, Item>{};
+Item _itemForMessage(Map<String, dynamic> message) {
+  final dynamic data = message['data'] ?? message;
+  final String itemId = data['id'];
+  final Item item = _items.putIfAbsent(itemId, () => Item(itemId: itemId))
+    .._matchteam = data['matchteam']
+    .._score = data['score'];
+  return item;
+}
+
+class Item {
+  Item({this.itemId});
+  final String itemId;
+
+  StreamController<Item> _controller = StreamController<Item>.broadcast();
+  Stream<Item> get onChanged => _controller.stream;
+
+  String _matchteam;
+  String get matchteam => _matchteam;
+  set matchteam(String value) {
+    _matchteam = value;
+    _controller.add(this);
+  }
+
+  String _score;
+  String get score => _score;
+  set score(String value) {
+    _score = value;
+    _controller.add(this);
+  }
+
+  static final Map<String, Route<void>> routes = <String, Route<void>>{};
+  Route<void> get route {
+    final String routeName = '/detail/$itemId';
+    return routes.putIfAbsent(
+      routeName,
+          () => MaterialPageRoute<void>(
+        settings: RouteSettings(name: routeName),
+        builder: (BuildContext context) => null, // DetailPage(itemId),
+      ),
+    );
+  }
 }
