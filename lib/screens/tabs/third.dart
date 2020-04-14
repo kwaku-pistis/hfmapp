@@ -1,3 +1,4 @@
+import 'package:HFM/screens/payments.dart';
 import 'package:HFM/screens/pledges.dart';
 import 'package:flutter/material.dart';
 
@@ -54,7 +55,10 @@ class Third extends StatelessWidget {
                             ),
                           ),
                           RaisedButton(
-                            onPressed: () {},
+                            onPressed: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        Payments(extra: 'Church Offering'))),
                             child: Text(
                               'GIVE',
                               style: TextStyle(color: Colors.white),
@@ -107,7 +111,10 @@ class Third extends StatelessWidget {
                             ),
                           ),
                           RaisedButton(
-                            onPressed: () {},
+                            onPressed: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        Payments(extra: 'First Fruits'))),
                             child: Text(
                               'GIVE',
                               style: TextStyle(color: Colors.white),
@@ -160,7 +167,10 @@ class Third extends StatelessWidget {
                             ),
                           ),
                           RaisedButton(
-                            onPressed: () {},
+                            onPressed: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        Payments(extra: 'Project Offering'))),
                             child: Text(
                               'GIVE',
                               style: TextStyle(color: Colors.white),
@@ -213,7 +223,10 @@ class Third extends StatelessWidget {
                             ),
                           ),
                           RaisedButton(
-                            onPressed: () {},
+                            onPressed: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        Payments(extra: 'Special Pledges'))),
                             child: Text(
                               'GIVE',
                               style: TextStyle(color: Colors.white),
@@ -266,7 +279,10 @@ class Third extends StatelessWidget {
                             ),
                           ),
                           RaisedButton(
-                            onPressed: () {},
+                            onPressed: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        Payments(extra: 'Thanksgiving Offering'))),
                             child: Text(
                               'GIVE',
                               style: TextStyle(color: Colors.white),

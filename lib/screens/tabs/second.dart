@@ -30,25 +30,25 @@ class _SecondState extends State<Second> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
-                  width: 150,
-                  height: 150,
+                  width: MediaQuery.of(context).size.width,
+                  height: 192,
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
+                    // shape: BoxShape.circle,
                     image: DecorationImage(
-                      image: AssetImage('assets/images/logo.png'),
-                      fit: BoxFit.cover,
+                      image: AssetImage('assets/images/hfm.png'),
+                      fit: BoxFit.cover
                     ),
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 16),
-                  child: Text(
-                    'HarvestFields Ministries',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
+                // Container(
+                //   margin: EdgeInsets.only(top: 16),
+                //   child: Text(
+                //     'HarvestFields Ministries',
+                //     style: TextStyle(
+                //       fontSize: 20,
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),

@@ -55,7 +55,7 @@ class _LoginOptionsState extends State<LoginOptions>
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
-          'Sign Up',
+          'Welcome to HarvestFields',
           style: TextStyle(
             color: colortheme.primaryColor,
             fontSize: 40,
