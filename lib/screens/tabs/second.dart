@@ -82,7 +82,7 @@ class _SecondState extends State<Second> {
                 child: Container(
                   margin: EdgeInsets.only(top: 10, bottom: 10),
                   child: Text(
-                    'BLOG POSTS',
+                    'QUICKWORD',
                     style:
                         TextStyle(fontSize: 16, color: colortheme.accentColor),
                   ),
@@ -121,7 +121,7 @@ class _SecondState extends State<Second> {
         builder: (context) {
           return AlertDialog(
             title: Text(
-              'Call us with your Local Network',
+              'Call Us',
               style: TextStyle(
                   fontSize: 20,
                   color: colortheme.accentColor,

@@ -126,7 +126,7 @@ class _FourthState extends State<Fourth> {
                 Icons.message,
                 color: colortheme.accentColor,
               ),
-              title: Text('Messages'),
+              title: Text('Chats'),
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) => Messages())),
             ),

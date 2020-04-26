@@ -30,7 +30,7 @@ class _AboutHfmState extends State<AboutHfm> {
       body: SingleChildScrollView(
         child: Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
+          // height: MediaQuery.of(context).size.height,
           child: Column(
             children: <Widget>[
               Container(
@@ -45,25 +45,24 @@ class _AboutHfmState extends State<AboutHfm> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                      width: 150,
-                      height: 150,
+                      width: MediaQuery.of(context).size.width,
+                      height: 192,
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
+                        // shape: BoxShape.circle,
                         image: DecorationImage(
-                          image: AssetImage('assets/images/logo.png'),
-                          fit: BoxFit.cover,
-                        ),
+                            image: AssetImage('assets/images/hfm.png'),
+                            fit: BoxFit.cover),
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.only(top: 16),
-                      child: Text(
-                        'HarvestFields Ministries',
-                        style: TextStyle(
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   margin: EdgeInsets.only(top: 16),
+                    //   child: Text(
+                    //     'HarvestFields Ministries',
+                    //     style: TextStyle(
+                    //       fontSize: 20,
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -77,13 +76,9 @@ class _AboutHfmState extends State<AboutHfm> {
                           width: 30,
                           height: 30,
                           margin: EdgeInsets.only(
-                              left: 10,
-                              right: 14,
-                              top: 10,
-                              bottom: 10),
+                              left: 10, right: 14, top: 10, bottom: 10),
                           padding: EdgeInsets.all(4),
-                          decoration:
-                              BoxDecoration(color: Color(0xff333333)),
+                          decoration: BoxDecoration(color: Color(0xff333333)),
                           child: Icon(
                             Icons.library_books,
                             color: Colors.white,
@@ -95,8 +90,9 @@ class _AboutHfmState extends State<AboutHfm> {
                     ],
                   ),
                   onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (BuildContext context) => MyWebView('About the Ministry', 'https://harvestfieldsministries.wordpress.com/about-the-ministry/')
-                  )),
+                      builder: (BuildContext context) => MyWebView(
+                          'About the Ministry',
+                          'https://harvestfieldsministries.wordpress.com/about-the-ministry/'))),
                 ),
               ),
               Container(
@@ -108,155 +104,231 @@ class _AboutHfmState extends State<AboutHfm> {
               Container(
                 padding: EdgeInsets.all(25.0),
                 width: double.infinity,
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(top: 0, bottom: 25),
-                      child: Text(
-                        'Connect with Us',
-                        style: TextStyle(color: colortheme.primaryColor, fontSize: 20),
-                      ),
+                child: Column(children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(top: 0, bottom: 25),
+                    child: Text(
+                      'Connect with Us',
+                      style: TextStyle(
+                          color: colortheme.primaryColor, fontSize: 20),
                     ),
-                    GestureDetector(
+                  ),
+                  GestureDetector(
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                            width: 30,
+                            height: 30,
+                            margin: EdgeInsets.only(
+                                left: 10, right: 14, top: 10, bottom: 10),
+                            padding: EdgeInsets.all(4),
+                            decoration: BoxDecoration(color: Color(0xff333333)),
+                            child: Icon(
+                              Icons.location_on,
+                              color: Colors.white,
+                            )),
+                        Text(
+                          'HarvestFields Ministries, \nDansoman High St, Accra, Ghana.',
+                          style: TextStyle(fontSize: 16),
+                        )
+                      ],
+                    ),
+                    onTap: () => _launchMapsUrl(),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    color: Color(0xff666666),
+                    height: 0.5,
+                    margin: EdgeInsets.only(top: 5),
+                  ),
+                  GestureDetector(
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                            width: 30,
+                            height: 30,
+                            margin: EdgeInsets.only(
+                                left: 10, right: 14, top: 10, bottom: 10),
+                            child: Image(
+                                image: AssetImage(
+                                    'assets/images/ic_facebook.png'))),
+                        Text(
+                          'Like us on Facebook',
+                          style: TextStyle(fontSize: 16),
+                        )
+                      ],
+                    ),
+                    onTap: () => _launchUrl(_fbUrl),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    color: Color(0xff666666),
+                    height: 0.5,
+                    margin: EdgeInsets.only(top: 5),
+                  ),
+                  GestureDetector(
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                            width: 30,
+                            height: 30,
+                            margin: EdgeInsets.only(
+                                left: 10, right: 14, top: 10, bottom: 10),
+                            child: Image(
+                                image: AssetImage(
+                                    'assets/images/ic_instagram.png'))),
+                        Text(
+                          'Follow us on Instagram',
+                          style: TextStyle(fontSize: 16),
+                        )
+                      ],
+                    ),
+                    onTap: () => _launchUrl(_igUrl),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    color: Color(0xff666666),
+                    height: 0.5,
+                    margin: EdgeInsets.only(top: 5),
+                  ),
+                  GestureDetector(
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                            width: 30,
+                            height: 30,
+                            margin: EdgeInsets.only(
+                                left: 10, right: 14, top: 10, bottom: 10),
+                            child: Image(
+                                image: AssetImage(
+                                    'assets/images/ic_twitter.png'))),
+                        Text(
+                          'Follow us on Twitter',
+                          style: TextStyle(fontSize: 16),
+                        )
+                      ],
+                    ),
+                    onTap: () => _launchUrl(_twitterUrl),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    color: Color(0xff666666),
+                    height: 0.5,
+                    margin: EdgeInsets.only(top: 5),
+                  ),
+                  GestureDetector(
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                            width: 30,
+                            height: 30,
+                            margin: EdgeInsets.only(
+                                left: 10, right: 14, top: 10, bottom: 10),
+                            child: Image(
+                                image: AssetImage('assets/images/ic_sc.png'))),
+                        Text(
+                          'Subscribe to our SoundCloud',
+                          style: TextStyle(fontSize: 16),
+                        )
+                      ],
+                    ),
+                    onTap: () => _launchUrl(_scUrl),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    color: Color(0xff666666),
+                    height: 0.5,
+                    margin: EdgeInsets.only(top: 5),
+                  ),
+                  /// new feature
+                  Container(
+                    margin: EdgeInsets.only(left: 10, right: 5, top: 20),
+                    child: Text(
+                      'Office Lines',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: colortheme.primaryColor,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  GestureDetector(
+                    child: Card(
+                      margin: EdgeInsets.fromLTRB(15, 20, 15, 5),
+                      color: colortheme.accentColor,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           Container(
-                              width: 30,
-                              height: 30,
-                              margin: EdgeInsets.only(
-                                  left: 10,
-                                  right: 14,
-                                  top: 10,
-                                  bottom: 10),
-                              padding: EdgeInsets.all(4),
-                              decoration:
-                                  BoxDecoration(color: Color(0xff333333)),
-                              child: Icon(
-                                Icons.location_on,
-                                color: Colors.white,
-                              )),
-                          Text(
-                            'HarvestFields Ministries, \nDansoman High St, Accra, Ghana.',
-                            style: TextStyle(fontSize: 16),
-                          )
+                            width: 40,
+                            height: 40,
+                            padding: EdgeInsets.all(5),
+                            margin: EdgeInsets.only(right: 0),
+                            child: Image(
+                              image: AssetImage('assets/images/ic_phone.png'),
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              width: double.maxFinite,
+                              child: Text(
+                                '+233-205-589220',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
-                      onTap: () => _launchMapsUrl(),
+                      elevation: 10,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
                     ),
-                    Container(
-                      width: double.infinity,
-                      color: Color(0xff666666),
-                      height: 0.5,
-                      margin: EdgeInsets.only(top: 5),
-                    ),
-                    GestureDetector(
+                    onTap: () => launch('tel://+233-205-589220'),
+                  ),
+                  GestureDetector(
+                    child: Card(
+                      margin: EdgeInsets.fromLTRB(15, 0, 15, 5),
+                      color: colortheme.accentColor,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           Container(
-                              width: 30,
-                              height: 30,
-                              margin: EdgeInsets.only(
-                                  left: 10,
-                                  right: 14,
-                                  top: 10,
-                                  bottom: 10),
-                              child: Image(
-                                  image: AssetImage(
-                                      'assets/images/ic_facebook.png'))),
-                          Text(
-                            'Like us on Facebook',
-                            style: TextStyle(fontSize: 16),
-                          )
+                            width: 40,
+                            height: 40,
+                            padding: EdgeInsets.all(5),
+                            margin: EdgeInsets.only(right: 0),
+                            child: Image(
+                              image: AssetImage('assets/images/ic_phone.png'),
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              width: double.maxFinite,
+                              child: Text(
+                                '+233-241-335434',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
-                      onTap: () => _launchUrl(_fbUrl),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      color: Color(0xff666666),
-                      height: 0.5,
-                      margin: EdgeInsets.only(top: 5),
-                    ),
-                    GestureDetector(
-                      child: Row(
-                        children: <Widget>[
-                          Container(
-                              width: 30,
-                              height: 30,
-                              margin: EdgeInsets.only(
-                                  left: 10,
-                                  right: 14,
-                                  top: 10,
-                                  bottom: 10),
-                              child: Image(
-                                  image: AssetImage(
-                                      'assets/images/ic_instagram.png'))),
-                          Text(
-                            'Follow us on Instagram',
-                            style: TextStyle(fontSize: 16),
-                          )
-                        ],
+                      elevation: 10,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
                       ),
-                      onTap: () => _launchUrl(_igUrl),
                     ),
-                    Container(
-                      width: double.infinity,
-                      color: Color(0xff666666),
-                      height: 0.5,
-                      margin: EdgeInsets.only(top: 5),
-                    ),
-                    GestureDetector(
-                      child: Row(
-                        children: <Widget>[
-                          Container(
-                              width: 30,
-                              height: 30,
-                              margin: EdgeInsets.only(
-                                  left: 10,
-                                  right: 14,
-                                  top: 10,
-                                  bottom: 10),
-                              child: Image(
-                                  image: AssetImage(
-                                      'assets/images/ic_twitter.png'))),
-                          Text(
-                            'Follow us on Twitter',
-                            style: TextStyle(fontSize: 16),
-                          )
-                        ],
-                      ),
-                      onTap: () => _launchUrl(_twitterUrl),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      color: Color(0xff666666),
-                      height: 0.5,
-                      margin: EdgeInsets.only(top: 5),
-                    ),
-                    GestureDetector(
-                      child: Row(
-                        children: <Widget>[
-                          Container(
-                              width: 30,
-                              height: 30,
-                              margin: EdgeInsets.only(
-                                  left: 10,
-                                  right: 14,
-                                  top: 10,
-                                  bottom: 10),
-                              child: Image(
-                                  image: AssetImage(
-                                      'assets/images/ic_sc.png'))),
-                          Text(
-                            'Subscribe to our SoundCloud',
-                            style: TextStyle(fontSize: 16),
-                          )
-                        ],
-                      ),
-                      onTap: () => _launchUrl(_scUrl),
-                    ),
-                  ]
-                ),
+                    onTap: () => launch('tel://+233-241-335434'),
+                  ),
+                ]),
               ),
             ],
           ),

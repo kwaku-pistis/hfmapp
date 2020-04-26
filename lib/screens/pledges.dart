@@ -50,7 +50,7 @@ class _PledgesState extends State<Pledges> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Pledges',
+          'Financial Pledges',
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(

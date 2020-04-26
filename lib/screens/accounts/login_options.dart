@@ -58,7 +58,7 @@ class _LoginOptionsState extends State<LoginOptions>
           'Welcome to HarvestFields',
           style: TextStyle(
             color: colortheme.primaryColor,
-            fontSize: 40,
+            fontSize: 30,
           ),
         ),
         elevation: 0,
@@ -68,6 +68,7 @@ class _LoginOptionsState extends State<LoginOptions>
       ),
       body: SingleChildScrollView(
         child: Container(
+            height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
               image: DecorationImage(
                   image: AssetImage('assets/images/adinkra_pattern.png'),
@@ -90,16 +91,17 @@ class _LoginOptionsState extends State<LoginOptions>
                 ),
                 Center(
                   child: Container(
-                    width: 200,
-                    height: 150,
-                    decoration: BoxDecoration(
+                      width: MediaQuery.of(context).size.width,
+                      height: 192,
+                      decoration: BoxDecoration(
+                        // shape: BoxShape.circle,
                         image: DecorationImage(
-                          image: AssetImage('assets/images/hfm.jpeg'),
-                          fit: BoxFit.fill,
-                        ),
-                        borderRadius: BorderRadius.circular(0)),
-                  ),
+                            image: AssetImage('assets/images/hfm.png'),
+                            fit: BoxFit.cover),
+                      ),
+                    ),
                 ),
+                SizedBox(height: 40),
                 Container(
                   width: MediaQuery.of(context).size.width * 0.6,
                   margin: EdgeInsets.only(

@@ -341,7 +341,7 @@ class _HelpSupportState extends State<HelpSupport> {
         builder: (context) {
           return AlertDialog(
             title: Text(
-              'Call us with your Local Network',
+              'Call Us',
               style: TextStyle(
                   fontSize: 20,
                   color: colortheme.accentColor,

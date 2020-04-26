@@ -56,7 +56,7 @@ class _MessagesState extends State<Messages> {
       appBar: AppBar(
         backgroundColor: colortheme.primaryColor,
         title: Text(
-          'Messages',
+          'Chats',
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: IconThemeData(color: Colors.white),

@@ -62,7 +62,7 @@ dependencies:
   flutter_linkify: ^3.1.0
   flutter_local_notifications: ^0.7.1+3
   webview_flutter: ^0.3.14+1
-  # flutter_rave: 
+  splashscreen: ^1.2.0
   rave_flutter: ^0.0.9-alpha+1
 
 dev_dependencies:
