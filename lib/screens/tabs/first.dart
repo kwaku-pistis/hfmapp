@@ -7,6 +7,7 @@ import 'package:HFM/screens/comments_screen.dart';
 import 'package:HFM/screens/friend_profile_screen.dart';
 import 'package:HFM/screens/likes_screen.dart';
 import 'package:HFM/screens/messages.dart';
+import 'package:HFM/screens/photo_view.dart';
 import 'package:HFM/screens/search_screen.dart';
 import 'package:HFM/screens/upload_photo_screen.dart';
 import 'package:HFM/themes/colors.dart';
@@ -107,14 +108,6 @@ class _FeedScreenState extends State<FeedScreen> {
           )
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.of(context).push(MaterialPageRoute(
-      //         builder: (BuildContext context) => SearchScreen()));
-      //   },
-      //   child: Icon(Icons.search),
-      //   backgroundColor: colortheme.accentColor,
-      // ),
       floatingActionButton: UnicornDialer(
         parentButtonBackground: colortheme.accentColor,
         orientation: UnicornOrientation.VERTICAL,
@@ -213,6 +206,22 @@ class _FeedScreenState extends State<FeedScreen> {
     timeDiff = Jiffy(diff).fromNow();
 
     //if ()
+    // _repository
+    //     .checkIfUserLikedOrNot(currentUser.uid, list[index].reference)
+    //     .then((isLiked) {
+    //   // print("reef : ${list[index].data[index].reference.path}");
+    //   if (isLiked) {
+    //     setState(() {
+    //       _isLiked = true;
+    //     });
+    //     // postLike(list[index].data[index].reference, currentUser);
+    //   } else {
+    //     setState(() {
+    //       isLiked = false;
+    //     });
+    //     // postUnlike(list[index].data[index].reference, currentUser);
+    //   }
+    // });
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -309,16 +318,25 @@ class _FeedScreenState extends State<FeedScreen> {
                     ],
                   )
                 : commentWidget(list[index].reference)),
-        CachedNetworkImage(
-          imageUrl: list[index].data['imgUrl'],
-          placeholder: ((context, s) => Center(
-                child: list[index].data['imgUrl'] == null
-                    ? CircularProgressIndicator()
-                    : Container(),
-              )),
-          width: 125.0,
-          height: 250.0,
-          fit: BoxFit.cover,
+        GestureDetector(
+          child: CachedNetworkImage(
+            imageUrl: list[index].data['imgUrl'],
+            placeholder: ((context, s) => Center(
+                  child: list[index].data['imgUrl'] == null
+                      ? CircularProgressIndicator()
+                      : Container(),
+                )),
+            width: 125.0,
+            height: 250.0,
+            fit: BoxFit.cover,
+          ),
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) =>
+                    ImageView(imageUrl: list[index].data['imgUrl'])));
+
+            // PhotoView(imageProvider: null)
+          },
         ),
         Padding(
           padding:
@@ -485,6 +503,26 @@ class _FeedScreenState extends State<FeedScreen> {
       }),
     );
   }
+
+  // _checkifUserLikedaPost() async {
+  //   _repository.checkIfUserLikedOrNot(currentUser.uid, list[index].reference).then((isLiked) {
+  //     // print("reef : ${list[index].data[index].reference.path}");
+  //     if (isLiked) {
+  //       setState(() {
+  //         icon = Icons.favorite;
+  //         color = Colors.red;
+  //       });
+  //       // postLike(list[index].data[index].reference, currentUser);
+  //     } else {
+
+  //       setState(() {
+  //         icon =FontAwesomeIcons.heart;
+  //         color = null;
+  //       });
+  //       // postUnlike(list[index].data[index].reference, currentUser);
+  //     }
+  //   });
+  // }
 
   void postLike(DocumentReference reference, User currentUser) {
     var _like = Like(

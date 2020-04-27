@@ -412,8 +412,8 @@ class FirebaseProvider {
 
     QuerySnapshot querySnapshot = await _firestore
         .collection("User Info")
-        .document(user.uid)
-        .collection("following")
+        // .document(user.uid)
+        // .collection("following")
         .getDocuments();
 
     for (var i = 0; i < querySnapshot.documents.length; i++) {

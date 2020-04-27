@@ -40,7 +40,7 @@ class _SettingsState extends State<Settings> {
       body: SingleChildScrollView(
         child: Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
+          // height: MediaQuery.of(context).size.height,
           padding: EdgeInsets.all(16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -334,19 +334,19 @@ class _SettingsState extends State<Settings> {
                   _launchPlayStore();
                 },
               ),
-              GestureDetector(
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  child: Text(
-                    'Sign out',
-                    style:
-                        TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
-                  ),
-                ),
-                onTap: () {
-                  _signOut();
-                },
-              ),
+              // GestureDetector(
+              //   child: Container(
+              //     width: MediaQuery.of(context).size.width,
+              //     child: Text(
+              //       'Sign out',
+              //       style:
+              //           TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+              //     ),
+              //   ),
+              //   onTap: () {
+              //     _signOut();
+              //   },
+              // ),
             ],
           ),
         ),
