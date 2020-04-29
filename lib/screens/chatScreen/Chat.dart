@@ -4,6 +4,7 @@ import 'package:HFM/screens/chatScreen/ChatAppBar.dart';
 import 'package:HFM/screens/chatScreen/ChatSegment.dart';
 import 'package:HFM/screens/chatScreen/InputSegment.dart';
 import 'package:HFM/utils/Communication.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Chat extends StatefulWidget {
@@ -32,28 +33,45 @@ class ChatState extends State<Chat> {
     //     id = user.uid;
     //   });
     // });
+    Firestore.instance
+        .collection('User Info')
+        .document(widget.id)
+        .updateData({'chattingWith': widget.friendId});
     super.initState();
     _init();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: CHAT_SCREEN_BACKGROUND,
-      body: (friendPhotoUri == null || friendDisplayName == null)
-          ? Center(child: CircularProgressIndicator())
-          : _chatScreenBody(),
-      appBar: AppBar(
-        title: (friendPhotoUri == null || friendDisplayName == null)
-            ? null
-            : ChatAppBar(
-                photoUri: friendPhotoUri,
-                displayName: friendDisplayName,
-                id: friendId,
-                about: about),
-        iconTheme: IconThemeData(color: Colors.white),
-        actions: _appBarActions(),
+    return WillPopScope(
+      child: Scaffold(
+        backgroundColor: CHAT_SCREEN_BACKGROUND,
+        body: (friendPhotoUri == null || friendDisplayName == null)
+            ? Center(child: CircularProgressIndicator())
+            : _chatScreenBody(),
+        appBar: AppBar(
+          title: (friendPhotoUri == null || friendDisplayName == null)
+              ? null
+              : ChatAppBar(
+                  photoUri: friendPhotoUri,
+                  displayName: friendDisplayName,
+                  id: friendId,
+                  about: about),
+          iconTheme: IconThemeData(color: Colors.white),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Firestore.instance
+                  .collection('User Info')
+                  .document(widget.id)
+                  .updateData({'chattingWith': null});
+              Navigator.pop(context);
+            },
+          ),
+          actions: _appBarActions(),
+        ),
       ),
+      onWillPop: onBackPress,
     );
   }
 
@@ -62,15 +80,23 @@ class ChatState extends State<Chat> {
   }
 
   Widget _chatScreenBody() {
-    return Column(
-      children: <Widget>[
-        ChatSegment(groupId: groupId, id: widget.id),
-        InputSegment(
-          groupId: groupId,
-          id: widget.id,
-          friendId: friendId,
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/adinkra_pattern.png'),
+          fit: BoxFit.cover,
         )
-      ],
+      ),
+      child: Column(
+        children: <Widget>[
+          ChatSegment(groupId: groupId, id: widget.id),
+          InputSegment(
+            groupId: groupId,
+            id: widget.id,
+            friendId: friendId,
+          )
+        ],
+      ),
     );
   }
 
@@ -99,4 +125,15 @@ class ChatState extends State<Chat> {
         : USER_IMAGE_PLACE_HOLDER;
     setState(() {});
   }
+
+  Future<bool> onBackPress() {
+    Firestore.instance
+        .collection('User Info')
+        .document(widget.id)
+        .updateData({'chattingWith': null});
+    Navigator.pop(context);
+
+    return Future.value(false);
+  }
+
 }

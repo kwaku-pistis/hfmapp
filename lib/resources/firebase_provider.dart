@@ -432,6 +432,7 @@ class FirebaseProvider {
           .collection("User Info")
           .document(followingUIDs[i])
           .collection("posts")
+          .orderBy('postTime', descending: true)
           .getDocuments();
       // postSnapshot.documents;
       for (var i = 0; i < postSnapshot.documents.length; i++) {

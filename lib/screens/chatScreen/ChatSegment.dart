@@ -27,12 +27,12 @@ class ChatSegmentState extends State<ChatSegment> {
   Widget build(BuildContext context) {
     return Flexible(
       child: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/adinkra_pattern.png'),
-            fit: BoxFit.cover,
-          )
-        ),
+          // decoration: BoxDecoration(
+          //   image: DecorationImage(
+          //     image: AssetImage('assets/images/adinkra_pattern.png'),
+          //     fit: BoxFit.cover,
+          //   )
+          // ),
           height: MediaQuery.of(context).size.height / 1.1,
           child: StreamBuilder(
             stream: _firestore
@@ -73,14 +73,20 @@ class ChatSegmentState extends State<ChatSegment> {
         children: <Widget>[
           Flexible(
             child: Container(
-                width: MediaQuery.of(context).size.width*0.7,//MESSAGE_WIDTH,
+                width: MediaQuery.of(context).size.width * 0.7, //MESSAGE_WIDTH,
                 height: snapshot[MESSAGE_TYPE] == MESSAGE_TYPE_PHOTO
-                    ? MediaQuery.of(context).size.width*0.7
+                    ? MediaQuery.of(context).size.width * 0.7
                     : null,
                 padding: EdgeInsets.all(MESSAGE_PADDING),
-                margin: EdgeInsets.only(right: MESSAGE_MARGIN, top: 5, bottom: 3, left: MESSAGE_MARGIN),
+                margin: EdgeInsets.only(
+                    right: MESSAGE_MARGIN,
+                    top: 5,
+                    bottom: 3,
+                    left: MESSAGE_MARGIN),
                 decoration: BoxDecoration(
-                    color: colortheme.accentColor,
+                    color: snapshot[MESSAGE_ID_FROM] == id
+                        ? colortheme.accentColor
+                        : Colors.black45,
                     borderRadius: BorderRadius.circular(MESSAGE_RADIUS)),
                 child: Column(
                   children: <Widget>[

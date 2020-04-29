@@ -10,6 +10,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<DocumentSnapshot> getFriendById(String id) async {
@@ -24,6 +25,9 @@ Future<DocumentSnapshot> getFriendById(String id) async {
 sendMessage(String msg, String groupId, String id, String friendId) {
   //save time to avoid deleting issues
   var timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+  var date = DateTime.now();
+  var fDate = DateFormat.yMd().format(date);
+  print("Chat sent on: $fDate");
 
   var documentReference = Firestore.instance
       .collection(MESSAGES_COLLECTION)
@@ -44,7 +48,8 @@ sendMessage(String msg, String groupId, String id, String friendId) {
       MESSAGE_ID_TO: friendId,
       MESSAGE_TIMESTAMP: timestamp,
       MESSAGE_CONTENT: msg,
-      MESSAGE_TYPE: MESSAGE_TYPE_TEXT
+      MESSAGE_TYPE: MESSAGE_TYPE_TEXT,
+      "Date": fDate,
     });
   });
   // .then((onValue) {
@@ -197,19 +202,23 @@ FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 void registerNotification(String currentUserId) {
   firebaseMessaging.requestNotificationPermissions();
 
-  firebaseMessaging.configure(onMessage: (Map<String, dynamic> message) {
-    print('onMessage: $message');
-    showNotification(message['notification']);
-    return;
-  }, 
-  onBackgroundMessage: myBackgroundMessageHandler,
-  onResume: (Map<String, dynamic> message) {
-    print('onResume: $message');
-    return;
-  }, onLaunch: (Map<String, dynamic> message) {
-    print('onLaunch: $message');
-    return;
-  });
+  firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) {
+        print('onMessage: $message');
+        Platform.isAndroid
+            ? showNotification(message['notification'])
+            : showNotification(message['aps']['alert']);
+        return;
+      },
+      onBackgroundMessage: myBackgroundMessageHandler,
+      onResume: (Map<String, dynamic> message) {
+        print('onResume: $message');
+        return;
+      },
+      onLaunch: (Map<String, dynamic> message) {
+        print('onLaunch: $message');
+        return;
+      });
 
   firebaseMessaging.getToken().then((token) {
     print('token: $token');
@@ -228,7 +237,7 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 void configLocalNotification() {
   var initializationSettingsAndroid =
-      new AndroidInitializationSettings('app_icon');
+      new AndroidInitializationSettings('notification_icon');
   var initializationSettingsIOS = new IOSInitializationSettings();
   var initializationSettings = new InitializationSettings(
       initializationSettingsAndroid, initializationSettingsIOS);
@@ -304,7 +313,7 @@ class Item {
     final String routeName = '/detail/$itemId';
     return routes.putIfAbsent(
       routeName,
-          () => MaterialPageRoute<void>(
+      () => MaterialPageRoute<void>(
         settings: RouteSettings(name: routeName),
         builder: (BuildContext context) => null, // DetailPage(itemId),
       ),

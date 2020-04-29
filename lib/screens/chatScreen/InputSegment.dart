@@ -52,13 +52,14 @@ class InputSegmentState extends State<InputSegment> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: Colors.transparent,
       margin: EdgeInsets.all(8.0),
       child: Row(
         children: <Widget>[
           Expanded(
               child: Container(
                   decoration: BoxDecoration(
-                      color: Colors.grey,
+                      color: Colors.black,
                       borderRadius:
                           BorderRadius.circular(INPUT_TEXT_FIELD_RADIUS)),
                   child: TextField(
@@ -74,6 +75,7 @@ class InputSegmentState extends State<InputSegment> {
                     textCapitalization: TextCapitalization.sentences,
                     style: TextStyle(color: Colors.white),
                     keyboardType: TextInputType.multiline,
+                    maxLines: null,
                   ))),
           GestureDetector(
             child: Container(

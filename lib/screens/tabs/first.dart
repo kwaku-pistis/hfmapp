@@ -37,9 +37,11 @@ class _FeedScreenState extends State<FeedScreen> {
   IconData icon;
   Color color;
   List<User> usersList = List<User>();
-  Future<List<DocumentSnapshot>> _future;
-  bool _isLiked = false;
+  Future<List<DocumentSnapshot>> _future, _userPosts;
+  // bool _isLiked = false;
   List<String> followingUIDs = List<String>();
+
+  List<int> _indexes = [];
 
   @override
   void initState() {
@@ -50,12 +52,15 @@ class _FeedScreenState extends State<FeedScreen> {
   void fetchFeed() async {
     FirebaseUser currentUser = await _repository.getCurrentUser();
 
+    setState(() {
+      _userPosts = _repository.retrieveUserPosts(currentUser.uid);
+    });
+    followingUIDs = await _repository.fetchFollowingUids(currentUser);
+
     User user = await _repository.fetchUserDetailsById(currentUser.uid);
     setState(() {
       this.currentUser = user;
     });
-
-    followingUIDs = await _repository.fetchFollowingUids(currentUser);
 
     for (var i = 0; i < followingUIDs.length; i++) {
       print("DSDASDASD : ${followingUIDs[i]}");
@@ -117,11 +122,11 @@ class _FeedScreenState extends State<FeedScreen> {
       body: currentUser != null
           ? Padding(
               padding: const EdgeInsets.only(top: 4.0),
-              child: followingUIDs.length != 0
+              child: followingUIDs.length != 0 || _userPosts != null
                   ? postImagesWidget()
                   : Center(
                       child: Text(
-                          'No posts yet. Follow others to see their posts.'),
+                          'No posts yet. Start a post or follow others to see their posts.'),
                     ),
             )
           : Center(
@@ -205,23 +210,23 @@ class _FeedScreenState extends State<FeedScreen> {
     var diff = DateTime.parse(temp);
     timeDiff = Jiffy(diff).fromNow();
 
+    // var sorted_list = list.sort();
+    // var item = sorted_list[index]
+
     //if ()
-    // _repository
-    //     .checkIfUserLikedOrNot(currentUser.uid, list[index].reference)
-    //     .then((isLiked) {
-    //   // print("reef : ${list[index].data[index].reference.path}");
-    //   if (isLiked) {
-    //     setState(() {
-    //       _isLiked = true;
-    //     });
-    //     // postLike(list[index].data[index].reference, currentUser);
-    //   } else {
-    //     setState(() {
-    //       isLiked = false;
-    //     });
-    //     // postUnlike(list[index].data[index].reference, currentUser);
-    //   }
-    // });
+    _repository
+        .checkIfUserLikedOrNot(currentUser.uid, list[index].reference)
+        .then((isLiked) {
+      // print("reef : ${list[index].data[index].reference.path}");
+      if (isLiked) {
+        if (!_indexes.contains(index)) {
+          setState(() {
+            _indexes.add(index);
+          });
+        }
+        // postLike(list[index].data[index].reference, currentUser);
+      }
+    });
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -345,46 +350,28 @@ class _FeedScreenState extends State<FeedScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               GestureDetector(
-                  child: _isLiked
+                  child: _indexes.contains(index)
                       ? Icon(Icons.favorite, color: Colors.red)
                       : Icon(
                           FontAwesomeIcons.heart,
                           color: null,
                         ),
                   onTap: () {
-                    if (!_isLiked) {
+                    if (!_indexes.contains(index)) {
                       setState(() {
-                        _isLiked = true;
+                        // _isLiked = true;
+                        _indexes.add(index);
                       });
                       // saveLikeValue(_isLiked);
                       postLike(list[index].reference, currentUser);
                     } else {
                       setState(() {
-                        _isLiked = false;
+                        // _isLiked = false;
+                        _indexes.remove(index);
                       });
                       //saveLikeValue(_isLiked);
                       postUnlike(list[index].reference, currentUser);
                     }
-
-                    // _repository.checkIfUserLikedOrNot(currentUser.uid, list[index].data[index].reference).then((isLiked) {
-                    //   print("reef : ${list[index].data[index].reference.path}");
-                    //   if (!isLiked) {
-                    //     setState(() {
-                    //       icon = Icons.favorite;
-                    //       color = Colors.red;
-                    //     });
-                    //     postLike(list[index].data[index].reference, currentUser);
-                    //   } else {
-
-                    //     setState(() {
-                    //       icon =FontAwesomeIcons.heart;
-                    //       color = null;
-                    //     });
-                    //     postUnlike(list[index].data[index].reference, currentUser);
-                    //   }
-                    // });
-                    // updateValues(
-                    //     list[index].data[index].reference);
                   }),
               new SizedBox(
                 width: 16.0,
@@ -463,11 +450,11 @@ class _FeedScreenState extends State<FeedScreen> {
                 }
               }),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 4.0, left: 16, right: 16),
-              child: commentWidget(list[index].reference),
-            ),
           ],
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 4.0, left: 16, right: 16),
+          child: commentWidget(list[index].reference),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
