@@ -117,8 +117,8 @@ class InputSegmentState extends State<InputSegment> {
   }
 
   _sendMessage() {
-    sendMessage(_textEditingController.value.text, groupId, id, friendId);
-    _textEditingController.clear();
+    // sendMessage(_textEditingController.value.text, groupId, id, friendId);
+    // _textEditingController.clear();
   }
 
   _pickImage() {

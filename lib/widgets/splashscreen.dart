@@ -3,8 +3,12 @@ import 'dart:async';
 import 'package:HFM/screens/home.dart';
 import 'package:HFM/themes/colors.dart';
 import 'package:custom_splash/custom_splash.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:splashscreen/splashscreen.dart';
+
+import '../main.dart';
 
 class SplashScreenPage extends StatefulWidget {
   @override
@@ -16,12 +20,76 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
   void initState() {
     super.initState();
 
+    // _requestIOSPermissions();
+    // _configureDidReceiveLocalNotificationSubject();
+    // _configureSelectNotificationSubject();
+
     Timer(Duration(seconds: 5), () {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (BuildContext context) => Home(
                 user: null,
               )));
     });
+  }
+
+  // void _requestIOSPermissions() {
+  //   flutterLocalNotificationsPlugin
+  //       .resolvePlatformSpecificImplementation<
+  //           IOSFlutterLocalNotificationsPlugin>()
+  //       ?.requestPermissions(
+  //         alert: true,
+  //         badge: true,
+  //         sound: true,
+  //       );
+  // }
+
+  // void _configureDidReceiveLocalNotificationSubject() {
+  //   didReceiveLocalNotificationSubject.stream
+  //       .listen((ReceivedNotification receivedNotification) async {
+  //     await showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) => CupertinoAlertDialog(
+  //         title: receivedNotification.title != null
+  //             ? Text(receivedNotification.title)
+  //             : null,
+  //         content: receivedNotification.body != null
+  //             ? Text(receivedNotification.body)
+  //             : null,
+  //         actions: [
+  //           CupertinoDialogAction(
+  //             isDefaultAction: true,
+  //             child: Text('Ok'),
+  //             onPressed: () async {
+  //               Navigator.of(context, rootNavigator: true).pop();
+  //               // await Navigator.push(
+  //               //   context,
+  //               //   MaterialPageRoute(
+  //               //     builder: (context) =>
+  //               //         SecondScreen(receivedNotification.payload),
+  //               //   ),
+  //               // );
+  //             },
+  //           )
+  //         ],
+  //       ),
+  //     );
+  //   });
+  // }
+
+  // void _configureSelectNotificationSubject() {
+  //   selectNotificationSubject.stream.listen((String payload) async {
+  //     // await Navigator.push(
+  //     //   context,
+  //     //   MaterialPageRoute(builder: (context) => SecondScreen(payload)),
+  //     // );
+  //   });
+  // }
+
+  @override
+  void dispose() {
+    didReceiveLocalNotificationSubject.close();
+    selectNotificationSubject.close();
+    super.dispose();
   }
 
   @override

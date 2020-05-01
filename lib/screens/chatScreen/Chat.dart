@@ -2,7 +2,6 @@ import 'package:HFM/Consts.dart';
 import 'package:HFM/resources/repository.dart';
 import 'package:HFM/screens/chatScreen/ChatAppBar.dart';
 import 'package:HFM/screens/chatScreen/ChatSegment.dart';
-import 'package:HFM/screens/chatScreen/InputSegment.dart';
 import 'package:HFM/utils/Communication.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -81,6 +80,7 @@ class ChatState extends State<Chat> {
 
   Widget _chatScreenBody() {
     return Container(
+      padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/adinkra_pattern.png'),
@@ -89,12 +89,12 @@ class ChatState extends State<Chat> {
       ),
       child: Column(
         children: <Widget>[
-          ChatSegment(groupId: groupId, id: widget.id),
-          InputSegment(
-            groupId: groupId,
-            id: widget.id,
-            friendId: friendId,
-          )
+          ChatSegment(groupId: groupId, id: widget.id, friendId: friendId),
+          // InputSegment(
+          //   groupId: groupId,
+          //   id: widget.id,
+          //   friendId: friendId,
+          // )
         ],
       ),
     );

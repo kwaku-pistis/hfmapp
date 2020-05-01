@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:HFM/Consts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dash_chat/dash_chat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -12,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../main.dart';
 
 Future<DocumentSnapshot> getFriendById(String id) async {
   var documents = await _firestore
@@ -22,7 +25,8 @@ Future<DocumentSnapshot> getFriendById(String id) async {
   return documents.documents[0];
 }
 
-sendMessage(String msg, String groupId, String id, String friendId) {
+sendMessage(ChatMessage msg, String groupId, String id, String friendId,
+    BuildContext context) {
   //save time to avoid deleting issues
   var timestamp = DateTime.now().millisecondsSinceEpoch.toString();
   var date = DateTime.now();
@@ -42,14 +46,15 @@ sendMessage(String msg, String groupId, String id, String friendId) {
   //     .document(FRIEND_ID);
 
   Firestore.instance.runTransaction((transaction) async {
-    registerNotification(id);
+    // registerNotification(id, context);
     await transaction.set(documentReference, {
       MESSAGE_ID_FROM: id,
       MESSAGE_ID_TO: friendId,
       MESSAGE_TIMESTAMP: timestamp,
-      MESSAGE_CONTENT: msg,
+      MESSAGE_CONTENT: msg.toJson(),
       MESSAGE_TYPE: MESSAGE_TYPE_TEXT,
-      "Date": fDate,
+    }).then((onValue) {
+      registerNotification(id, context);
     });
   });
   // .then((onValue) {
@@ -199,7 +204,7 @@ Future deleteUser(String userId, String id) async {
 
 FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
-void registerNotification(String currentUserId) {
+void registerNotification(String currentUserId, BuildContext context) {
   firebaseMessaging.requestNotificationPermissions();
 
   firebaseMessaging.configure(
@@ -208,11 +213,13 @@ void registerNotification(String currentUserId) {
         Platform.isAndroid
             ? showNotification(message['notification'])
             : showNotification(message['aps']['alert']);
+        Navigator.of((context)).pushNamed(message['screen']);
         return;
       },
       onBackgroundMessage: myBackgroundMessageHandler,
       onResume: (Map<String, dynamic> message) {
         print('onResume: $message');
+        Navigator.of((context)).pushNamed(message['screen']);
         return;
       },
       onLaunch: (Map<String, dynamic> message) {
@@ -233,16 +240,16 @@ void registerNotification(String currentUserId) {
   });
 }
 
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+// FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
-void configLocalNotification() {
-  var initializationSettingsAndroid =
-      new AndroidInitializationSettings('notification_icon');
-  var initializationSettingsIOS = new IOSInitializationSettings();
-  var initializationSettings = new InitializationSettings(
-      initializationSettingsAndroid, initializationSettingsIOS);
-  flutterLocalNotificationsPlugin.initialize(initializationSettings);
-}
+// void configLocalNotification() {
+//   var initializationSettingsAndroid =
+//       new AndroidInitializationSettings('notification_icon');
+//   var initializationSettingsIOS = new IOSInitializationSettings();
+//   var initializationSettings = new InitializationSettings(
+//       initializationSettingsAndroid, initializationSettingsIOS);
+//   flutterLocalNotificationsPlugin.initialize(initializationSettings);
+// }
 
 void showNotification(message) async {
   var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
@@ -267,14 +274,21 @@ Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) {
   if (message.containsKey('data')) {
     // Handle data message
     final dynamic data = message['data'];
+    return data;
   }
 
   if (message.containsKey('notification')) {
     // Handle notification message
     final dynamic notification = message['notification'];
+    // Platform.isAndroid
+    //     ? showNotification(notification)
+    //     : showNotification(message['aps']['alert']);
+    // Navigator.of((context)).pushNamed(message['screen']);
+    return notification;
   }
 
   // Or do other work.
+  return null;
 }
 
 final Map<String, Item> _items = <String, Item>{};

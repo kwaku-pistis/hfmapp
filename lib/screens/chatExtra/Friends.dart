@@ -1,11 +1,12 @@
 import 'package:HFM/Consts.dart';
 import 'package:HFM/resources/repository.dart';
+import 'package:HFM/screens/chatScreen/Chat.dart';
 import 'package:HFM/themes/colors.dart';
 import 'package:HFM/utils/Communication.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
 class FriendsScreen extends StatefulWidget {
@@ -16,19 +17,37 @@ class FriendsScreen extends StatefulWidget {
 Firestore _firestore = Firestore.instance;
 var _repository = Repository();
 
+FirebaseAuth _auth = FirebaseAuth.instance;
+List<String> _followingIds = [];
+
 class FriendsScreenState extends State<FriendsScreen> {
   //currentUser
   String id;
 
   @override
   void initState() {
+    _retrieveFollowingIds();
     super.initState();
-    _getPreferences();
+    // _getPreferences();
 
     _repository.getCurrentUser().then((user) {
       print("USER : ${user.displayName}");
       setState(() {
         id = user.uid;
+      });
+      _repository.fetchFollowingUids(user).then((onValue) {
+        setState(() {
+          _followingIds = onValue;
+        });
+      });
+    });
+  }
+
+  _retrieveFollowingIds() async {
+    FirebaseUser user = await _auth.currentUser();
+    _repository.fetchFollowingUids(user).then((onValue) {
+      setState(() {
+        _followingIds = onValue;
       });
     });
   }
@@ -59,18 +78,20 @@ class FriendsScreenState extends State<FriendsScreen> {
         if (snapshots.connectionState == ConnectionState.waiting)
           return CircularProgressIndicator();
         else {
-          return ListView.builder(
-            itemCount: snapshots.data.documents.length,
-            itemBuilder: (context, index) =>
-                _friendTileBuilder(snapshots.data.documents[index]),
-          );
+          return _followingIds.isNotEmpty
+              ? ListView.builder(
+                  itemCount: snapshots.data.documents.length,
+                  itemBuilder: (context, index) =>
+                      _friendTileBuilder(snapshots.data.documents[index]),
+                )
+              : CircularProgressIndicator();
         }
       },
     );
   }
 
   Widget _friendTileBuilder(DocumentSnapshot document) {
-    if (document[USER_ID] == id) return Container();
+    if (!_followingIds.contains(document[USER_ID])) return Container();
 
     return ListTile(
       title: Row(
@@ -99,53 +120,56 @@ class FriendsScreenState extends State<FriendsScreen> {
         ],
       ),
       onTap: () {
-        _showAddFriendDialog(document[USER_ID], document[USER_DISPLAY_NAME],
-            document[USER_PHOTO_URI]);
+        // _showAddFriendDialog(document[USER_ID], document[USER_DISPLAY_NAME],
+        //     document[USER_PHOTO_URI]);
+        addFriend(document[USER_ID], id);
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => Chat(friendId: document[USER_ID], id: id)));
       },
     );
   }
 
-  _showAddFriendDialog(
-      String friendId, String friendDisplayName, String friendPhotoUri) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(friendDisplayName),
-            content: CircleAvatar(
-              backgroundImage: CachedNetworkImageProvider(friendPhotoUri != null
-                  ? friendPhotoUri
-                  : USER_IMAGE_PLACE_HOLDER),
-              radius: ADD_FRIEND_DIALOG_PHOTO_RADIUS,
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text(
-                  'ADD',
-                  style: TextStyle(color: colortheme.accentColor),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                  Toast.show('you have added $friendDisplayName', context,
-                      duration: Toast.LENGTH_SHORT);
-                  addFriend(friendId, id);
-                },
-              ),
-              FlatButton(
-                child: Text(
-                  'CANCEL',
-                  style: TextStyle(color: colortheme.accentColor),
-                ),
-                onPressed: () => Navigator.pop(context),
-              )
-            ],
-          );
-        });
-  }
+  // _showAddFriendDialog(
+  //     String friendId, String friendDisplayName, String friendPhotoUri) {
+  //   showDialog(
+  //       context: context,
+  //       builder: (context) {
+  //         return AlertDialog(
+  //           title: Text(friendDisplayName),
+  //           content: CircleAvatar(
+  //             backgroundImage: CachedNetworkImageProvider(friendPhotoUri != null
+  //                 ? friendPhotoUri
+  //                 : USER_IMAGE_PLACE_HOLDER),
+  //             radius: ADD_FRIEND_DIALOG_PHOTO_RADIUS,
+  //           ),
+  //           actions: <Widget>[
+  //             FlatButton(
+  //               child: Text(
+  //                 'ADD',
+  //                 style: TextStyle(color: colortheme.accentColor),
+  //               ),
+  //               onPressed: () {
+  //                 Navigator.pop(context);
+  //                 Toast.show('you have added $friendDisplayName', context,
+  //                     duration: Toast.LENGTH_SHORT);
+  //                 addFriend(friendId, id);
+  //               },
+  //             ),
+  //             FlatButton(
+  //               child: Text(
+  //                 'CANCEL',
+  //                 style: TextStyle(color: colortheme.accentColor),
+  //               ),
+  //               onPressed: () => Navigator.pop(context),
+  //             )
+  //           ],
+  //         );
+  //       });
+  // }
 
-  _getPreferences() async {
-    var prefs = await SharedPreferences.getInstance();
-    id = await prefs.get(SHARED_PREFERENCES_USER_ID);
-    setState(() {});
-  }
+  // _getPreferences() async {
+  //   var prefs = await SharedPreferences.getInstance();
+  //   id = await prefs.get(SHARED_PREFERENCES_USER_ID);
+  //   setState(() {});
+  // }
 }
