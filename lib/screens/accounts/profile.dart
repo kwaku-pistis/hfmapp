@@ -126,7 +126,7 @@ class _ProfileState extends State<Profile> {
                           margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
                           child: TextFormField(
                               controller: firstNameController,
-                              autovalidate: fnameValidate,
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
                               decoration: const InputDecoration(
                                 icon: Icon(
                                   Icons.person,
@@ -174,7 +174,7 @@ class _ProfileState extends State<Profile> {
                           margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
                           child: TextFormField(
                               controller: null,
-                              autovalidate: lnameValidate,
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
                               decoration: const InputDecoration(
                                 icon: Icon(
                                   Icons.person,
@@ -222,7 +222,7 @@ class _ProfileState extends State<Profile> {
                           margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
                           child: TextFormField(
                               controller: null,
-                              autovalidate: usernameValidate,
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
                               decoration: const InputDecoration(
                                 icon: Icon(
                                   Icons.person_pin,
@@ -267,7 +267,7 @@ class _ProfileState extends State<Profile> {
                           margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
                           child: TextFormField(
                               controller: null,
-                              autovalidate: peValidate,
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
                               initialValue: data,
                               decoration: const InputDecoration(
                                 icon: Icon(

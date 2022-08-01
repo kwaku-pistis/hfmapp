@@ -160,7 +160,7 @@ class _PaymentsState extends State<Payments> {
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Form(
                     key: formKey,
-                    autovalidate: autoValidate,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     child: Column(
                       children: <Widget>[
                         // TextFormField(
