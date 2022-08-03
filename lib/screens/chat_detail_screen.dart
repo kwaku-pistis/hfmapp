@@ -15,7 +15,8 @@ class ChatDetailScreen extends StatefulWidget {
   final String name;
   final String receiverUid;
 
-  ChatDetailScreen({this.photoUrl, this.name, this.receiverUid});
+  ChatDetailScreen(
+      {required this.photoUrl, required this.name, required this.receiverUid});
 
   @override
   _ChatDetailScreenState createState() => _ChatDetailScreenState();
@@ -23,12 +24,12 @@ class ChatDetailScreen extends StatefulWidget {
 
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
   var _formKey = GlobalKey<FormState>();
-  String _senderuid;
+  late String _senderuid;
   TextEditingController _messageController = TextEditingController();
   final _repository = Repository();
-  String receiverPhotoUrl, senderPhotoUrl, receiverName, senderName;
-  StreamSubscription<DocumentSnapshot> subscription;
-  File imageFile;
+  late String receiverPhotoUrl, senderPhotoUrl, receiverName, senderName;
+  late StreamSubscription<DocumentSnapshot> subscription;
+  late File imageFile;
 
   @override
   void initState() {
@@ -40,14 +41,14 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       });
       _repository.fetchUserDetailsById(_senderuid).then((user) {
         setState(() {
-          senderPhotoUrl = user.profileImage;
-          senderName = user.name;
+          senderPhotoUrl = user.profileImage!;
+          senderName = user.name!;
         });
       });
       _repository.fetchUserDetailsById(widget.receiverUid).then((user) {
         setState(() {
-          receiverPhotoUrl = user.profileImage;
-          receiverName = user.name;
+          receiverPhotoUrl = user.profileImage!;
+          receiverName = user.name!;
         });
       });
     });
@@ -56,7 +57,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   @override
   void dispose() {
     super.dispose();
-    subscription?.cancel();
+    subscription.cancel();
   }
 
   @override
@@ -81,15 +82,13 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         ),
         body: Form(
           key: _formKey,
-          child: _senderuid == null
+          child: _senderuid.isEmpty
               ? Container(
                   child: CircularProgressIndicator(),
                 )
               : Column(
                   children: <Widget>[
-                   
                     chatMessagesListWidget(),
-                    
                     chatInputWidget(),
                     SizedBox(
                       height: 20.0,
@@ -104,8 +103,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       height: 55.0,
       margin: const EdgeInsets.symmetric(horizontal: 8.0),
       child: TextFormField(
-        validator: (String input) {
-          if (input.isEmpty) {
+        validator: (String? input) {
+          if (input!.isEmpty) {
             return "Please enter message";
           }
         },
@@ -138,7 +137,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                           fontSize: 16.0),
                     ),
                     onTap: () {
-                      if (_formKey.currentState.validate()) {
+                      if (_formKey.currentState!.validate()) {
                         sendMessage();
                       }
                     },
@@ -162,7 +161,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     );
   }
 
-  Future<void> pickImage({String source}) async {
+  Future<void> pickImage({String? source}) async {
     var selectedImage = await ImagePicker.pickImage(
         source: source == 'Gallery' ? ImageSource.gallery : ImageSource.camera);
 
@@ -234,9 +233,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             //listItem = snapshot.data.documents;
             return ListView.builder(
               padding: EdgeInsets.all(10.0),
-              itemBuilder: (context, index) =>
-                  chatMessageItem(snapshot.data.documents[index]),
-              itemCount: snapshot.data.documents.length,
+              itemBuilder: (context, index) => chatMessageItem(snapshot),
+              // itemCount: snapshot.data[],
+              itemCount: 10,
             );
           }
         },
@@ -244,18 +243,18 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     );
   }
 
-  Widget chatMessageItem(DocumentSnapshot snapshot) {
+  Widget chatMessageItem(AsyncSnapshot snapshot) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(12.0),
           child: Row(
-            mainAxisAlignment: snapshot['senderUid'] == _senderuid
+            mainAxisAlignment: snapshot.data['senderUid'] == _senderuid
                 ? MainAxisAlignment.end
                 : MainAxisAlignment.start,
             children: <Widget>[
-              snapshot['senderUid'] == _senderuid
+              snapshot.data['senderUid'] == _senderuid
                   ? senderLayout(snapshot)
                   : receiverLayout(snapshot)
             ],
@@ -265,8 +264,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     );
   }
 
-  Widget senderLayout(DocumentSnapshot snapshot) {
-    return snapshot['type'] == 'text'
+  Widget senderLayout(AsyncSnapshot snapshot) {
+    return snapshot.data['type'] == 'text'
         ? Container(
             decoration: BoxDecoration(
               color: Colors.grey[300],
@@ -274,19 +273,19 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             ),
             child: Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: Text(snapshot['message'],
+                child: Text(snapshot.data['message'],
                     style: TextStyle(color: Colors.black, fontSize: 16.0))),
           )
         : FadeInImage(
             fit: BoxFit.cover,
-            image: NetworkImage(snapshot['photoUrl']),
+            image: NetworkImage(snapshot.data['photoUrl']),
             placeholder: AssetImage('assets/blankimage.png'),
             width: 250.0,
             height: 300.0,
           );
   }
 
-  Widget receiverLayout(DocumentSnapshot snapshot) {
+  Widget receiverLayout(AsyncSnapshot snapshot) {
     return Container(
       decoration: BoxDecoration(
           color: Colors.white30,
@@ -294,12 +293,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           border: Border.all(color: Colors.grey)),
       child: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: snapshot['type'] == 'text'
-            ? Text(snapshot['message'],
+        child: snapshot.data['type'] == 'text'
+            ? Text(snapshot.data['message'],
                 style: TextStyle(color: Colors.black, fontSize: 16.0))
             : FadeInImage(
                 fit: BoxFit.cover,
-                image: NetworkImage(snapshot['photoUrl']),
+                image: NetworkImage(snapshot.data['photoUrl']),
                 placeholder: AssetImage('assets/blankimage.png'),
                 width: 200.0,
                 height: 200.0,

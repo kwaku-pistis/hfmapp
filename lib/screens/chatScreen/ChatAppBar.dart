@@ -6,35 +6,49 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 ///appBar
-class ChatAppBar extends StatefulWidget{
+class ChatAppBar extends StatefulWidget {
   final String photoUri;
   final String displayName;
   final String id;
   final String about;
-  ChatAppBar({this.photoUri, this.displayName,this.id,this.about});
+  ChatAppBar(
+      {required this.photoUri,
+      required this.displayName,
+      required this.id,
+      required this.about});
   @override
-  State<StatefulWidget> createState()=>ChatAppBarState(photoUri: photoUri,displayName: displayName,id: id,about:about);
+  State<StatefulWidget> createState() => ChatAppBarState(
+      photoUri: photoUri, displayName: displayName, id: id, about: about);
 }
-class ChatAppBarState extends State<ChatAppBar>{
 
+class ChatAppBarState extends State<ChatAppBar> {
   final String photoUri;
   final String displayName;
   final String id;
   final String about;
   String userStatus = '';
 
-  StreamSubscription<Event> stateListener;
+  late StreamSubscription<Event> stateListener;
 
-  ChatAppBarState({this.photoUri,this.displayName,this.id,this.about});
+  ChatAppBarState(
+      {required this.photoUri,
+      required this.displayName,
+      required this.id,
+      required this.about});
   @override
   void initState() {
     super.initState();
-    stateListener = FirebaseDatabase.instance.reference().child('/status/$id').onValue.listen((event){
+    stateListener = FirebaseDatabase.instance
+        .reference()
+        .child('/status/$id')
+        .onValue
+        .listen((event) {
       setState(() {
         userStatus = event.snapshot.value['state'];
       });
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -51,32 +65,37 @@ class ChatAppBarState extends State<ChatAppBar>{
                 width: APP_BAR_IMAGE_WIDTH,
                 height: APP_BAR_IMAGE_HEIGHT,
               ),
-              borderRadius: BorderRadius.all(Radius.circular(APP_BAR_IMAGE_RADIUS)),
+              borderRadius:
+                  BorderRadius.all(Radius.circular(APP_BAR_IMAGE_RADIUS)),
               clipBehavior: Clip.antiAlias,
             ),
           ),
           Container(
             margin: EdgeInsets.only(left: 8.0),
-            child:Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
                   margin: EdgeInsets.only(top: 8.0, left: 10),
-                  child:Text(displayName, style: TextStyle(color: Colors.white),),
+                  child: Text(
+                    displayName,
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
-                Text(userStatus,style: TextStyle(fontSize: 10.0, color: Colors.white))
+                Text(userStatus,
+                    style: TextStyle(fontSize: 10.0, color: Colors.white))
               ],
             ),
           )
         ],
       ),
-      onTap: (){},
+      onTap: () {},
     );
   }
+
   @override
   void dispose() {
     stateListener.cancel();
     super.dispose();
   }
 }
-

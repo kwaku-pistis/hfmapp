@@ -23,11 +23,11 @@ class _MyWebViewState extends State<MyWebView> {
       Completer<WebViewController>();
 
   _MyWebViewState({
-    @required this.title,
-    @required this.selectedUrl,
+    required this.title,
+    required this.selectedUrl,
   });
 
-  num _stackToView = 1;
+  int _stackToView = 1;
 
   void _handleLoad(String value) {
     setState(() {

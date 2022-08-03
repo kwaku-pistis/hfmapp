@@ -12,8 +12,8 @@ class _AddVendorWidgetState extends State<AddVendorWidget> {
   var refFocusNode = FocusNode();
   var ratioFocusNode = FocusNode();
   bool autoValidate = false;
-  String id;
-  String ratio;
+  late String? id;
+  late String? ratio;
 
   @override
   void dispose() {
@@ -46,7 +46,7 @@ class _AddVendorWidgetState extends State<AddVendorWidget> {
                 FocusScope.of(context).requestFocus(ratioFocusNode);
               },
               validator: (value) =>
-                  value.trim().isEmpty ? 'Field is required' : null,
+                  value!.trim().isEmpty ? 'Field is required' : null,
             ),
             SizedBox(
               height: 30,
@@ -65,23 +65,23 @@ class _AddVendorWidgetState extends State<AddVendorWidget> {
                 FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
               ],
               validator: (value) =>
-                  value.trim().isEmpty ? 'Field is required' : null,
+                  value!.trim().isEmpty ? 'Field is required' : null,
             )
           ],
         ),
       ),
       actions: <Widget>[
-        FlatButton(
+        ElevatedButton(
             onPressed: () => Navigator.of(context).pop(),
             child: Text('CANCEL')),
-        FlatButton(onPressed: validateInputs, child: Text('ADD')),
+        ElevatedButton(onPressed: validateInputs, child: Text('ADD')),
       ],
     );
   }
 
   void validateInputs() {
     var formState = formKey.currentState;
-    if (formState.validate()) {
+    if (formState!.validate()) {
       formState.save();
       Navigator.of(context).pop(SubAccount(id, ratio));
     } else {

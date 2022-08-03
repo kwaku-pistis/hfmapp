@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 
-class DeleteMessageDialog extends StatefulWidget{
+class DeleteMessageDialog extends StatefulWidget {
   final String groupId;
   final String timestamp;
-  DeleteMessageDialog({@required this.groupId,@required this.timestamp});
+  DeleteMessageDialog({required this.groupId, required this.timestamp});
   @override
-  State<StatefulWidget> createState() => DeleteMessageDialogState(groupId: groupId,timestamp: timestamp,);
+  State<StatefulWidget> createState() => DeleteMessageDialogState(
+        groupId: groupId,
+        timestamp: timestamp,
+      );
 }
-class DeleteMessageDialogState extends State<DeleteMessageDialog>{
+
+class DeleteMessageDialogState extends State<DeleteMessageDialog> {
   final String groupId;
   final String timestamp;
-  DeleteMessageDialogState({this.groupId,this.timestamp});
+  DeleteMessageDialogState({required this.groupId, required this.timestamp});
 
   @override
   Widget build(BuildContext context) {

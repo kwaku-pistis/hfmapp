@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 class CommentsScreen extends StatefulWidget {
   final DocumentReference documentReference;
   final User user;
-  CommentsScreen({this.documentReference, this.user});
+  CommentsScreen({required this.documentReference, required this.user});
 
   @override
   _CommentsScreenState createState() => _CommentsScreenState();
@@ -20,7 +20,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
   @override
   void dispose() {
     super.dispose();
-    _commentController?.dispose();
+    _commentController.dispose();
   }
 
   @override
@@ -65,14 +65,14 @@ class _CommentsScreenState extends State<CommentsScreen> {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(40.0),
                 image: DecorationImage(
-                    image: NetworkImage(widget.user.profileImage))),
+                    image: NetworkImage(widget.user.profileImage!))),
           ),
           Flexible(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: TextFormField(
-                validator: (String input) {
-                  if (input.isEmpty) {
+                validator: (String? input) {
+                  if (input!.isEmpty) {
                     return "Please enter comment";
                   }
                   return null;
@@ -94,7 +94,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   Text('Post', style: TextStyle(color: colortheme.accentColor)),
             ),
             onTap: () {
-              if (_formKey.currentState.validate()) {
+              if (_formKey.currentState!.validate()) {
                 postComment();
               }
             },
@@ -108,9 +108,9 @@ class _CommentsScreenState extends State<CommentsScreen> {
     var _comment = Comment(
         comment: _commentController.text,
         timeStamp: FieldValue.serverTimestamp(),
-        ownerName: widget.user.name,
-        ownerPhotoUrl: widget.user.profileImage,
-        ownerUid: widget.user.uid);
+        ownerName: widget.user.name!,
+        ownerPhotoUrl: widget.user.profileImage!,
+        ownerUid: widget.user.uid!);
     widget.documentReference
         .collection("comments")
         .document()
@@ -133,9 +133,9 @@ class _CommentsScreenState extends State<CommentsScreen> {
             return Center(child: CircularProgressIndicator());
           } else {
             return ListView.builder(
-              itemCount: snapshot.data.documents.length,
+              itemCount: snapshot.data!.documents.length,
               itemBuilder: ((context, index) =>
-                  commentItem(snapshot.data.documents[index])),
+                  commentItem(snapshot.data!.documents[index])),
             );
           }
         }),

@@ -12,9 +12,9 @@ import 'package:jiffy/jiffy.dart';
 
 class PostDetailScreen extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
-  final User user, currentuser;
+  final User user, currentUser;
 
-  PostDetailScreen({this.documentSnapshot, this.user, this.currentuser});
+  PostDetailScreen({required this.documentSnapshot, required this.user, required this.currentUser});
 
   @override
   _PostDetailScreenState createState() => _PostDetailScreenState();
@@ -206,7 +206,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                               builder: ((context) => CommentsScreen(
                                     documentReference:
                                         widget.documentSnapshot.reference,
-                                    user: widget.currentuser,
+                                    user: widget.currentUser,
                                   ))));
                     },
                     child: new Icon(
@@ -242,20 +242,20 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                               context,
                               MaterialPageRoute(
                                   builder: ((context) => LikesScreen(
-                                        user: widget.currentuser,
+                                        user: widget.currentUser,
                                         documentReference:
                                             widget.documentSnapshot.reference,
                                       ))));
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: likesSnapshot.data.length > 1
+                          child: likesSnapshot.data!.length > 1
                               ? Text(
-                                  "Liked by ${likesSnapshot.data[0].data['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
+                                  "Liked by ${likesSnapshot.data![0].data['ownerName']} and ${(likesSnapshot.data!.length - 1).toString()} others",
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 )
-                              : Text(likesSnapshot.data.length == 1
-                                  ? "Liked by ${likesSnapshot.data[0].data['ownerName']}"
+                              : Text(likesSnapshot.data!.length == 1
+                                  ? "Liked by ${likesSnapshot.data![0].data['ownerName']}"
                                   : "0 Likes"),
                         ),
                       );
@@ -286,7 +286,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         if (snapshot.hasData) {
           return GestureDetector(
             child: Text(
-              'View all ${snapshot.data.length} comments',
+              'View all ${snapshot.data!.length} comments',
               style: TextStyle(color: Colors.grey),
             ),
             onTap: () {
@@ -295,7 +295,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   MaterialPageRoute(
                       builder: ((context) => CommentsScreen(
                             documentReference: reference,
-                            user: widget.currentuser,
+                            user: widget.currentUser,
                           ))));
             },
           );
@@ -308,13 +308,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
   void postLike(DocumentReference reference) {
     var _like = Like(
-        ownerName: widget.currentuser.name,
-        ownerPhotoUrl: widget.currentuser.profileImage,
-        ownerUid: widget.currentuser.uid,
+        ownerName: widget.currentUser.name!,
+        ownerPhotoUrl: widget.currentUser.profileImage!,
+        ownerUid: widget.currentUser.uid!,
         timeStamp: FieldValue.serverTimestamp());
     reference
         .collection('likes')
-        .document(widget.currentuser.uid)
+        .document(widget.currentUser.uid)
         .setData(_like.toMap(_like))
         .then((value) {
       print("Post Liked");
@@ -324,7 +324,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   void postUnlike(DocumentReference reference) {
     reference
         .collection("likes")
-        .document(widget.currentuser.uid)
+        .document(widget.currentUser.uid)
         .delete()
         .then((value) {
       print("Post Unliked");

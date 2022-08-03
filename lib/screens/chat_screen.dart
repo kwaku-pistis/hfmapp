@@ -12,7 +12,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   var _repository = Repository();
   User _user = User();
-  List<User> usersList = List<User>();
+  List<User> usersList = [];
 
   @override
   void initState() {
@@ -33,7 +33,10 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: colortheme.primaryColor,
-          title: Text('Select user to start chat with', style: TextStyle(color: Colors.white),),
+          title: Text(
+            'Select user to start chat with',
+            style: TextStyle(color: Colors.white),
+          ),
           iconTheme: IconThemeData(color: Colors.white),
           actions: <Widget>[
             IconButton(
@@ -57,16 +60,17 @@ class _ChatScreenState extends State<ChatScreen> {
                       context,
                       MaterialPageRoute(
                           builder: ((context) => ChatDetailScreen(
-                                photoUrl: usersList[index].profileImage,
-                                name: usersList[index].name,
-                                receiverUid: usersList[index].uid,
+                                photoUrl: usersList[index].profileImage!,
+                                name: usersList[index].name!,
+                                receiverUid: usersList[index].uid!,
                               ))));
                 },
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: NetworkImage(usersList[index].profileImage),
+                    backgroundImage:
+                        NetworkImage(usersList[index].profileImage!),
                   ),
-                  title: Text(usersList[index].name),
+                  title: Text(usersList[index].name!),
                 ),
               ),
             );
@@ -77,7 +81,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
 class ChatSearch extends SearchDelegate<String> {
   List<User> usersList;
-  ChatSearch({this.usersList});
+  ChatSearch({required this.usersList});
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -99,7 +103,7 @@ class ChatSearch extends SearchDelegate<String> {
         progress: transitionAnimation,
       ),
       onPressed: () {
-        close(context, null);
+        close(context, "");
       },
     );
   }
@@ -107,14 +111,14 @@ class ChatSearch extends SearchDelegate<String> {
   @override
   Widget buildResults(BuildContext context) {
     // TODO: implement buildResults
-    return null;
+    return Container();
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
     final List<User> suggestionsList = query.isEmpty
         ? usersList
-        : usersList.where((p) => p.name.startsWith(query)).toList();
+        : usersList.where((p) => p.name!.startsWith(query)).toList();
     return ListView.builder(
       itemCount: suggestionsList.length,
       itemBuilder: ((context, index) => ListTile(
@@ -124,15 +128,16 @@ class ChatSearch extends SearchDelegate<String> {
                   context,
                   MaterialPageRoute(
                       builder: ((context) => ChatDetailScreen(
-                            photoUrl: suggestionsList[index].profileImage,
-                            name: suggestionsList[index].name,
-                            receiverUid: suggestionsList[index].uid,
+                            photoUrl: suggestionsList[index].profileImage!,
+                            name: suggestionsList[index].name!,
+                            receiverUid: suggestionsList[index].uid!,
                           ))));
             },
             leading: CircleAvatar(
-              backgroundImage: NetworkImage(suggestionsList[index].profileImage),
+              backgroundImage:
+                  NetworkImage(suggestionsList[index].profileImage!),
             ),
-            title: Text(suggestionsList[index].name),
+            title: Text(suggestionsList[index].name!),
           )),
     );
   }

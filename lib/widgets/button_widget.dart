@@ -9,7 +9,7 @@ class Button extends StatelessWidget {
   final Widget childText;
   final VoidCallback onPressed;
 
-  Button({@required this.onPressed, this.text, this.childText})
+  Button({required this.onPressed, required this.text, required this.childText})
       : assert(childText != null || text != null);
 
   @override
@@ -20,9 +20,9 @@ class Button extends StatelessWidget {
             pressedOpacity: 0.5,
             onPressed: onPressed,
           )
-        : RaisedButton(
+        : ElevatedButton(
             onPressed: onPressed,
-            color: colortheme.accentColor,
+            // color: colortheme.accentColor,
             child: childText == null
                 ? Text(
                     text.toUpperCase(),

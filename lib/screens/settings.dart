@@ -15,8 +15,8 @@ class Settings extends StatefulWidget {
 final FirebaseAuth _auth = FirebaseAuth.instance;
 bool _isChecked = true;
 bool isPmChecked = true;
-String packageName;
-String version;
+String packageName = '';
+String version = '';
 
 class _SettingsState extends State<Settings> {
   @override
@@ -60,7 +60,7 @@ class _SettingsState extends State<Settings> {
                   value: _isChecked,
                   onChanged: (value) {
                     setState(() {
-                      _isChecked = value;
+                      _isChecked = value!;
                     });
                     print('Checked State: $_isChecked');
                   },
@@ -75,7 +75,7 @@ class _SettingsState extends State<Settings> {
                   value: isPmChecked,
                   onChanged: (value) {
                     setState(() {
-                      isPmChecked = value;
+                      isPmChecked = value!;
                     });
                     print('Checked State: $isPmChecked');
                   },

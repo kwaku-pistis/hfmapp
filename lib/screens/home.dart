@@ -21,21 +21,21 @@ class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState(user: this.user);
 
-  final FirebaseUser user;
+  final FirebaseUser? user;
 
-  Home({@required this.user});
+  Home({required this.user});
 }
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  FirebaseUser user;
+  late FirebaseUser? user;
 
-  _HomeState({@required this.user});
+  _HomeState({required this.user});
 
-  TabController controller;
+  late TabController controller;
   //GoogleSignIn _googleSignIn;
-  bool isLoggedIn;
+  late bool isLoggedIn;
 
   @override
   void initState() {

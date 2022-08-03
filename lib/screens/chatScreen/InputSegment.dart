@@ -18,7 +18,7 @@ class InputSegment extends StatefulWidget {
   final String groupId;
   final String friendId;
   InputSegment(
-      {@required this.id, @required this.groupId, @required this.friendId});
+      {required this.id, required this.groupId, required this.friendId});
   @override
   State<StatefulWidget> createState() =>
       InputSegmentState(id, groupId, friendId);

@@ -24,7 +24,7 @@ class ChatSegment extends StatefulWidget {
   final String groupId;
   final String friendId;
   ChatSegment(
-      {@required this.groupId, @required this.id, @required this.friendId});
+      {required this.groupId, required this.id, required this.friendId});
 
   @override
   State<StatefulWidget> createState() =>
@@ -33,26 +33,27 @@ class ChatSegment extends StatefulWidget {
 
 Firestore _firestore = Firestore.instance;
 var _repository = Repository();
-User _user;
+late User _user;
 
 class ChatSegmentState extends State<ChatSegment> {
   final String id;
   final String groupId;
   final String friendId;
+
   ChatSegmentState(this.groupId, this.id, this.friendId);
 
   // dash chat variables
   final GlobalKey<DashChatState> _chatViewKey = GlobalKey<DashChatState>();
 
-  ChatUser user;
+  late ChatUser user;
 
   // final ChatUser otherUser = ChatUser(
   //   name: "Mrfatty",
   //   uid: "25649654",
   // );
 
-  List<ChatMessage> messages = List<ChatMessage>();
-  var m = List<ChatMessage>();
+  List<ChatMessage> messages = [];
+  var m = [];
 
   var i = 0;
 
@@ -98,15 +99,16 @@ class ChatSegmentState extends State<ChatSegment> {
             builder: (BuildContext buildContext,
                 AsyncSnapshot<QuerySnapshot> snapshots) {
               //show error if there is any
-              if (snapshots.hasError) return Text(snapshots.error);
+              if (snapshots.hasError) return Text(snapshots.error.toString());
               //if connecting show progressIndicator
               if (snapshots.connectionState == ConnectionState.waiting)
                 return Center(child: CircularProgressIndicator());
               //show users
               else {
-                List<DocumentSnapshot> items = snapshots.data.documents;
-                var messages =
-                    items.map((i) => ChatMessage.fromJson(i.data["content"])).toList();
+                List<DocumentSnapshot> items = snapshots.data!.documents;
+                var messages = items
+                    .map((i) => ChatMessage.fromJson(i.data["content"]))
+                    .toList();
                 // return ListView.builder(
                 //   reverse: true,
                 //   itemCount: snapshots.data.documents.length,
@@ -164,9 +166,9 @@ class ChatSegmentState extends State<ChatSegment> {
                       });
 
                       Timer(Duration(milliseconds: 300), () {
-                        _chatViewKey.currentState.scrollController
+                        _chatViewKey.currentState!.scrollController
                           ..animateTo(
-                            _chatViewKey.currentState.scrollController.position
+                            _chatViewKey.currentState!.scrollController.position
                                 .maxScrollExtent,
                             curve: Curves.easeOut,
                             duration: const Duration(milliseconds: 300),
@@ -254,7 +256,7 @@ class ChatSegmentState extends State<ChatSegment> {
           Icons.send,
           color: colortheme.accentColor,
         ),
-        onPressed: onSend);
+        onPressed: () => onSend);
   }
 
   Widget _buildMessage(DocumentSnapshot snapshot, String id, String groupId) {
@@ -384,9 +386,10 @@ class ChatSegmentState extends State<ChatSegment> {
         i++;
       }
       Timer(Duration(milliseconds: 300), () {
-        _chatViewKey.currentState.scrollController
+        _chatViewKey.currentState!.scrollController
           ..animateTo(
-            _chatViewKey.currentState.scrollController.position.maxScrollExtent,
+            _chatViewKey
+                .currentState!.scrollController.position.maxScrollExtent,
             curve: Curves.easeOut,
             duration: const Duration(milliseconds: 300),
           );

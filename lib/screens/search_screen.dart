@@ -14,10 +14,10 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   var _repository = Repository();
-  List<DocumentSnapshot> list = List<DocumentSnapshot>();
+  List<DocumentSnapshot> list = [];
   User _user = User();
-  User currentUser;
-  List<User> usersList = List<User>();
+  late User currentUser;
+  List<User> usersList = [];
 
   @override
   void initState() {
@@ -128,7 +128,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     MaterialPageRoute(
                         builder: ((context) => PostDetailScreen(
                               user: _user,
-                              currentuser: _user,
+                              currentUser: _user,
                               documentSnapshot: list[index],
                             ))));
               },
@@ -140,7 +140,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
 class DataSearch extends SearchDelegate<String> {
   List<User> userList;
-  DataSearch({this.userList});
+  DataSearch({required this.userList});
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -162,7 +162,7 @@ class DataSearch extends SearchDelegate<String> {
         progress: transitionAnimation,
       ),
       onPressed: () {
-        close(context, null);
+        close(context, "");
       },
     );
   }
@@ -183,7 +183,7 @@ class DataSearch extends SearchDelegate<String> {
   Widget buildSuggestions(BuildContext context) {
     final suggestionsList = query.isEmpty
         ? userList
-        : userList.where((p) => p.name.startsWith(query)).toList();
+        : userList.where((p) => p.name!.startsWith(query)).toList();
     return ListView.builder(
       itemCount: suggestionsList.length,
       itemBuilder: ((context, index) => ListTile(
@@ -193,14 +193,14 @@ class DataSearch extends SearchDelegate<String> {
                   context,
                   MaterialPageRoute(
                       builder: ((context) => FriendProfileScreen(
-                          name: suggestionsList[index].name))));
+                          name: suggestionsList[index].name!))));
             },
             leading: CircleAvatar(
               backgroundImage:
-                  NetworkImage(suggestionsList[index].profileImage),
+                  NetworkImage(suggestionsList[index].profileImage!),
               //backgroundImage: AssetImage('assets/images/profile.png'),
             ),
-            title: Text(suggestionsList[index].name),
+            title: Text(suggestionsList[index].name!),
           )),
     );
   }

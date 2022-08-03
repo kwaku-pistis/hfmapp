@@ -4,7 +4,7 @@ import 'package:photo_view/photo_view.dart';
 class ImageView extends StatelessWidget {
   final String imageUrl;
 
-  ImageView({@required this.imageUrl});
+  ImageView({required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {

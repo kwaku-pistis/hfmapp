@@ -14,18 +14,22 @@ class EditProfileScreen extends StatefulWidget {
   final String photoUrl, email, bio, name, username;
 
   EditProfileScreen(
-      {this.photoUrl, this.email, this.bio, this.name, this.username});
+      {required this.photoUrl,
+      required this.email,
+      required this.bio,
+      required this.name,
+      required this.username});
 
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();
 }
 
-String _name, _bio, _username, _emailorPhone;
+String _name = '', _bio = '', _username = '', _emailorPhone = '';
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   var _repository = Repository();
   FirebaseAuth _auth = FirebaseAuth.instance;
-  FirebaseUser currentUser;
+  FirebaseUser? currentUser;
   final _nameController = TextEditingController();
   final _bioController = TextEditingController();
   final _emailController = TextEditingController();
@@ -46,17 +50,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
   }
 
-  File imageFile;
+  File? imageFile;
 
   Future<File> _pickImage(String action) async {
-    File selectedImage;
+    File? selectedImage;
 
     action == 'Gallery'
         ? selectedImage =
             await ImagePicker.pickImage(source: ImageSource.gallery)
         : await ImagePicker.pickImage(source: ImageSource.camera);
 
-    return selectedImage;
+    return selectedImage!;
   }
 
   @override
@@ -82,7 +86,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             onTap: () {
               _repository
                   .updateDetails(
-                      currentUser.uid,
+                      currentUser!.uid,
                       _nameController.text,
                       _bioController.text,
                       _emailController.text,
@@ -112,7 +116,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           image: DecorationImage(
                               image: widget.photoUrl.isEmpty
                                   ? AssetImage('assets/no_image.png')
-                                  : NetworkImage(widget.photoUrl),
+                                  : NetworkImage(widget.photoUrl)
+                                      as ImageProvider,
                               fit: BoxFit.cover),
                         )),
                   ),
@@ -197,7 +202,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 child: TextField(
                   controller: _emailController,
                   decoration: InputDecoration(
-                      hintText: 'Email address or phone number', labelText: 'Email / Phone'),
+                      hintText: 'Email address or phone number',
+                      labelText: 'Email / Phone'),
                   onChanged: ((value) {
                     setState(() {
                       _emailorPhone = value;
@@ -227,8 +233,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       imageFile = selectedImage;
                     });
                     compressImage();
-                    _repository.uploadImageToStorage(imageFile).then((url) {
-                      _repository.updatePhoto(url, currentUser.uid).then((v) {
+                    _repository.uploadImageToStorage(imageFile!).then((url) {
+                      _repository.updatePhoto(url, currentUser!.uid).then((v) {
                         Navigator.pop(context);
                       });
                     });
@@ -243,8 +249,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       imageFile = selectedImage;
                     });
                     compressImage();
-                    _repository.uploadImageToStorage(imageFile).then((url) {
-                      _repository.updatePhoto(url, currentUser.uid).then((v) {
+                    _repository.uploadImageToStorage(imageFile!).then((url) {
+                      _repository.updatePhoto(url, currentUser!.uid).then((v) {
                         Navigator.pop(context);
                       });
                     });
@@ -268,7 +274,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final path = tempDir.path;
     int rand = Random().nextInt(10000);
 
-    Im.Image image = Im.decodeImage(imageFile.readAsBytesSync());
+    Im.Image image = Im.decodeImage(imageFile!.readAsBytesSync());
     //Im.copyResize(image, 500);
 
     var newim2 = new File('$path/img_$rand.jpg')

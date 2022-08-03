@@ -14,22 +14,22 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class FriendProfileScreen extends StatefulWidget {
   final String name;
-  FriendProfileScreen({this.name});
+  FriendProfileScreen({required this.name});
 
   @override
   _FriendProfileScreenState createState() => _FriendProfileScreenState();
 }
 
 class _FriendProfileScreenState extends State<FriendProfileScreen> {
-  String currentUserId, followingUserId;
+  late String currentUserId, followingUserId;
   var _repository = Repository();
   Color _gridColor = colortheme.accentColor;
   Color _listColor = Colors.grey;
   bool _isGridActive = true;
-  User _user, currentuser;
-  IconData icon;
-  Color color;
-  Future<List<DocumentSnapshot>> _future;
+  late User _user, currentuser;
+  late IconData icon;
+  late Color color;
+  late Future<List<DocumentSnapshot>> _future;
   //bool _isLiked = false;
   bool isFollowing = false;
   bool followButtonClicked = false;
@@ -97,11 +97,11 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
   }
 
   Widget buildButton(
-      {String text,
-      Color backgroundcolor,
-      Color textColor,
-      Color borderColor,
-      Function function}) {
+      {required String text,
+      required Color backgroundcolor,
+      required Color textColor,
+      required Color borderColor,
+      required Function()? function}) {
     return GestureDetector(
       onTap: function,
       child: Container(
@@ -145,7 +145,8 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
         text: "loading...",
         backgroundcolor: Colors.white,
         textColor: Colors.black,
-        borderColor: Colors.grey);
+        borderColor: Colors.grey,
+        function: () {});
   }
 
   @override
@@ -186,17 +187,18 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(80.0),
                                     image: DecorationImage(
-                                        image: _user.profileImage.isEmpty
+                                        image: _user.profileImage!.isEmpty
                                             ? AssetImage(
                                                 'assets/images/profile.png')
-                                            : NetworkImage(_user.profileImage),
+                                            : NetworkImage(_user.profileImage!)
+                                                as ImageProvider,
                                         fit: BoxFit.cover),
                                   )),
                             ),
                             Padding(
                               padding:
                                   const EdgeInsets.only(left: 0.0, top: 10.0),
-                              child: Text(_user.name,
+                              child: Text(_user.name!,
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold,
@@ -206,9 +208,9 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                               padding: const EdgeInsets.only(
                                   bottom: 20.0, top: 10.0),
                               child: Text(
-                                  _user.username.isEmpty
+                                  _user.username!.isEmpty
                                       ? '@username'
-                                      : _user.username,
+                                      : _user.username!,
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.normal,
@@ -234,7 +236,8 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                                                 snapshot) {
                                           if (snapshot.hasData) {
                                             return detailsWidget(
-                                                snapshot.data.length.toString(),
+                                                snapshot.data!.length
+                                                    .toString(),
                                                 'posts');
                                           } else {
                                             return Center(
@@ -260,7 +263,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                                               padding: const EdgeInsets.only(
                                                   left: 24.0),
                                               child: detailsWidget(
-                                                  snapshot.data.length
+                                                  snapshot.data!.length
                                                       .toString(),
                                                   'followers'),
                                             );
@@ -288,7 +291,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                                               padding: const EdgeInsets.only(
                                                   left: 20.0),
                                               child: detailsWidget(
-                                                  snapshot.data.length
+                                                  snapshot.data!.length
                                                       .toString(),
                                                   'following'),
                                             );
@@ -322,7 +325,8 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 25.0, top: 0.0),
-                    child: _user.bio.isNotEmpty ? Text(_user.bio) : Container(),
+                    child:
+                        _user.bio!.isNotEmpty ? Text(_user.bio!) : Container(),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 0.0),
@@ -387,7 +391,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                 if (snapshot.connectionState == ConnectionState.done) {
                   return GridView.builder(
                     shrinkWrap: true,
-                    itemCount: snapshot.data.length,
+                    itemCount: snapshot.data!.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
                         crossAxisSpacing: 4.0,
@@ -416,11 +420,11 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                       //                 ))));
                       //   },
                       // );
-                      var img = snapshot.data[index].data['imgUrl'];
+                      var img = snapshot.data![index].data['imgUrl'];
                       return GestureDetector(
                         child: img != ""
                             ? CachedNetworkImage(
-                                imageUrl: snapshot.data[index].data['imgUrl'],
+                                imageUrl: snapshot.data![index].data['imgUrl'],
                                 placeholder: ((context, s) => Center(
                                       child: img != ""
                                           ? CircularProgressIndicator()
@@ -435,7 +439,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                                 height: 125.0,
                                 padding: EdgeInsets.all(5),
                                 child: Text(
-                                  snapshot.data[index].data['caption'],
+                                  snapshot.data![index].data['caption'],
                                   style: TextStyle(color: Colors.black),
                                   textAlign: TextAlign.left,
                                 ),
@@ -443,14 +447,14 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                               ),
                         onTap: () {
                           print(
-                              "SNAPSHOT : ${snapshot.data[index].reference.path}");
+                              "SNAPSHOT : ${snapshot.data![index].reference.path}");
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: ((context) => PostDetailScreen(
                                         user: _user,
-                                        currentuser: _user,
-                                        documentSnapshot: snapshot.data[index],
+                                        currentUser: _user,
+                                        documentSnapshot: snapshot.data![index],
                                       ))));
                         },
                       );
@@ -464,6 +468,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
               } else {
                 return Center(child: CircularProgressIndicator());
               }
+              return Center(child: CircularProgressIndicator());
             }),
           )
         : FutureBuilder(
@@ -474,15 +479,15 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                 if (snapshot.connectionState == ConnectionState.done) {
                   return SingleChildScrollView(
                     child: SizedBox(
-                      height: 600.0,
-                      child: ListView.builder(
-                          //shrinkWrap: true,
-                          itemCount: snapshot.data.length,
-                          itemBuilder: ((context, index) => ListItem(
-                              list: snapshot.data,
-                              index: index,
-                              user: _user,
-                              currentuser: currentuser)))),
+                        height: 600.0,
+                        child: ListView.builder(
+                            //shrinkWrap: true,
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: ((context, index) => ListItem(
+                                list: snapshot.data!,
+                                index: index,
+                                user: _user,
+                                currentuser: currentuser)))),
                   );
                 } else {
                   return Center(
@@ -521,7 +526,11 @@ class ListItem extends StatefulWidget {
   User user, currentuser;
   int index;
 
-  ListItem({this.list, this.user, this.index, this.currentuser});
+  ListItem(
+      {required this.list,
+      required this.user,
+      required this.index,
+      required this.currentuser});
 
   @override
   _ListItemState createState() => _ListItemState();
@@ -530,7 +539,7 @@ class ListItem extends StatefulWidget {
 class _ListItemState extends State<ListItem> {
   var _repository = Repository();
   bool _isLiked = false;
-  Future<List<DocumentSnapshot>> _future;
+  late Future<List<DocumentSnapshot>> _future;
 
   Widget commentWidget(DocumentReference reference) {
     return FutureBuilder(
@@ -539,7 +548,7 @@ class _ListItemState extends State<ListItem> {
         if (snapshot.hasData) {
           return GestureDetector(
             child: Text(
-              'View all ${snapshot.data.length} comments',
+              'View all ${snapshot.data!.length} comments',
               style: TextStyle(color: Colors.grey),
             ),
             onTap: () {
@@ -586,7 +595,7 @@ class _ListItemState extends State<ListItem> {
                       shape: BoxShape.circle,
                       image: new DecorationImage(
                           fit: BoxFit.fill,
-                          image: new NetworkImage(widget.user.profileImage)),
+                          image: new NetworkImage(widget.user.profileImage!)),
                     ),
                   ),
                   new SizedBox(
@@ -596,7 +605,7 @@ class _ListItemState extends State<ListItem> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       new Text(
-                        widget.user.name,
+                        widget.user.name!,
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       widget.list[widget.index].data['location'] != null
@@ -705,13 +714,13 @@ class _ListItemState extends State<ListItem> {
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: likesSnapshot.data.length > 1
+                  child: likesSnapshot.data!.length > 1
                       ? Text(
-                          "Liked by ${likesSnapshot.data[0].data['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
+                          "Liked by ${likesSnapshot.data![0].data['ownerName']} and ${(likesSnapshot.data!.length - 1).toString()} others",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         )
-                      : Text(likesSnapshot.data.length == 1
-                          ? "Liked by ${likesSnapshot.data[0].data['ownerName']}"
+                      : Text(likesSnapshot.data!.length == 1
+                          ? "Liked by ${likesSnapshot.data![0].data['ownerName']}"
                           : "0 Likes"),
                 ),
               );
@@ -729,7 +738,7 @@ class _ListItemState extends State<ListItem> {
                     children: <Widget>[
                       Wrap(
                         children: <Widget>[
-                          Text(widget.user.name,
+                          Text(widget.user.name!,
                               style: TextStyle(fontWeight: FontWeight.bold)),
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0),
@@ -755,9 +764,9 @@ class _ListItemState extends State<ListItem> {
 
   void postLike(DocumentReference reference) {
     var _like = Like(
-        ownerName: widget.currentuser.name,
-        ownerPhotoUrl: widget.currentuser.profileImage,
-        ownerUid: widget.currentuser.uid,
+        ownerName: widget.currentuser.name!,
+        ownerPhotoUrl: widget.currentuser.profileImage!,
+        ownerUid: widget.currentuser.uid!,
         timeStamp: FieldValue.serverTimestamp());
     reference
         .collection('likes')

@@ -16,7 +16,7 @@ final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
 final BehaviorSubject<String> selectNotificationSubject =
     BehaviorSubject<String>();
 
-NotificationAppLaunchDetails notificationAppLaunchDetails;
+NotificationAppLaunchDetails notificationAppLaunchDetails = NotificationAppLaunchDetails(true, "true");
 
 class ReceivedNotification {
   final int id;
@@ -25,10 +25,10 @@ class ReceivedNotification {
   final String payload;
 
   ReceivedNotification({
-    @required this.id,
-    @required this.title,
-    @required this.body,
-    @required this.payload,
+    required this.id,
+    required this.title,
+    required this.body,
+    required this.payload,
   });
 }
 

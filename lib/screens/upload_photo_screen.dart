@@ -22,11 +22,11 @@ class UploadPhotoScreen extends StatefulWidget {
 }
 
 class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
-  File imageFile;
+  late File? imageFile;
   var _locationController;
   var _captionController;
   final _repository = Repository();
-  String caption, location;
+  late String caption, location;
 
   @override
   void initState() {
@@ -74,10 +74,10 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                 _changeVisibility(false);
 
                 _repository.getCurrentUser().then((currentUser) {
-                  if (currentUser != null && imageFile != null) {
+                  if (currentUser != null) {
                     compressImage();
                     _repository.retrieveUserDetails(currentUser).then((user) {
-                      _repository.uploadImageToStorage(imageFile).then((url) {
+                      _repository.uploadImageToStorage(imageFile!).then((url) {
                         _repository
                             .addPostToDb(user, url, _captionController.text,
                                 _locationController.text)
@@ -96,7 +96,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                         print("Error uploading image to storage : $e");
                       });
                     });
-                  } else if (currentUser != null && imageFile == null) {
+                  } else if (imageFile == null) {
                     _repository.retrieveUserDetails(currentUser).then((user) {
                       _repository
                           .addPostToDb(user, '', _captionController.text,
@@ -180,14 +180,14 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                           children: <Widget>[
                             GestureDetector(
                               child: Chip(
-                                label: Text(snapshot.data.first.locality == null
+                                label: Text(snapshot.data!.first.locality == null
                                     ? 'No location found'
-                                    : snapshot.data.first.locality),
+                                    : snapshot.data!.first.locality),
                               ),
                               onTap: () {
                                 setState(() {
                                   _locationController.text =
-                                      snapshot.data.first.locality;
+                                      snapshot.data!.first.locality;
                                 });
                               },
                             ),
@@ -213,35 +213,35 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                                             color: Colors.black, fontSize: 12),
                                         children: [
                                           TextSpan(
-                                              text: snapshot.data.first
+                                              text: snapshot.data!.first
                                                           .subAdminArea ==
                                                       null
                                                   ? 'No sub Area found'
                                                   : snapshot
-                                                      .data.first.subAdminArea),
+                                                      .data!.first.subAdminArea),
                                           TextSpan(text: ', '),
                                           TextSpan(
-                                              text: snapshot.data.first
+                                              text: snapshot.data!.first
                                                           .subLocality ==
                                                       null
                                                   ? 'No sub-locality found'
                                                   : snapshot
-                                                      .data.first.subLocality),
+                                                      .data!.first.subLocality),
                                         ]),
                                   ),
                                 ),
                                 onTap: () {
                                   setState(() {
                                     _locationController.text =
-                                        snapshot.data.first.subAdminArea != null
-                                            ? snapshot.data.first.subAdminArea
+                                        snapshot.data!.first.subAdminArea != null
+                                            ? snapshot.data!.first.subAdminArea
                                             : '' +
                                                         ", " +
-                                                        snapshot.data.first
+                                                        snapshot.data!.first
                                                             .subLocality !=
                                                     null
                                                 ? snapshot
-                                                    .data.first.subLocality
+                                                    .data!.first.subLocality
                                                 : '';
                                   });
                                 },
@@ -266,7 +266,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                           fit: BoxFit.fill,
                           image: imageFile == null
                               ? AssetImage('')
-                              : FileImage(imageFile))),
+                              : FileImage(imageFile!) as ImageProvider)),
                 ),
               ),
               Padding(
@@ -304,7 +304,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
     final path = tempDir.path;
     int rand = Random().nextInt(10000);
 
-    Im.Image image = Im.decodeImage(imageFile.readAsBytesSync());
+    Im.Image image = Im.decodeImage(imageFile!.readAsBytesSync());
     Im.copyResize(image, width: 500, height: 500);
 
     var newim2 = new File('$path/img_$rand.jpg')
@@ -317,8 +317,8 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
   }
 
   Future<List<Address>> locateUser() async {
-    LocationData currentLocation;
-    Future<List<Address>> addresses;
+    LocationData? currentLocation;
+    Future<List<Address>>? addresses;
 
     var location = new Location();
 

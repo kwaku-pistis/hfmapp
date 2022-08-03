@@ -1,19 +1,26 @@
-
 class User {
+  late String? uid;
+  late String? email;
+  late String? profileImage;
+  late String? name;
+  late String? followers;
+  late String? following;
+  late String? posts;
+  late String? bio;
+  late String? username;
 
-   String uid;
-   String email;
-   String profileImage;
-   String name;
-   String followers;
-   String following;
-   String posts;
-   String bio;
-   String username;
+  User(
+      {this.uid,
+      this.email,
+      this.profileImage,
+      this.name,
+      this.followers,
+      this.following,
+      this.bio,
+      this.posts,
+      this.username});
 
-   User({this.uid, this.email, this.profileImage, this.name, this.followers, this.following, this.bio, this.posts, this.username});
-
-    Map toMap(User user) {
+  Map<String, dynamic> toMap(User user) {
     var data = Map<String, dynamic>();
     data['uid'] = user.uid;
     data['email'] = user.email;
@@ -36,7 +43,6 @@ class User {
     this.following = mapData['following'];
     this.bio = mapData['bio'];
     this.posts = mapData['posts'];
-    this.username = mapData['username']; 
+    this.username = mapData['username'];
   }
 }
-

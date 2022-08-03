@@ -12,7 +12,7 @@ class AddPostScreen extends StatefulWidget {
 }
 
 class _AddPostScreenState extends State<AddPostScreen> {
-  File imageFile;
+  late File imageFile;
 
   Future<File> _pickImage(String action) async {
     File selectedImage;

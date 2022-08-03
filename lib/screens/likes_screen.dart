@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 class LikesScreen extends StatefulWidget {
   final DocumentReference documentReference;
   final User user;
-  LikesScreen({this.documentReference, this.user});
+  LikesScreen({required this.documentReference, required this.user});
 
   @override
   _LikesScreenState createState() => _LikesScreenState();
@@ -22,7 +22,10 @@ class _LikesScreenState extends State<LikesScreen> {
       appBar: AppBar(
         elevation: 1,
         backgroundColor: colortheme.primaryColor,
-        title: Text('Likes', style: TextStyle(color: Colors.white),),
+        title: Text(
+          'Likes',
+          style: TextStyle(color: Colors.white),
+        ),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: FutureBuilder(
@@ -30,14 +33,14 @@ class _LikesScreenState extends State<LikesScreen> {
         builder: ((context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
           if (snapshot.hasData) {
             return ListView.builder(
-              itemCount: snapshot.data.length,
+              itemCount: snapshot.data!.length,
               itemBuilder: ((context, index) {
                 return Padding(
                   padding: const EdgeInsets.only(left: 4.0, top: 16.0),
                   child: ListTile(
                     title: GestureDetector(
                       onTap: () {
-                        // snapshot.data[index].data['ownerName'] == widget.user.displayName ? 
+                        // snapshot.data[index].data['ownerName'] == widget.user.displayName ?
                         // Navigator.push(context, MaterialPageRoute(
                         //   builder: ((context) => InstaProfileScreen())
                         // )) : Navigator.push(context, MaterialPageRoute(
@@ -45,7 +48,7 @@ class _LikesScreenState extends State<LikesScreen> {
                         // ));
                       },
                       child: Text(
-                        snapshot.data[index].data['ownerName'],
+                        snapshot.data![index].data['ownerName'],
                         style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
@@ -54,16 +57,16 @@ class _LikesScreenState extends State<LikesScreen> {
                     ),
                     leading: GestureDetector(
                       onTap: () {
-                      //  snapshot.data[index].data['ownerName'] == widget.user.displayName ? 
-                      //   Navigator.push(context, MaterialPageRoute(
-                      //     builder: ((context) => InstaProfileScreen())
-                      //   )) : Navigator.push(context, MaterialPageRoute(
-                      //     builder: ((context) => InstaFriendProfileScreen(name: snapshot.data[index].data['ownerName'],))
-                      //   ));
+                        //  snapshot.data[index].data['ownerName'] == widget.user.displayName ?
+                        //   Navigator.push(context, MaterialPageRoute(
+                        //     builder: ((context) => InstaProfileScreen())
+                        //   )) : Navigator.push(context, MaterialPageRoute(
+                        //     builder: ((context) => InstaFriendProfileScreen(name: snapshot.data[index].data['ownerName'],))
+                        //   ));
                       },
                       child: CircleAvatar(
                         backgroundImage: NetworkImage(
-                            snapshot.data[index].data['ownerPhotoUrl']),
+                            snapshot.data![index].data['ownerPhotoUrl']),
                         radius: 30.0,
                       ),
                     ),

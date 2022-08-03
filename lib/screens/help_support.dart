@@ -10,8 +10,8 @@ class HelpSupport extends StatefulWidget {
   _HelpSupportState createState() => _HelpSupportState();
 }
 
-String packageName;
-String version;
+String packageName = '';
+String version = '';
 
 class _HelpSupportState extends State<HelpSupport> {
   @override

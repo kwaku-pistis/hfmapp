@@ -20,7 +20,7 @@ Firestore _firestore = Firestore.instance;
 var _repository = Repository();
 
 class _MessagesState extends State<Messages> {
-  String id;
+  late String id;
   @override
   void initState() {
     super.initState();
@@ -91,13 +91,13 @@ class _MessagesState extends State<Messages> {
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError)
           return Center(
-            child: Text(snapshot.error),
+            child: Text(snapshot.error.toString()),
           );
         if (snapshot.connectionState == ConnectionState.waiting)
           return Center(
             child: CircularProgressIndicator(),
           );
-        if (snapshot.data.documents.isEmpty)
+        if (snapshot.data!.documents.isEmpty)
           return Center(
               child: GestureDetector(
             child: Column(
@@ -116,9 +116,9 @@ class _MessagesState extends State<Messages> {
             },
           ));
         return ListView.builder(
-            itemCount: snapshot.data.documents.length,
+            itemCount: snapshot.data!.documents.length,
             itemBuilder: (context, index) =>
-                _friendTileBuilder(snapshot.data.documents[index]));
+                _friendTileBuilder(snapshot.data!.documents[index]));
       },
     );
   }
@@ -127,18 +127,19 @@ class _MessagesState extends State<Messages> {
     return StreamBuilder(
       stream: Stream.fromFuture(getFriendById(document[FRIEND_ID])),
       builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        if (snapshot.hasError) return Center(child: Text(snapshot.error));
+        if (snapshot.hasError)
+          return Center(child: Text(snapshot.error.toString()));
         if (snapshot.connectionState == ConnectionState.waiting)
           return Center(
             child: CircularProgressIndicator(),
           );
         return ListTile(
-          title: Text(snapshot.data.data[USER_DISPLAY_NAME]),
+          title: Text(snapshot.data!.data[USER_DISPLAY_NAME]),
           // subtitle: Text(document[FRIEND_LATEST_MESSAGE] == null
           //     ? '...'
           //     : document[FRIEND_LATEST_MESSAGE]),
           subtitle: Text(
-            'A conversation with ${snapshot.data.data[USER_DISPLAY_NAME]}',
+            'A conversation with ${snapshot.data!.data[USER_DISPLAY_NAME]}',
             style: TextStyle(fontStyle: FontStyle.italic),
           ),
           leading: Container(
@@ -150,8 +151,8 @@ class _MessagesState extends State<Messages> {
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
                   ),
                 ),
-                imageUrl: snapshot.data.data[USER_PHOTO_URI] != null
-                    ? snapshot.data.data[USER_PHOTO_URI]
+                imageUrl: snapshot.data!.data[USER_PHOTO_URI] != null
+                    ? snapshot.data!.data[USER_PHOTO_URI]
                     : USER_IMAGE_PLACE_HOLDER,
                 width: MAINSCREEN_FRIEND_PHOTO_WIDTH,
                 height: MAINSCREEN_FRIEND_PHOTO_HEIGHT,
@@ -163,11 +164,13 @@ class _MessagesState extends State<Messages> {
           ),
           //navigate to chatScreen
           onTap: () => Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) =>
-                  Chat(friendId: snapshot.data.data[USER_ID], id: id,))),
+              builder: (context) => Chat(
+                    friendId: snapshot.data!.data[USER_ID],
+                    id: id,
+                  ))),
           onLongPress: () => _longPressAlertDialog(
-              snapshot.data.data[USER_DISPLAY_NAME],
-              snapshot.data.data[USER_ID]),
+              snapshot.data!.data[USER_DISPLAY_NAME],
+              snapshot.data!.data[USER_ID]),
         );
       },
     );
@@ -183,7 +186,10 @@ class _MessagesState extends State<Messages> {
             content: Text('Do you want to delete chat with $displayName?'),
             actions: <Widget>[
               FlatButton(
-                child: Text('Delete', style: TextStyle(color: colortheme.accentColor),),
+                child: Text(
+                  'Delete',
+                  style: TextStyle(color: colortheme.accentColor),
+                ),
                 onPressed: () {
                   Navigator.pop(context);
                   deleteUser(userId, id).then((value) {
@@ -191,8 +197,11 @@ class _MessagesState extends State<Messages> {
                   });
                 },
               ),
-              FlatButton(
-                child: Text('Cancel', style: TextStyle(color: colortheme.accentColor),),
+              ElevatedButton(
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(color: colortheme.accentColor),
+                ),
                 onPressed: () => Navigator.pop(context),
               )
             ],

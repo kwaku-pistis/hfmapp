@@ -288,7 +288,7 @@ Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) {
   }
 
   // Or do other work.
-  return null;
+  return Future<void>.value();
 }
 
 final Map<String, Item> _items = <String, Item>{};
@@ -302,20 +302,21 @@ Item _itemForMessage(Map<String, dynamic> message) {
 }
 
 class Item {
-  Item({this.itemId});
   final String itemId;
 
+  Item({required this.itemId});
+  
   StreamController<Item> _controller = StreamController<Item>.broadcast();
   Stream<Item> get onChanged => _controller.stream;
 
-  String _matchteam;
+  late String _matchteam;
   String get matchteam => _matchteam;
   set matchteam(String value) {
     _matchteam = value;
     _controller.add(this);
   }
 
-  String _score;
+  late String _score;
   String get score => _score;
   set score(String value) {
     _score = value;
@@ -329,7 +330,7 @@ class Item {
       routeName,
       () => MaterialPageRoute<void>(
         settings: RouteSettings(name: routeName),
-        builder: (BuildContext context) => null, // DetailPage(itemId),
+        builder: (BuildContext context) => Container(), // DetailPage(itemId),
       ),
     );
   }

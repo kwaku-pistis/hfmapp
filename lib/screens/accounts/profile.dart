@@ -19,7 +19,7 @@ class Profile extends StatefulWidget {
   final String data;
   final FirebaseUser user;
 
-  Profile({@required this.data, @required this.user});
+  Profile({required this.data, required this.user});
 }
 
 final Pattern emailPattern =
@@ -37,23 +37,23 @@ bool usernameValidate = false;
 bool genderValidate = false;
 bool peValidate = false;
 
-File _image;
+File? _image;
 var image;
 int _state = 0;
 
-String fname, lname, username, phoneOrEmail, gender;
+String? fname, lname, username, phoneOrEmail, gender;
 
 StorageReference _storage =
     FirebaseStorage.instance.ref().child('User Profile Image');
 
 final Firestore _firestore = Firestore.instance;
-User _user;
+User? _user;
 
 class _ProfileState extends State<Profile> {
   String data;
   FirebaseUser user;
 
-  _ProfileState({@required this.data, @required this.user});
+  _ProfileState({required this.data, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +102,7 @@ class _ProfileState extends State<Profile> {
                       image: DecorationImage(
                         image: _image == null
                             ? AssetImage('assets/images/profile.png')
-                            : FileImage(_image),
+                            : FileImage(_image!) as ImageProvider,
                         fit: BoxFit.cover,
                       )),
                 ),
@@ -126,7 +126,8 @@ class _ProfileState extends State<Profile> {
                           margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
                           child: TextFormField(
                               controller: firstNameController,
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                               decoration: const InputDecoration(
                                 icon: Icon(
                                   Icons.person,
@@ -139,18 +140,18 @@ class _ProfileState extends State<Profile> {
                                 contentPadding:
                                     EdgeInsets.only(bottom: 10, top: 10),
                               ),
-                              onSaved: (String value) {
+                              onSaved: (String? value) {
                                 // This optional block of code can be used to run
                                 // code when the user saves the form.
                                 setState(() {
                                   fname = value;
                                 });
                               },
-                              validator: (String value) {
+                              validator: (String? value) {
                                 // RegExp emailRegex = new RegExp(emailPattern);
                                 // RegExp phoneRegex = new RegExp(phonePattern);
 
-                                if (value.isEmpty) {
+                                if (value!.isEmpty) {
                                   return 'This field is required';
                                 }
                                 if (value.contains('@')) {
@@ -174,7 +175,8 @@ class _ProfileState extends State<Profile> {
                           margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
                           child: TextFormField(
                               controller: null,
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                               decoration: const InputDecoration(
                                 icon: Icon(
                                   Icons.person,
@@ -187,18 +189,18 @@ class _ProfileState extends State<Profile> {
                                 contentPadding:
                                     EdgeInsets.only(bottom: 10, top: 10),
                               ),
-                              onSaved: (String value) {
+                              onSaved: (String? value) {
                                 // This optional block of code can be used to run
                                 // code when the user saves the form.
                                 setState(() {
                                   lname = value;
                                 });
                               },
-                              validator: (String value) {
+                              validator: (String? value) {
                                 // RegExp emailRegex = new RegExp(emailPattern);
                                 // RegExp phoneRegex = new RegExp(phonePattern);
 
-                                if (value.isEmpty) {
+                                if (value!.isEmpty) {
                                   return 'This field is required';
                                 }
                                 if (value.contains('@')) {
@@ -222,7 +224,8 @@ class _ProfileState extends State<Profile> {
                           margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
                           child: TextFormField(
                               controller: null,
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                               decoration: const InputDecoration(
                                 icon: Icon(
                                   Icons.person_pin,
@@ -235,18 +238,18 @@ class _ProfileState extends State<Profile> {
                                 contentPadding:
                                     EdgeInsets.only(bottom: 10, top: 10),
                               ),
-                              onSaved: (String value) {
+                              onSaved: (String? value) {
                                 // This optional block of code can be used to run
                                 // code when the user saves the form.
                                 setState(() {
                                   username = value;
                                 });
                               },
-                              validator: (String value) {
+                              validator: (String? value) {
                                 // RegExp emailRegex = new RegExp(emailPattern);
                                 // RegExp phoneRegex = new RegExp(phonePattern);
 
-                                if (value.isEmpty) {
+                                if (value!.isEmpty) {
                                   return 'This field is required';
                                 }
 
@@ -267,7 +270,8 @@ class _ProfileState extends State<Profile> {
                           margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
                           child: TextFormField(
                               controller: null,
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                               initialValue: data,
                               decoration: const InputDecoration(
                                 icon: Icon(
@@ -281,18 +285,19 @@ class _ProfileState extends State<Profile> {
                                 contentPadding:
                                     EdgeInsets.only(bottom: 10, top: 10),
                               ),
-                              onSaved: (String value) {
+                              onSaved: (String? value) {
                                 // This optional block of code can be used to run
                                 // code when the user saves the form.
                                 setState(() {
                                   phoneOrEmail = value;
                                 });
                               },
-                              validator: (String value) {
-                                RegExp emailRegex = new RegExp(emailPattern);
+                              validator: (String? value) {
+                                RegExp emailRegex =
+                                    new RegExp(emailPattern.toString());
                                 //RegExp phoneRegex = new RegExp(phonePattern);
 
-                                if (value.startsWith(new RegExp(r'[a-z]'))) {
+                                if (value!.startsWith(new RegExp(r'[a-z]'))) {
                                   if (!emailRegex.hasMatch(value)) {
                                     return 'Not a valid email address';
                                   }
@@ -357,9 +362,9 @@ class _ProfileState extends State<Profile> {
                               height: 0.5,
                               color: Color(0xff326b40),
                             ),
-                            onChanged: (String newValue) {
+                            onChanged: (String? newValue) {
                               setState(() {
-                                dropdownValue = newValue;
+                                dropdownValue = newValue!;
                               });
                             },
                             items: options
@@ -421,12 +426,12 @@ class _ProfileState extends State<Profile> {
   }
 
   _validateForm() {
-    if (_formkey.currentState.validate() &&
+    if (_formkey.currentState!.validate() &&
         dropdownValue != '--Select Gender--') {
       setState(() {
         _state = 1;
       });
-      _formkey.currentState.save();
+      _formkey.currentState!.save();
 
       if (image != null) {
         _uploadImage();
@@ -446,7 +451,7 @@ class _ProfileState extends State<Profile> {
         .whenComplete(await _saveDataToFirebaseDB(taskSnapshot));
   }
 
-  _saveDataToFirebaseDB(StorageTaskSnapshot taskSnapshot) async {
+  _saveDataToFirebaseDB(StorageTaskSnapshot? taskSnapshot) async {
     String downloadUrl =
         taskSnapshot != null ? await taskSnapshot.ref.getDownloadURL() : '';
     // DocumentReference storeReference =
@@ -466,7 +471,7 @@ class _ProfileState extends State<Profile> {
 
     _user = User(
         uid: user.uid,
-        email:data,
+        email: data,
         name: '$fname $lname',
         profileImage: downloadUrl,
         followers: '0',
@@ -482,7 +487,8 @@ class _ProfileState extends State<Profile> {
     _firestore
         .collection("User Info")
         .document(user.uid)
-        .setData(_user.toMap(_user)).then(moveToHome(downloadUrl));
+        .setData(_user!.toMap(_user!))
+        .then(moveToHome(downloadUrl));
   }
 
   moveToHome(String downloadUrl) async {

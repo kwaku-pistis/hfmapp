@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 class Chat extends StatefulWidget {
   final String friendId, id;
-  Chat({@required this.friendId, @required this.id});
+  Chat({required this.friendId, required this.id});
 
   @override
   State<StatefulWidget> createState() => ChatState(friendId: friendId);
@@ -16,12 +16,12 @@ class Chat extends StatefulWidget {
 
 class ChatState extends State<Chat> {
   final String friendId;
-  String friendDisplayName;
-  String friendPhotoUri;
-  String groupId;
+  late String friendDisplayName;
+  late String friendPhotoUri;
+  late String groupId;
   //String id;
-  String about;
-  ChatState({@required this.friendId});
+  late String about;
+  ChatState({required this.friendId});
   var _repository = Repository();
 
   @override
@@ -75,18 +75,17 @@ class ChatState extends State<Chat> {
   }
 
   List<Widget> _appBarActions() {
-    return null;
+    return [];
   }
 
   Widget _chatScreenBody() {
     return Container(
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/adinkra_pattern.png'),
-          fit: BoxFit.cover,
-        )
-      ),
+          image: DecorationImage(
+        image: AssetImage('assets/images/adinkra_pattern.png'),
+        fit: BoxFit.cover,
+      )),
       child: Column(
         children: <Widget>[
           ChatSegment(groupId: groupId, id: widget.id, friendId: friendId),
@@ -135,5 +134,4 @@ class ChatState extends State<Chat> {
 
     return Future.value(false);
   }
-
 }

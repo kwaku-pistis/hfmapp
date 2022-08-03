@@ -18,8 +18,8 @@ class ProfileDetails extends StatefulWidget {
   _ProfileDetailsState createState() => _ProfileDetailsState();
 }
 
-String name, username, profileImage, uuid;
-User _user;
+String name = '', username = '', profileImage = '', uuid = '';
+late User _user;
 bool _isGridActive = true;
 Color _gridColor = colortheme.accentColor;
 Color _listColor = Colors.grey;
@@ -27,7 +27,7 @@ var timeDiff;
 
 class _ProfileDetailsState extends State<ProfileDetails> {
   var _repository = Repository();
-  Future<List<DocumentSnapshot>> _future;
+  late Future<List<DocumentSnapshot>> _future;
 
   @override
   void initState() {
@@ -42,10 +42,10 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     User user = await _repository.retrieveUserDetails(currentUser);
     setState(() {
       _user = user;
-      name = _user.name;
-      username = _user.username;
-      profileImage = _user.profileImage;
-      uuid = _user.uid;
+      name = _user.name!;
+      username = _user.username!;
+      profileImage = _user.profileImage!;
+      uuid = _user.uid!;
     });
     _future = _repository.retrieveUserPosts(uuid);
   }
@@ -91,7 +91,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                           image: DecorationImage(
                             image: profileImage == null
                                 ? AssetImage('assets/images/profile.png')
-                                : NetworkImage(profileImage),
+                                : NetworkImage(profileImage) as ImageProvider,
                             fit: BoxFit.fill,
                           ),
                         ),
@@ -137,11 +137,11 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                               context,
                               MaterialPageRoute(
                                   builder: ((context) => EditProfileScreen(
-                                      photoUrl: _user.profileImage,
-                                      email: _user.email,
-                                      bio: _user.bio,
-                                      name: _user.name,
-                                      username: _user.username))
+                                      photoUrl: _user.profileImage!,
+                                      email: _user.email!,
+                                      bio: _user.bio!,
+                                      name: _user.name!,
+                                      username: _user.username!))
                                   //builder: ((context) => null)
                                   ));
                         },
@@ -165,7 +165,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
                       if (snapshot.hasData) {
                         return detailsWidget(
-                            snapshot.data.length.toString(), 'posts');
+                            snapshot.data!.length.toString(), 'posts');
                       } else {
                         return Center(
                           child: CircularProgressIndicator(),
@@ -183,7 +183,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         return Padding(
                           padding: const EdgeInsets.only(left: 24.0),
                           child: detailsWidget(
-                              snapshot.data.length.toString(), 'followers'),
+                              snapshot.data!.length.toString(), 'followers'),
                         );
                       } else {
                         return Center(
@@ -202,7 +202,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         return Padding(
                           padding: const EdgeInsets.only(left: 20.0),
                           child: detailsWidget(
-                              snapshot.data.length.toString(), 'following'),
+                              snapshot.data!.length.toString(), 'following'),
                         );
                       } else {
                         return Center(
@@ -296,17 +296,17 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                 if (snapshot.connectionState == ConnectionState.done) {
                   return GridView.builder(
                     shrinkWrap: true,
-                    itemCount: snapshot.data.length,
+                    itemCount: snapshot.data!.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
                         crossAxisSpacing: 4.0,
                         mainAxisSpacing: 4.0),
                     itemBuilder: ((context, index) {
-                      var img = snapshot.data[index].data['imgUrl'];
+                      var img = snapshot.data![index].data['imgUrl'];
                       return GestureDetector(
                         child: img != ""
                             ? CachedNetworkImage(
-                                imageUrl: snapshot.data[index].data['imgUrl'],
+                                imageUrl: snapshot.data![index].data['imgUrl'],
                                 placeholder: ((context, s) => Center(
                                       child: img != ""
                                           ? CircularProgressIndicator()
@@ -321,7 +321,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                                 height: 125.0,
                                 padding: EdgeInsets.all(5),
                                 child: Text(
-                                  snapshot.data[index].data['caption'],
+                                  snapshot.data![index].data['caption'],
                                   style: TextStyle(color: Colors.black),
                                   textAlign: TextAlign.left,
                                 ),
@@ -329,14 +329,14 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                               ),
                         onTap: () {
                           print(
-                              "SNAPSHOT : ${snapshot.data[index].reference.path}");
+                              "SNAPSHOT : ${snapshot.data![index].reference.path}");
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: ((context) => PostDetailScreen(
                                         user: _user,
-                                        currentuser: _user,
-                                        documentSnapshot: snapshot.data[index],
+                                        currentUser: _user,
+                                        documentSnapshot: snapshot.data![index],
                                       ))));
                         },
                       );
@@ -350,6 +350,10 @@ class _ProfileDetailsState extends State<ProfileDetails> {
               } else {
                 return Center(child: CircularProgressIndicator());
               }
+
+              return Center(
+                child: CircularProgressIndicator(),
+              );
             }),
           )
         : FutureBuilder(
@@ -362,9 +366,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       height: 600.0,
                       child: ListView.builder(
                           //shrinkWrap: true,
-                          itemCount: snapshot.data.length,
+                          itemCount: snapshot.data!.length,
                           itemBuilder: ((context, index) => ListItem(
-                              list: snapshot.data,
+                              list: snapshot.data!,
                               index: index,
                               user: _user))));
                 } else {
@@ -404,7 +408,7 @@ class ListItem extends StatefulWidget {
   final User user;
   final int index;
 
-  ListItem({this.list, this.user, this.index});
+  ListItem({required this.list, required this.user, required this.index});
 
   @override
   _ListItemState createState() => _ListItemState();
@@ -422,7 +426,7 @@ class _ListItemState extends State<ListItem> {
         if (snapshot.hasData) {
           return GestureDetector(
             child: Text(
-              'View all ${snapshot.data.length} comments',
+              'View all ${snapshot.data!.length} comments',
               style: TextStyle(color: Colors.grey),
             ),
             onTap: () {
@@ -453,7 +457,7 @@ class _ListItemState extends State<ListItem> {
   Widget build(BuildContext context) {
     var temp = widget.list[widget.index].data['postTime'];
     var diff = DateTime.parse(temp);
-    timeDiff =  Jiffy(diff).fromNow();
+    timeDiff = Jiffy(diff).fromNow();
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -483,7 +487,7 @@ class _ListItemState extends State<ListItem> {
                         shape: BoxShape.circle,
                         image: new DecorationImage(
                             fit: BoxFit.fill,
-                            image: new NetworkImage(widget.user.profileImage)),
+                            image: new NetworkImage(widget.user.profileImage!)),
                       ),
                     ),
                   ),
@@ -503,7 +507,7 @@ class _ListItemState extends State<ListItem> {
                           //             ))));
                         },
                         child: new Text(
-                          widget.user.name,
+                          widget.user.name!,
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -661,13 +665,13 @@ class _ListItemState extends State<ListItem> {
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: likesSnapshot.data.length > 1
+                      child: likesSnapshot.data!.length > 1
                           ? Text(
-                              "Liked by ${likesSnapshot.data[0].data['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
+                              "Liked by ${likesSnapshot.data![0].data['ownerName']} and ${(likesSnapshot.data!.length - 1).toString()} others",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             )
-                          : Text(likesSnapshot.data.length == 1
-                              ? "Liked by ${likesSnapshot.data[0].data['ownerName']}"
+                          : Text(likesSnapshot.data!.length == 1
+                              ? "Liked by ${likesSnapshot.data![0].data['ownerName']}"
                               : "0 Likes"),
                     ),
                   );
@@ -692,9 +696,9 @@ class _ListItemState extends State<ListItem> {
 
   void postLike(DocumentReference reference) {
     var _like = Like(
-        ownerName: widget.user.name,
-        ownerPhotoUrl: widget.user.name,
-        ownerUid: widget.user.uid,
+        ownerName: widget.user.name!,
+        ownerPhotoUrl: widget.user.name!,
+        ownerUid: widget.user.uid!,
         timeStamp: FieldValue.serverTimestamp());
     reference
         .collection('likes')

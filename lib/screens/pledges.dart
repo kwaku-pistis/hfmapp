@@ -12,7 +12,7 @@ import 'package:toast/toast.dart';
 class Pledges extends StatefulWidget {
   final String extra;
 
-  Pledges({@required this.extra});
+  Pledges({required this.extra});
 
   @override
   _PledgesState createState() => _PledgesState();
@@ -26,9 +26,9 @@ bool _amtValidate = false;
 
 class _PledgesState extends State<Pledges> {
   var _repository = Repository();
-  User _user;
-  String name;
-
+  late User _user;
+  late String name;
+ 
   @override
   void initState() {
     retrieveUserDetails();
@@ -40,7 +40,7 @@ class _PledgesState extends State<Pledges> {
     User user = await _repository.retrieveUserDetails(currentUser);
     setState(() {
       _user = user;
-      name = _user.name;
+      name = _user.name!;
     });
     //_future = _repository.retrieveUserPosts(_user.uid);
   }
@@ -141,7 +141,7 @@ class _PledgesState extends State<Pledges> {
                         return showDatePicker(
                             context: context,
                             firstDate: DateTime(1900),
-                            initialDate: currentValue ?? DateTime.now(),
+                            initialDate: currentValue,
                             lastDate: DateTime(2100));
                       },
                       autovalidate: false,

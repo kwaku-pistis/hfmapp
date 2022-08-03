@@ -13,7 +13,7 @@ import 'package:rave_flutter/rave_flutter.dart';
 class Payments extends StatefulWidget {
   final String extra;
 
-  Payments({@required this.extra});
+  Payments({required this.extra});
 
   @override
   _PaymentsState createState() => _PaymentsState();
@@ -21,7 +21,7 @@ class Payments extends StatefulWidget {
 
 class _PaymentsState extends State<Payments> {
   var _repository = Repository();
-  User _user;
+  late User _user;
 
   var scaffoldKey = GlobalKey<ScaffoldState>();
   var formKey = GlobalKey<FormState>();
@@ -38,17 +38,17 @@ class _PaymentsState extends State<Payments> {
   bool preAuthCharge = false;
   bool addSubAccounts = false;
   List<SubAccount> subAccounts = [];
-  String email;
-  double amount;
+  String email = '';
+  double amount = 0.0;
   String publicKey = "FLWPUBK-795349cc358b4d96003546de855fabe5-X";
   String encryptionKey = "b03b6272ecafe12b99089a8a";
-  String txRef;
-  String orderRef;
-  String narration;
-  String currency;
-  String country;
-  String firstName;
-  String lastName;
+  late String txRef;
+  String orderRef = '';
+  String narration = '';
+  String currency = 'GHS';
+  String country = 'GH';
+  String firstName = '';
+  String lastName = '';
 
   @override
   void initState() {
@@ -171,7 +171,7 @@ class _PaymentsState extends State<Payments> {
                         TextFormField(
                           decoration:
                               InputDecoration(hintText: 'Amount to charge (GHS)'),
-                          onSaved: (value) => amount = double.tryParse(value),
+                          onSaved: (value) => amount = double.tryParse(value!)!,
                           keyboardType: TextInputType.number,
                         ),
                         // SizedBox(height: 20),
@@ -195,19 +195,19 @@ class _PaymentsState extends State<Payments> {
                         SizedBox(height: 20),
                         TextFormField(
                           decoration: InputDecoration(hintText: 'Narration'),
-                          onSaved: (value) => narration = value,
+                          onSaved: (value) => narration = value!,
                         ),
                         SizedBox(height: 20),
                         TextFormField(
                           decoration: InputDecoration(
                               hintText: 'Currency code e.g GHS'),
-                          onSaved: (value) => currency = value,
+                          onSaved: (value) => currency = value!,
                         ),
                         SizedBox(height: 20),
                         TextFormField(
                           decoration:
                               InputDecoration(hintText: 'Country code e.g GH'),
-                          onSaved: (value) => country = value,
+                          onSaved: (value) => country = value!,
                         ),
                         SizedBox(height: 20),
                         // TextFormField(
@@ -223,7 +223,10 @@ class _PaymentsState extends State<Payments> {
                     ),
                   ),
                 ),
-                Button(text: 'Start Payment', onPressed: validateInputs)
+                ElevatedButton(
+                  child: Text('Start Payment'), 
+                  onPressed: validateInputs
+                )
               ],
             ),
           ),
@@ -241,23 +244,23 @@ class _PaymentsState extends State<Payments> {
       var subAccount = await showDialog<SubAccount>(
           context: context, builder: (context) => AddVendorWidget());
       if (subAccount != null) {
-        if (subAccounts == null) subAccounts = [];
+        // if (subAccounts == null) subAccounts = [];
         setState(() => subAccounts.add(subAccount));
       }
     }
 
     var buttons = <Widget>[
-      Button(
+      ElevatedButton(
         onPressed: addSubAccount,
-        text: 'Add vendor',
+        child: Text('Add vendor'),
       ),
       SizedBox(
         width: 10,
         height: 10,
       ),
-      Button(
+      ElevatedButton(
         onPressed: () => onAddAccountsChange(false),
-        text: 'Clear',
+        child: Text('Clear'),
       ),
     ];
 
@@ -298,7 +301,7 @@ class _PaymentsState extends State<Payments> {
 
   void validateInputs() {
     var formState = formKey.currentState;
-    if (!formState.validate()) {
+    if (!formState!.validate()) {
       setState(() => autoValidate = true);
       return;
     }
@@ -319,7 +322,7 @@ class _PaymentsState extends State<Payments> {
       ..email = _user.email
       ..fName = _user.name
       ..lName = _user.name
-      ..narration = narration ?? '${widget.extra}'
+      ..narration = narration
       ..txRef = widget.extra
       ..orderRef = orderRef
       ..acceptMpesaPayments = acceptMpesaPayment
@@ -338,7 +341,7 @@ class _PaymentsState extends State<Payments> {
     var response = await RavePayManager()
         .prompt(context: context, initializer: initializer);
     print(response);
-    scaffoldKey.currentState
-        .showSnackBar(SnackBar(content: Text(response?.message)));
+    scaffoldKey.currentState!
+        .showSnackBar(SnackBar(content: Text(response.message)));
   }
 }

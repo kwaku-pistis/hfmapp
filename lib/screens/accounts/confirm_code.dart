@@ -13,21 +13,21 @@ class ConfirmCode extends StatefulWidget {
 
   final String phoneNumber;
 
-  ConfirmCode({@required this.phoneNumber});
+  ConfirmCode({required this.phoneNumber});
 }
 
 TextEditingController codeTextController = new TextEditingController();
-String currentText;
+String currentText = '';
 int _state = 0;
-FirebaseUser _user;
-String _smsVerificationCode;
+FirebaseUser? _user;
+String _smsVerificationCode = '';
 
 FirebaseAuth _auth = FirebaseAuth.instance;
 
 class _ConfirmCodeState extends State<ConfirmCode> {
   String phoneNumber;
 
-  _ConfirmCodeState({@required this.phoneNumber});
+  _ConfirmCodeState({required this.phoneNumber});
 
   @override
   void initState() {
@@ -164,8 +164,8 @@ class _ConfirmCodeState extends State<ConfirmCode> {
             _verificationComplete(authCredentials, context),
         verificationFailed: (authException) =>
             _verificationFailed(authException, context),
-        codeSent: (verificationId, [code]) =>
-            _smsCodeSent(verificationId, [code]),
+        codeSent: (verificationId, [int? code]) =>
+            _smsCodeSent(verificationId, [code!]),
         codeAutoRetrievalTimeout: (verificationId) =>
             _codeAutoRetrievalTimeout(verificationId));
   }
@@ -185,8 +185,8 @@ class _ConfirmCodeState extends State<ConfirmCode> {
               _verificationComplete(authCredentials, context),
           verificationFailed: (authException) =>
               _verificationFailed(authException, context),
-          codeSent: (verificationId, [code]) =>
-              _smsCodeSent(verificationId, [code]),
+          codeSent: (verificationId, [int? code]) =>
+              _smsCodeSent(verificationId, [code!]),
           codeAutoRetrievalTimeout: (verificationId) =>
               _codeAutoRetrievalTimeout(verificationId));
 
@@ -211,7 +211,7 @@ class _ConfirmCodeState extends State<ConfirmCode> {
           MaterialPageRoute(
               builder: (BuildContext context) => Profile(
                     data: phoneNumber,
-                    user: _user,
+                    user: _user!,
                   )),
           ModalRoute.withName('/'));
       return onValue.user;

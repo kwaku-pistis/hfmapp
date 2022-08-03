@@ -29,17 +29,17 @@ class FeedScreen extends StatefulWidget {
 }
 
 var timeDiff;
-String packageName;
+String packageName = '';
 
 class _FeedScreenState extends State<FeedScreen> {
   var _repository = Repository();
-  User currentUser, user, followingUser;
-  IconData icon;
-  Color color;
-  List<User> usersList = List<User>();
-  Future<List<DocumentSnapshot>> _future, _userPosts;
+  late User currentUser, user, followingUser;
+  late IconData icon;
+  late Color color;
+  List<User> usersList = [];
+  late Future<List<DocumentSnapshot>> _future, _userPosts;
   // bool _isLiked = false;
-  List<String> followingUIDs = List<String>();
+  List<String> followingUIDs = [];
 
   List<int> _indexes = [];
 
@@ -145,20 +145,20 @@ class _FeedScreenState extends State<FeedScreen> {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (BuildContext context) => SearchScreen()));
         },
-        heroTag: 'btn1'));
+        heroTag: 'btn1') as UnicornButton );
     children.add(_profileOption(
         iconData: Icons.message,
         onPressed: () {
           Navigator.of(context).push(
               MaterialPageRoute(builder: (BuildContext context) => Messages()));
         },
-        heroTag: 'btn2'));
+        heroTag: 'btn2') as UnicornButton );
 
     return children;
   }
 
   Widget _profileOption(
-      {IconData iconData, Function onPressed, String heroTag}) {
+      {IconData? iconData, Function()? onPressed, String? heroTag}) {
     return UnicornButton(
         currentButton: FloatingActionButton(
       backgroundColor: Colors.grey[500],
@@ -181,9 +181,9 @@ class _FeedScreenState extends State<FeedScreen> {
           if (snapshot.connectionState == ConnectionState.done) {
             return ListView.builder(
                 //shrinkWrap: true,
-                itemCount: snapshot.data.length,
+                itemCount: snapshot.data!.length,
                 itemBuilder: ((context, index) => listItem(
-                      list: snapshot.data,
+                      list: snapshot.data!,
                       index: index,
                       user: followingUser,
                       currentUser: currentUser,
@@ -203,10 +203,10 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   Widget listItem(
-      {List<DocumentSnapshot> list, User user, User currentUser, int index}) {
-    print("dadadadad : ${user.uid}");
+      {List<DocumentSnapshot>? list, User? user, User? currentUser, int? index}) {
+    print("dadadadad : ${user!.uid}");
     print("datetime: ${DateTime.now()}");
-    var temp = list[index].data['postTime'];
+    var temp = list![index!].data['postTime'];
     var diff = DateTime.parse(temp);
     timeDiff = Jiffy(diff).fromNow();
 
@@ -215,7 +215,7 @@ class _FeedScreenState extends State<FeedScreen> {
 
     //if ()
     _repository
-        .checkIfUserLikedOrNot(currentUser.uid, list[index].reference)
+        .checkIfUserLikedOrNot(currentUser!.uid!, list[index].reference)
         .then((isLiked) {
       // print("reef : ${list[index].data[index].reference.path}");
       if (isLiked) {
@@ -435,13 +435,13 @@ class _FeedScreenState extends State<FeedScreen> {
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: likesSnapshot.data.length > 1
+                      child: likesSnapshot.data!.length > 1
                           ? Text(
-                              "Liked by ${likesSnapshot.data[0].data['ownerName']} and ${(likesSnapshot.data.length - 1).toString()} others",
+                              "Liked by ${likesSnapshot.data![0].data['ownerName']} and ${(likesSnapshot.data!.length - 1).toString()} others",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             )
-                          : Text(likesSnapshot.data.length == 1
-                              ? "Liked by ${likesSnapshot.data[0].data['ownerName']}"
+                          : Text(likesSnapshot.data!.length == 1
+                              ? "Liked by ${likesSnapshot.data![0].data['ownerName']}"
                               : "0 Likes"),
                     ),
                   );
@@ -471,7 +471,7 @@ class _FeedScreenState extends State<FeedScreen> {
         if (snapshot.hasData) {
           return GestureDetector(
             child: Text(
-              'View all ${snapshot.data.length} comments',
+              'View all ${snapshot.data!.length} comments',
               style: TextStyle(color: Colors.grey),
             ),
             onTap: () {
@@ -513,9 +513,9 @@ class _FeedScreenState extends State<FeedScreen> {
 
   void postLike(DocumentReference reference, User currentUser) {
     var _like = Like(
-        ownerName: currentUser.name,
-        ownerPhotoUrl: currentUser.profileImage,
-        ownerUid: currentUser.uid,
+        ownerName: currentUser.name!,
+        ownerPhotoUrl: currentUser.profileImage!,
+        ownerUid: currentUser.uid!,
         timeStamp: FieldValue.serverTimestamp());
     reference
         .collection('likes')

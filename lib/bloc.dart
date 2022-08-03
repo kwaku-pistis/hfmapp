@@ -30,7 +30,7 @@ class DeepLinkBloc extends Bloc {
   }
 
 
-  _onRedirected(String uri) {
+  _onRedirected(dynamic uri) {
     // Here can be any uri analysis, checking tokens etc, if it’s necessary
     // Throw deep link URI into the BloC's stream
     stateSink.add(uri);
@@ -43,7 +43,7 @@ class DeepLinkBloc extends Bloc {
   }
 
 
-  Future<String> startUri() async {
+  Future<dynamic> startUri() async {
     try {
       return platform.invokeMethod('initialLink');
     } on PlatformException catch (e) {

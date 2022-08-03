@@ -9,7 +9,7 @@ final GoogleSignIn _googleSignIn = new GoogleSignIn();
 
 /// try to authenticate with google silently or with interaction
 /// return a firebase user
-Future<FirebaseUser> signInWithGoogle() async{
+Future<AuthResult> signInWithGoogle() async{
   GoogleSignInAccount currentUser = _googleSignIn.currentUser;
   //try to sign in without user interaction
   if(currentUser == null){
@@ -29,7 +29,7 @@ Future<FirebaseUser> signInWithGoogle() async{
       accessToken: userAuth.accessToken);
 
 
-  //return await _firebaseAuth.signInWithCredential(credential);
+  return await _firebaseAuth.signInWithCredential(credential);
 }
 
 ///sign out user from firebase and google

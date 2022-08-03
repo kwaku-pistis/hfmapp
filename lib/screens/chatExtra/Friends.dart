@@ -22,7 +22,7 @@ List<String> _followingIds = [];
 
 class FriendsScreenState extends State<FriendsScreen> {
   //currentUser
-  String id;
+  String id = '';
 
   @override
   void initState() {
@@ -80,9 +80,9 @@ class FriendsScreenState extends State<FriendsScreen> {
         else {
           return _followingIds.isNotEmpty
               ? ListView.builder(
-                  itemCount: snapshots.data.documents.length,
+                  itemCount: snapshots.data!.documents.length,
                   itemBuilder: (context, index) =>
-                      _friendTileBuilder(snapshots.data.documents[index]),
+                      _friendTileBuilder(snapshots.data!.documents[index]),
                 )
               : CircularProgressIndicator();
         }

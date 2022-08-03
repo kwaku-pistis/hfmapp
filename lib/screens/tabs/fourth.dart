@@ -14,7 +14,7 @@ import 'package:package_info/package_info.dart';
 import 'package:share/share.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 
-String name, profileImage;
+late String name, profileImage;
 
 class Fourth extends StatefulWidget {
   @override
@@ -23,7 +23,7 @@ class Fourth extends StatefulWidget {
 
 class _FourthState extends State<Fourth> {
   var _repository = Repository();
-  User _user;
+  late User _user;
 
   @override
   void initState() {
@@ -36,15 +36,15 @@ class _FourthState extends State<Fourth> {
     User user = await _repository.retrieveUserDetails(currentUser);
     setState(() {
       _user = user;
-      name = _user.name;
-      profileImage = _user.profileImage;
+      name = _user.name!;
+      profileImage = _user.profileImage!;
     });
     //_future = _repository.retrieveUserPosts(_user.uid);
   }
 
   @override
   Widget build(BuildContext context) {
-    String packageName;
+    String packageName = '';
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       packageName = packageInfo.packageName;
     });
@@ -74,7 +74,7 @@ class _FourthState extends State<Fourth> {
                         image: DecorationImage(
                           image: profileImage == null
                               ? AssetImage('assets/images/profile.png')
-                              : NetworkImage(profileImage),
+                              : NetworkImage(profileImage) as ImageProvider,
                           fit: BoxFit.fill,
                         ),
                       ),
@@ -136,7 +136,8 @@ class _FourthState extends State<Fourth> {
                 color: colortheme.accentColor,
               ),
               title: Text('Invite a friend'),
-              onTap: () => Share.share('Join me $name on the HARVESTFIELDS APP and let\'s talk about Jesus. \nGet the app on playstore using this link: https://play.google.com/store/apps/details?id=$packageName'),
+              onTap: () => Share.share(
+                  'Join me $name on the HARVESTFIELDS APP and let\'s talk about Jesus. \nGet the app on playstore using this link: https://play.google.com/store/apps/details?id=$packageName'),
             ),
             ListTile(
               leading: Icon(

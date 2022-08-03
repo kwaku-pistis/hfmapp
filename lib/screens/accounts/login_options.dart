@@ -22,9 +22,9 @@ class LoginOptions extends StatefulWidget {
 TextEditingController emailTextController = new TextEditingController();
 bool _phoneValidate = false;
 int _state = 0;
-String _emailAddress;
-String _link;
-String emailAdd;
+String _emailAddress = '';
+String _link = '';
+String emailAdd = '';
 
 var _repository = Repository();
 
@@ -91,15 +91,15 @@ class _LoginOptionsState extends State<LoginOptions>
                 ),
                 Center(
                   child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 192,
-                      decoration: BoxDecoration(
-                        // shape: BoxShape.circle,
-                        image: DecorationImage(
-                            image: AssetImage('assets/images/hfm.png'),
-                            fit: BoxFit.cover),
-                      ),
+                    width: MediaQuery.of(context).size.width,
+                    height: 192,
+                    decoration: BoxDecoration(
+                      // shape: BoxShape.circle,
+                      image: DecorationImage(
+                          image: AssetImage('assets/images/hfm.png'),
+                          fit: BoxFit.cover),
                     ),
+                  ),
                 ),
                 SizedBox(height: 40),
                 Container(
@@ -192,14 +192,15 @@ class _LoginOptionsState extends State<LoginOptions>
     );
   }
 
-  void showPhoneDialog<T>({BuildContext context, Widget child}) {
+  void showPhoneDialog<T>(
+      {required BuildContext context, required Widget child}) {
     showDialog<T>(
       context: context,
       builder: (BuildContext context) => child,
-    ).then<void>((T value) {
+    ).then<void>((T? value) {
       // The value passed to Navigator.pop() or null.
       if (value != null) {
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
+        _scaffoldKey.currentState!.showSnackBar(SnackBar(
           content: Text('You selected: $value'),
         ));
       }
@@ -242,7 +243,7 @@ class _LoginOptionsState extends State<LoginOptions>
             'VERIFY NUMBER',
             style: Theme.of(context)
                 .textTheme
-                .button
+                .button!
                 .copyWith(fontSize: 16.0, color: colortheme.accentColor),
           ),
           onPressed: () {
@@ -287,7 +288,7 @@ class _LoginOptionsState extends State<LoginOptions>
             'VERIFY EMAIL',
             style: Theme.of(context)
                 .textTheme
-                .button
+                .button!
                 .copyWith(fontSize: 16.0, color: colortheme.accentColor),
           ),
           onPressed: () {
@@ -309,8 +310,8 @@ class _LoginOptionsState extends State<LoginOptions>
     );
   }
 
-  String phoneNumber;
-  String phoneIsoCode;
+  String phoneNumber = '';
+  String phoneIsoCode = '';
 
   void onPhoneNumberChange(
       String number, String internationalizedPhoneNumber, String isoCode) {
@@ -348,9 +349,9 @@ class _LoginOptionsState extends State<LoginOptions>
         await FirebaseDynamicLinks.instance.retrieveDynamicLink();
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    emailAdd = (prefs.getString('emailAddress') ?? null);
+    emailAdd = (prefs.getString('emailAddress') ?? null)!;
 
-    final Uri deepLink = data?.link;
+    final Uri deepLink = data.link;
     print(deepLink.toString());
 
     if (deepLink.toString() != null && emailAdd != null) {

@@ -1,18 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-class ShowImage extends StatefulWidget{
+class ShowImage extends StatefulWidget {
   final String imageUrl;
   final String tag;
-  ShowImage({@required this.imageUrl, @required this.tag});
+  ShowImage({required this.imageUrl, required this.tag});
   @override
-  State<StatefulWidget> createState() =>ShowImageState(imageUrl,tag);
-
+  State<StatefulWidget> createState() => ShowImageState(imageUrl, tag);
 }
-class ShowImageState extends State<ShowImage>{
+
+class ShowImageState extends State<ShowImage> {
   final String imageUrl;
   final String tag;
-  ShowImageState(this.imageUrl,this.tag);
+  ShowImageState(this.imageUrl, this.tag);
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +22,8 @@ class ShowImageState extends State<ShowImage>{
       ),
       backgroundColor: Colors.black,
       body: Center(
-        child: Hero(
-            tag: tag,
-            child: CachedNetworkImage(
-                imageUrl: imageUrl)
-        ),
+        child: Hero(tag: tag, child: CachedNetworkImage(imageUrl: imageUrl)),
       ),
     );
   }
-
 }
