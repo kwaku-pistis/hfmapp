@@ -35,7 +35,8 @@ final GoogleSignIn _googleSignIn = GoogleSignIn();
 class _LoginOptionsState extends State<LoginOptions>
     with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  String phoneNumber = '';
+  String? phoneNumber;
+  bool validNumber = false;
   PhoneNumber number = PhoneNumber();
   String parsableNumber = '';
   String phoneIsoCode = '';
@@ -56,21 +57,9 @@ class _LoginOptionsState extends State<LoginOptions>
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text(
-          'Welcome to HarvestFields',
-          style: TextStyle(
-            color: colorTheme.primaryColor,
-            fontSize: 30,
-          ),
-        ),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        centerTitle: true,
-        bottomOpacity: 0.0,
-      ),
       body: SingleChildScrollView(
         child: Container(
+            width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -78,55 +67,50 @@ class _LoginOptionsState extends State<LoginOptions>
                   fit: BoxFit.cover),
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                Text(
+                  'Welcome to HarvestFields',
+                  style: TextStyle(
+                    color: colorTheme.primaryColor,
+                    fontSize: 34,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 20),
                 Container(
-                  margin: const EdgeInsets.only(
-                      bottom: 40, top: 40, left: 20, right: 20),
-                  child: const Text(
-                    'Use any of the following means to register for HarverstFields Ministries app',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,
-                    ),
-                    textAlign: TextAlign.center,
+                  width: 150,
+                  height: 150,
+                  decoration: const BoxDecoration(
+                    // shape: BoxShape.circle,
+                    image: DecorationImage(
+                        image: AssetImage('assets/images/hfm.png'),
+                        fit: BoxFit.fitHeight),
                   ),
                 ),
-                Center(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: 192,
-                    decoration: const BoxDecoration(
-                      // shape: BoxShape.circle,
-                      image: DecorationImage(
-                          image: AssetImage('assets/images/hfm.png'),
-                          fit: BoxFit.cover),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 20),
                 Container(
                   width: MediaQuery.of(context).size.width * 0.6,
+                  height: 60,
                   margin: const EdgeInsets.only(
                     top: 40,
                   ),
                   child: ElevatedButton(
-                    onPressed: () {
-                      showPhoneDialog(
-                          context: context, child: _openPhoneDialog());
-                    },
+                    onPressed: () => _openPhoneDialog(),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all<Color>(
                         colorTheme.primaryColorDark,
                       ),
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
+                      elevation: MaterialStateProperty.all(8),
                     ),
                     child: const Text(
-                      'ENTER YOUR PHONE NUMBER',
+                      'SIGN UP WITH PHONE NUMBER',
                       style: TextStyle(
                         color: Colors.white,
                       ),
@@ -135,26 +119,25 @@ class _LoginOptionsState extends State<LoginOptions>
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width * 0.6,
+                  height: 60,
                   margin: const EdgeInsets.only(
-                    top: 5,
+                    top: 16,
                   ),
                   child: ElevatedButton(
-                    onPressed: () {
-                      showPhoneDialog(
-                          context: context, child: _openEmailDialog());
-                    },
+                    onPressed: () => _openEmailDialog(),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all<Color>(
                         colorTheme.primaryColor,
                       ),
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
+                      elevation: MaterialStateProperty.all(8),
                     ),
                     child: const Text(
-                      'ENTER YOUR EMAIL ADDRESS',
+                      'SIGN UP WITH EMAIL ADDRESS',
                       style: TextStyle(
                         color: Colors.white,
                       ),
@@ -163,8 +146,9 @@ class _LoginOptionsState extends State<LoginOptions>
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width * 0.6,
+                  height: 60,
                   margin: const EdgeInsets.only(
-                    top: 5,
+                    top: 16,
                   ),
                   child: ElevatedButton(
                     onPressed: () {
@@ -181,17 +165,19 @@ class _LoginOptionsState extends State<LoginOptions>
                       ),
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
+                      elevation: MaterialStateProperty.all(8),
                     ),
                     child: _setUpDialogChild(),
                   ),
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width * 0.6,
+                  height: 60,
                   margin: const EdgeInsets.only(
-                    top: 5,
+                    top: 16,
                   ),
                   child: ElevatedButton(
                     onPressed: () {},
@@ -201,9 +187,10 @@ class _LoginOptionsState extends State<LoginOptions>
                       ),
                       shape: MaterialStateProperty.all(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
+                      elevation: MaterialStateProperty.all(8),
                     ),
                     child: const Text(
                       'LOG IN WITH FACEBOOK',
@@ -219,64 +206,90 @@ class _LoginOptionsState extends State<LoginOptions>
     );
   }
 
-  void showPhoneDialog<T>(
-      {required BuildContext context, required Widget child}) {
-    showDialog<T>(
-      context: context,
-      builder: (BuildContext context) => child,
-    ).then<void>((T? value) {
-      // The value passed to Navigator.pop() or null.
-      if (value != null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('You selected: $value'),
-        ));
-      }
-    });
-  }
-
   _openPhoneDialog() {
     return Dialogs.materialDialog(
-      title: 'Phone Number Sign Up',
-      customView: InternationalPhoneNumberInput(
-        onInputChanged: (PhoneNumber number) {
-          print(number.phoneNumber);
-        },
-        onInputValidated: (bool value) {
-          print(value);
-        },
-        selectorConfig: const SelectorConfig(
-          selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
-        ),
-        ignoreBlank: false,
-        autoValidateMode: AutovalidateMode.disabled,
-        selectorTextStyle: const TextStyle(color: Colors.black),
-        initialValue: number,
-        textFieldController: numberTextController,
-        formatInput: false,
-        keyboardType:
-            const TextInputType.numberWithOptions(signed: true, decimal: true),
-        inputBorder: const OutlineInputBorder(),
-        onSaved: (PhoneNumber number) {
-          print('On Saved: $number');
-        },
-      ),
+      // title: 'Phone Number Sign Up',
+      // color: Colors.grey,
+      customView: Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              Text(
+                'Phone Number Sign Up',
+                style: TextStyle(
+                  color: colorTheme.primaryColor,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 40),
+              InternationalPhoneNumberInput(
+                onInputChanged: (PhoneNumber number) {
+                  print(number.phoneNumber);
+                  setState(() {
+                    phoneNumber = number.phoneNumber!;
+                  });
+                },
+                onInputValidated: (bool value) {
+                  print(value);
+                  setState(() {
+                    validNumber = value;
+                  });
+                },
+                selectorConfig: const SelectorConfig(
+                  selectorType: PhoneInputSelectorType.DIALOG,
+                ),
+                ignoreBlank: false,
+                autoValidateMode: AutovalidateMode.disabled,
+                selectorTextStyle: const TextStyle(color: Colors.black),
+                initialValue: number,
+                maxLength: 9,
+                countries: const ['GH', 'NG'],
+                textFieldController: numberTextController,
+                spaceBetweenSelectorAndTextField: 4,
+                formatInput: false,
+                keyboardType: const TextInputType.numberWithOptions(
+                    signed: true, decimal: true),
+                inputBorder: const OutlineInputBorder(),
+                onSaved: (PhoneNumber number) {
+                  print('On Saved: $number');
+                },
+              ),
+            ],
+          )),
       actions: <Widget>[
-        ElevatedButton(
-          child: Text(
-            'VERIFY NUMBER',
-            style: Theme.of(context)
-                .textTheme
-                .button!
-                .copyWith(fontSize: 16.0, color: colorTheme.primaryColorDark),
+        SizedBox(
+          height: 50,
+          child: ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+                colorTheme.primaryColorDark,
+              ),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              elevation: MaterialStateProperty.all(8),
+            ),
+            child: Text(
+              'VERIFY PHONE NUMBER',
+              style: Theme.of(context)
+                  .textTheme
+                  .button!
+                  .copyWith(fontSize: 16.0, color: Colors.white),
+            ),
+            onPressed: () {
+              if (validNumber) {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        ConfirmCode(phoneNumber: phoneNumber!)));
+              }
+            },
           ),
-          onPressed: () {
-            if (phoneNumber.length == 9) {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      ConfirmCode(phoneNumber: '+233$phoneNumber')));
-            }
-          },
-        ),
+        )
       ],
       context: context,
     );
@@ -286,46 +299,72 @@ class _LoginOptionsState extends State<LoginOptions>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed ||
         state == AppLifecycleState.inactive) {
-      _retrieveDynamicLink();
+      // _retrieveDynamicLink();
     }
   }
 
   _openEmailDialog() {
     return Dialogs.materialDialog(
-      title: 'Email Sign Up',
-      customView: TextField(
-        controller: emailTextController,
-        decoration: InputDecoration(
-          hintText: 'Enter your email address',
-          errorText: _phoneValidate ? 'Please enter an email address' : null,
+      customView: Container(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox(height: 20),
+            Text(
+              'Email Sign Up',
+              style: TextStyle(
+                color: colorTheme.primaryColor,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 40),
+            TextField(
+              controller: emailTextController,
+              decoration: InputDecoration(
+                hintText: 'Enter your email address',
+                errorText:
+                    _phoneValidate ? 'Please enter an email address' : null,
+                border: const OutlineInputBorder(),
+              ),
+              onChanged: (text) {},
+              keyboardType: TextInputType.emailAddress,
+            ),
+          ],
         ),
-        onChanged: (text) {},
-        keyboardType: TextInputType.emailAddress,
       ),
       actions: <Widget>[
-        ElevatedButton(
-          child: Text(
-            'VERIFY EMAIL',
-            style: Theme.of(context)
-                .textTheme
-                .button!
-                .copyWith(fontSize: 16.0, color: colorTheme.primaryColorDark),
+        SizedBox(
+          height: 50,
+          child: ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+                colorTheme.primaryColorDark,
+              ),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              elevation: MaterialStateProperty.all(8),
+            ),
+            child: Text(
+              'VERIFY EMAIL ADDRESS',
+              style: Theme.of(context)
+                  .textTheme
+                  .button!
+                  .copyWith(fontSize: 16.0, color: Colors.white),
+            ),
+            onPressed: () {
+              if (validNumber) {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        ConfirmCode(phoneNumber: phoneNumber!)));
+              }
+            },
           ),
-          onPressed: () {
-            if (emailTextController.text.isNotEmpty) {
-              Toast.show('verifying email...',
-                  gravity: Toast.center, duration: Toast.lengthShort);
-              Navigator.of(context).pop();
-              // setState(() {
-              //   _state = 1;
-              // });
-              _emailAddress = emailTextController.text;
-              _sendVerificationLink(_emailAddress);
-            } else {
-              _phoneValidate = true;
-            }
-          },
-        ),
+        )
       ],
       context: context,
     );
