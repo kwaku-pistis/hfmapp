@@ -11,28 +11,30 @@ import 'package:HFM/screens/photo_view.dart';
 import 'package:HFM/screens/search_screen.dart';
 import 'package:HFM/screens/upload_photo_screen.dart';
 import 'package:HFM/themes/colors.dart';
+import 'package:animated_floating_buttons/animated_floating_buttons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:package_info/package_info.dart';
-import 'package:share/share.dart';
-import 'package:unicorndial/unicorndial.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class FeedScreen extends StatefulWidget {
+  const FeedScreen({Key? key}) : super(key: key);
+
   @override
-  _FeedScreenState createState() => _FeedScreenState();
+  State<FeedScreen> createState() => _FeedScreenState();
 }
 
 var timeDiff;
 String packageName = '';
 
 class _FeedScreenState extends State<FeedScreen> {
-  var _repository = Repository();
+  final _repository = Repository();
   late User currentUser, user, followingUser;
   late IconData icon;
   late Color color;
@@ -41,7 +43,7 @@ class _FeedScreenState extends State<FeedScreen> {
   // bool _isLiked = false;
   List<String> followingUIDs = [];
 
-  List<int> _indexes = [];
+  final List<int> _indexes = [];
 
   @override
   void initState() {
@@ -50,7 +52,7 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   void fetchFeed() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
+    auth.User currentUser = await _repository.getCurrentUser();
 
     setState(() {
       _userPosts = _repository.retrieveUserPosts(currentUser.uid);
@@ -68,7 +70,7 @@ class _FeedScreenState extends State<FeedScreen> {
       this.user = await _repository.fetchUserDetailsById(followingUIDs[i]);
       print("user : ${this.user.uid}");
       usersList.add(this.user);
-      print("USERSLIST : ${usersList.length}");
+      print("USERS_LIST : ${usersList.length}");
 
       for (var i = 0; i < usersList.length; i++) {
         setState(() {
@@ -84,14 +86,14 @@ class _FeedScreenState extends State<FeedScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: new Color(0xfff8faf8),
+        backgroundColor: const Color(0xfff8faf8),
         centerTitle: false,
         elevation: 1.0,
-        leading: new Icon(
+        leading: const Icon(
           Icons.people,
           color: Colors.red,
         ),
-        title: Text(
+        title: const Text(
           'Share a post or image from here...',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
         ),
@@ -101,71 +103,75 @@ class _FeedScreenState extends State<FeedScreen> {
             child: IconButton(
               icon: Icon(
                 Icons.add_a_photo,
-                color: colortheme.accentColor,
+                color: colorTheme.primaryColorDark,
               ),
               onPressed: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: ((context) => UploadPhotoScreen())));
+                        builder: ((context) => const UploadPhotoScreen())));
               },
             ),
           )
         ],
       ),
-      floatingActionButton: UnicornDialer(
-        parentButtonBackground: colortheme.accentColor,
-        orientation: UnicornOrientation.VERTICAL,
-        parentButton: Icon(Icons.search),
-        childButtons: _getProfileMenu(),
+      // floatingActionButton: UnicornDialer(
+      //   parentButtonBackground: colorTheme.primaryColorDark,
+      //   orientation: UnicornOrientation.VERTICAL,
+      //   parentButton: const Icon(Icons.search),
+      //   childButtons: _getProfileMenu(),
+      // ),
+      floatingActionButton: AnimatedFloatingActionButton(
+        fabButtons: _getProfileMenu(),
+        animatedIconData: AnimatedIcons.menu_close,
       ),
       body: currentUser != null
           ? Padding(
               padding: const EdgeInsets.only(top: 4.0),
-              child: followingUIDs.length != 0 || _userPosts != null
+              child: followingUIDs.isNotEmpty || _userPosts != null
                   ? postImagesWidget()
-                  : Center(
+                  : const Center(
                       child: Text(
                           'No posts yet. Start a post or follow others to see their posts.'),
                     ),
             )
-          : Center(
+          : const Center(
               child: CircularProgressIndicator(),
             ),
     );
   }
 
-  List<UnicornButton> _getProfileMenu() {
-    List<UnicornButton> children = [];
+  List<Widget> _getProfileMenu() {
+    List<Widget> children = [];
 
     // Add Children here
     children.add(_profileOption(
         iconData: Icons.people,
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) => SearchScreen()));
+              builder: (BuildContext context) => const SearchScreen()));
         },
-        heroTag: 'btn1') as UnicornButton );
+        heroTag: 'btn1'));
     children.add(_profileOption(
         iconData: Icons.message,
         onPressed: () {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (BuildContext context) => Messages()));
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (BuildContext context) => const Messages()));
         },
-        heroTag: 'btn2') as UnicornButton );
+        heroTag: 'btn2'));
 
     return children;
   }
 
   Widget _profileOption(
       {IconData? iconData, Function()? onPressed, String? heroTag}) {
-    return UnicornButton(
-        currentButton: FloatingActionButton(
+    return SizedBox(
+        child: FloatingActionButton(
       backgroundColor: Colors.grey[500],
       mini: true,
-      child: Icon(iconData),
       onPressed: onPressed,
       heroTag: heroTag,
+      child: Icon(iconData),
     ));
   }
 
@@ -189,12 +195,12 @@ class _FeedScreenState extends State<FeedScreen> {
                       currentUser: currentUser,
                     )));
           } else {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
         } else {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         }
@@ -203,10 +209,13 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   Widget listItem(
-      {List<DocumentSnapshot>? list, User? user, User? currentUser, int? index}) {
+      {List<DocumentSnapshot>? list,
+      User? user,
+      User? currentUser,
+      int? index}) {
     print("dadadadad : ${user!.uid}");
-    print("datetime: ${DateTime.now()}");
-    var temp = list![index!].data['postTime'];
+    print("dateTime: ${DateTime.now()}");
+    var temp = list![index!]['postTime'];
     var diff = DateTime.parse(temp);
     timeDiff = Jiffy(diff).fromNow();
 
@@ -246,22 +255,22 @@ class _FeedScreenState extends State<FeedScreen> {
                           context,
                           MaterialPageRoute(
                               builder: ((context) => FriendProfileScreen(
-                                    name: list[index].data['postOwnerName'],
+                                    name: list[index]['postOwnerName'],
                                   ))));
                     },
-                    child: new Container(
+                    child: Container(
                       height: 40.0,
                       width: 40.0,
-                      decoration: new BoxDecoration(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        image: new DecorationImage(
+                        image: DecorationImage(
                             fit: BoxFit.fill,
-                            image: new NetworkImage(
-                                list[index].data['postOwnerPhotoUrl'])),
+                            image:
+                                NetworkImage(list[index]['postOwnerPhotoUrl'])),
                       ),
                     ),
                   ),
-                  new SizedBox(
+                  const SizedBox(
                     width: 10.0,
                   ),
                   Column(
@@ -273,25 +282,25 @@ class _FeedScreenState extends State<FeedScreen> {
                               context,
                               MaterialPageRoute(
                                   builder: ((context) => FriendProfileScreen(
-                                        name: list[index].data['postOwnerName'],
+                                        name: list[index]['postOwnerName'],
                                       ))));
                         },
-                        child: new Text(
-                          list[index].data['postOwnerName'],
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        child: Text(
+                          list[index]['postOwnerName'],
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
-                      list[index].data['location'] != null
-                          ? new Text(
-                              list[index].data['location'],
-                              style: TextStyle(color: Colors.grey),
+                      list[index]['location'] != null
+                          ? Text(
+                              list[index]['location'],
+                              style: const TextStyle(color: Colors.grey),
                             )
                           : Container(),
                     ],
                   )
                 ],
               ),
-              new IconButton(
+              const IconButton(
                 icon: Icon(Icons.more_vert),
                 onPressed: null,
               )
@@ -301,22 +310,23 @@ class _FeedScreenState extends State<FeedScreen> {
         Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: list[index].data['caption'] != null
+            child: list[index]['caption'] != null
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Wrap(
                         children: <Widget>[
                           SelectableLinkify(
-                            text: list[index].data['caption'],
+                            text: list[index]['caption'],
                             onOpen: (link) async {
-                              if (await canLaunch(link.url)) {
-                                await launch(link.url);
+                              if (await canLaunchUrlString(link.url)) {
+                                await launchUrlString(link.url);
                               } else {
                                 throw 'Could not launch $link';
                               }
                             },
-                            linkStyle: TextStyle(fontStyle: FontStyle.italic),
+                            linkStyle:
+                                const TextStyle(fontStyle: FontStyle.italic),
                           ),
                         ],
                       ),
@@ -325,10 +335,10 @@ class _FeedScreenState extends State<FeedScreen> {
                 : commentWidget(list[index].reference)),
         GestureDetector(
           child: CachedNetworkImage(
-            imageUrl: list[index].data['imgUrl'],
+            imageUrl: list[index]['imgUrl'],
             placeholder: ((context, s) => Center(
-                  child: list[index].data['imgUrl'] == null
-                      ? CircularProgressIndicator()
+                  child: list[index]['imgUrl'] == null
+                      ? const CircularProgressIndicator()
                       : Container(),
                 )),
             width: 125.0,
@@ -338,7 +348,7 @@ class _FeedScreenState extends State<FeedScreen> {
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) =>
-                    ImageView(imageUrl: list[index].data['imgUrl'])));
+                    ImageView(imageUrl: list[index]['imgUrl'])));
 
             // PhotoView(imageProvider: null)
           },
@@ -351,8 +361,8 @@ class _FeedScreenState extends State<FeedScreen> {
             children: <Widget>[
               GestureDetector(
                   child: _indexes.contains(index)
-                      ? Icon(Icons.favorite, color: Colors.red)
-                      : Icon(
+                      ? const Icon(Icons.favorite, color: Colors.red)
+                      : const Icon(
                           FontAwesomeIcons.heart,
                           color: null,
                         ),
@@ -373,7 +383,7 @@ class _FeedScreenState extends State<FeedScreen> {
                       postUnlike(list[index].reference, currentUser);
                     }
                   }),
-              new SizedBox(
+              const SizedBox(
                 width: 16.0,
               ),
               GestureDetector(
@@ -386,18 +396,18 @@ class _FeedScreenState extends State<FeedScreen> {
                                 user: currentUser,
                               ))));
                 },
-                child: new Icon(
+                child: const Icon(
                   FontAwesomeIcons.comment,
                 ),
               ),
-              new SizedBox(
+              const SizedBox(
                 width: 16.0,
               ),
               GestureDetector(
-                child: new Icon(FontAwesomeIcons.shareSquare),
+                child: const Icon(FontAwesomeIcons.shareFromSquare),
                 onTap: () {
                   Share.share(
-                      '${list[index].data['caption']} \n\nShared via the HarvestFields app. Get the app from https://play.google.com/store/apps/details?id=$packageName');
+                      '${list[index]['caption']} \n\nShared via the HarvestFields app. Get the app from https://play.google.com/store/apps/details?id=$packageName');
                 },
               ),
               // Row(
@@ -437,16 +447,17 @@ class _FeedScreenState extends State<FeedScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: likesSnapshot.data!.length > 1
                           ? Text(
-                              "Liked by ${likesSnapshot.data![0].data['ownerName']} and ${(likesSnapshot.data!.length - 1).toString()} others",
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              "Liked by ${likesSnapshot.data![0]['ownerName']} and ${(likesSnapshot.data!.length - 1).toString()} others",
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             )
                           : Text(likesSnapshot.data!.length == 1
-                              ? "Liked by ${likesSnapshot.data![0].data['ownerName']}"
+                              ? "Liked by ${likesSnapshot.data![0]['ownerName']}"
                               : "0 Likes"),
                     ),
                   );
                 } else {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
               }),
             ),
@@ -458,7 +469,7 @@ class _FeedScreenState extends State<FeedScreen> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Text("$timeDiff", style: TextStyle(color: Colors.grey)),
+          child: Text("$timeDiff", style: const TextStyle(color: Colors.grey)),
         )
       ],
     );
@@ -472,7 +483,7 @@ class _FeedScreenState extends State<FeedScreen> {
           return GestureDetector(
             child: Text(
               'View all ${snapshot.data!.length} comments',
-              style: TextStyle(color: Colors.grey),
+              style: const TextStyle(color: Colors.grey),
             ),
             onTap: () {
               Navigator.push(
@@ -485,7 +496,7 @@ class _FeedScreenState extends State<FeedScreen> {
             },
           );
         } else {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
       }),
     );
@@ -519,19 +530,15 @@ class _FeedScreenState extends State<FeedScreen> {
         timeStamp: FieldValue.serverTimestamp());
     reference
         .collection('likes')
-        .document(currentUser.uid)
-        .setData(_like.toMap(_like))
+        .doc(currentUser.uid)
+        .set(_like.toMap(_like))
         .then((value) {
       print("Post Liked");
     });
   }
 
   void postUnlike(DocumentReference reference, User currentUser) {
-    reference
-        .collection("likes")
-        .document(currentUser.uid)
-        .delete()
-        .then((value) {
+    reference.collection("likes").doc(currentUser.uid).delete().then((value) {
       print("Post Unliked");
     });
   }

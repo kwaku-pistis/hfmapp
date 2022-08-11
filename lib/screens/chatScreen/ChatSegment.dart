@@ -13,35 +13,32 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dash_chat/dash_chat.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:functional_widget_annotation/functional_widget_annotation.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ChatSegment extends StatefulWidget {
   final String id;
   final String groupId;
   final String friendId;
-  ChatSegment(
-      {required this.groupId, required this.id, required this.friendId});
+
+  const ChatSegment(
+      {Key? key,
+      required this.groupId,
+      required this.id,
+      required this.friendId})
+      : super(key: key);
 
   @override
-  State<StatefulWidget> createState() =>
-      ChatSegmentState(groupId, id, friendId);
+  State<StatefulWidget> createState() => ChatSegmentState();
 }
 
-Firestore _firestore = Firestore.instance;
+FirebaseFirestore _firestore = FirebaseFirestore.instance;
 var _repository = Repository();
 late User _user;
 
 class ChatSegmentState extends State<ChatSegment> {
-  final String id;
-  final String groupId;
-  final String friendId;
-
-  ChatSegmentState(this.groupId, this.id, this.friendId);
-
   // dash chat variables
   final GlobalKey<DashChatState> _chatViewKey = GlobalKey<DashChatState>();
 
@@ -64,7 +61,7 @@ class ChatSegmentState extends State<ChatSegment> {
   }
 
   _retrieve() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
+    auth.User currentUser = await _repository.getCurrentUser();
     User user_ = await _repository.retrieveUserDetails(currentUser);
     setState(() {
       _user = user_;
@@ -90,8 +87,8 @@ class ChatSegmentState extends State<ChatSegment> {
           child: StreamBuilder(
             stream: _firestore
                 .collection(MESSAGES_COLLECTION) //Messages
-                .document(groupId) //this groupId
-                .collection(groupId) //their collection of messages
+                .doc(widget.groupId) //this groupId
+                .collection(widget.groupId) //their collection of messages
                 .orderBy(MESSAGE_TIMESTAMP,
                     descending: false) // order messages by time
                 .snapshots(),
@@ -101,20 +98,19 @@ class ChatSegmentState extends State<ChatSegment> {
               //show error if there is any
               if (snapshots.hasError) return Text(snapshots.error.toString());
               //if connecting show progressIndicator
-              if (snapshots.connectionState == ConnectionState.waiting)
-                return Center(child: CircularProgressIndicator());
-              //show users
-              else {
-                List<DocumentSnapshot> items = snapshots.data!.documents;
+              if (snapshots.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else {
+                List<DocumentSnapshot> items = snapshots.data!.docs;
                 var messages = items
-                    .map((i) => ChatMessage.fromJson(i.data["content"]))
+                    .map((i) => ChatMessage.fromJson(i["content"]))
                     .toList();
                 // return ListView.builder(
                 //   reverse: true,
                 //   itemCount: snapshots.data.documents.length,
                 //   itemBuilder: (context, index) {
                 //     return _buildMessage(
-                //         snapshots.data.documents[index], id, groupId);
+                //         snapshots.data.documents[index], id, widget.groupId);
                 //   },
                 // );
 
@@ -126,7 +122,7 @@ class ChatSegmentState extends State<ChatSegment> {
                     sendOnEnter: true,
                     textInputAction: TextInputAction.send,
                     user: user,
-                    inputDecoration: InputDecoration.collapsed(
+                    inputDecoration: const InputDecoration.collapsed(
                         hintText: "Type a message",
                         hintStyle: TextStyle(color: Colors.white54)),
                     // dateFormat: DateFormat('yyyy-MMM-dd'),
@@ -144,15 +140,15 @@ class ChatSegmentState extends State<ChatSegment> {
                     },
                     inputMaxLines: 5,
                     messageContainerPadding:
-                        EdgeInsets.only(left: 5.0, right: 5.0),
+                        const EdgeInsets.only(left: 5.0, right: 5.0),
                     alwaysShowSend: false,
-                    inputTextStyle: TextStyle(
+                    inputTextStyle: const TextStyle(
                       fontSize: 16.0,
                       color: Colors.white,
                     ),
                     inputContainerStyle: BoxDecoration(
                       border: Border.all(width: 0.0),
-                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                      borderRadius: const BorderRadius.all(Radius.circular(30)),
                       color: Colors.grey[800],
                     ),
                     onQuickReply: (Reply reply) {
@@ -165,18 +161,17 @@ class ChatSegmentState extends State<ChatSegment> {
                         messages = [...messages];
                       });
 
-                      Timer(Duration(milliseconds: 300), () {
-                        _chatViewKey.currentState!.scrollController
-                          ..animateTo(
-                            _chatViewKey.currentState!.scrollController.position
-                                .maxScrollExtent,
-                            curve: Curves.easeOut,
-                            duration: const Duration(milliseconds: 300),
-                          );
+                      Timer(const Duration(milliseconds: 300), () {
+                        _chatViewKey.currentState!.scrollController.animateTo(
+                          _chatViewKey.currentState!.scrollController.position
+                              .maxScrollExtent,
+                          curve: Curves.easeOut,
+                          duration: const Duration(milliseconds: 300),
+                        );
 
                         if (i == 0) {
                           systemMessage();
-                          Timer(Duration(milliseconds: 600), () {
+                          Timer(const Duration(milliseconds: 600), () {
                             systemMessage();
                           });
                         } else {
@@ -193,43 +188,42 @@ class ChatSegmentState extends State<ChatSegment> {
                       IconButton(
                         icon: Icon(
                           Icons.photo,
-                          color: colortheme.primaryColor,
+                          color: colorTheme.primaryColor,
                         ),
                         onPressed: () async {
-                          File result = await ImagePicker.pickImage(
+                          File result = (await ImagePicker().pickImage(
                             source: ImageSource.gallery,
                             imageQuality: 80,
                             maxHeight: 400,
                             maxWidth: 400,
-                          );
+                          )) as File;
 
                           if (result != null) {
-                            final StorageReference storageRef = FirebaseStorage
+                            final Reference storageRef = FirebaseStorage
                                 .instance
                                 .ref()
                                 .child("chat_images");
 
-                            StorageUploadTask uploadTask = storageRef.putFile(
+                            UploadTask uploadTask = storageRef.putFile(
                               result,
-                              StorageMetadata(
+                              SettableMetadata(
                                 contentType: 'image/jpg',
                               ),
                             );
-                            StorageTaskSnapshot download =
-                                await uploadTask.onComplete;
+                            TaskSnapshot download = await uploadTask;
 
                             String url = await download.ref.getDownloadURL();
 
                             ChatMessage message =
                                 ChatMessage(text: "", user: user, image: url);
 
-                            var documentReference = Firestore.instance
+                            var documentReference = FirebaseFirestore.instance
                                 .collection('messages')
-                                .document(DateTime.now()
+                                .doc(DateTime.now()
                                     .millisecondsSinceEpoch
                                     .toString());
 
-                            Firestore.instance
+                            FirebaseFirestore.instance
                                 .runTransaction((transaction) async {
                               await transaction.set(
                                 documentReference,
@@ -254,7 +248,7 @@ class ChatSegmentState extends State<ChatSegment> {
     return IconButton(
         icon: Icon(
           Icons.send,
-          color: colortheme.accentColor,
+          color: colorTheme.primaryColorDark,
         ),
         onPressed: () => onSend);
   }
@@ -272,15 +266,15 @@ class ChatSegmentState extends State<ChatSegment> {
                 height: snapshot[MESSAGE_TYPE] == MESSAGE_TYPE_PHOTO
                     ? MediaQuery.of(context).size.width * 0.7
                     : null,
-                padding: EdgeInsets.all(MESSAGE_PADDING),
-                margin: EdgeInsets.only(
+                padding: const EdgeInsets.all(MESSAGE_PADDING),
+                margin: const EdgeInsets.only(
                     right: MESSAGE_MARGIN,
                     top: 5,
                     bottom: 3,
                     left: MESSAGE_MARGIN),
                 decoration: BoxDecoration(
                     color: snapshot[MESSAGE_ID_FROM] == id
-                        ? colortheme.accentColor
+                        ? colorTheme.accentColor
                         : Colors.black45,
                     borderRadius: BorderRadius.circular(MESSAGE_RADIUS)),
                 child: Column(
@@ -307,18 +301,18 @@ class ChatSegmentState extends State<ChatSegment> {
                             : snapshot[MESSAGE_TYPE] == MESSAGE_TYPE_TEXT
                                 ? AutoSizeText(
                                     snapshot[MESSAGE_CONTENT],
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: MESSAGE_FONT_SIZE,
                                         color: MESSAGE_FONT_COLOR),
                                   )
-                                : Text('sticker')),
+                                : const Text('sticker')),
                     Container(
-                      margin: EdgeInsets.all(4.0),
+                      margin: const EdgeInsets.all(4.0),
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
                           timeConverter(int.parse(snapshot[MESSAGE_TIMESTAMP])),
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: MESSAGE_DATE_FONT_SIZE,
                               color: MESSAGE_FONT_COLOR),
                         ),
@@ -337,12 +331,13 @@ class ChatSegmentState extends State<ChatSegment> {
   }
 
   _showDeleteMessageDialog(DocumentSnapshot snapshot) {
-    if (snapshot[MESSAGE_ID_FROM] == id) {
+    if (snapshot[MESSAGE_ID_FROM] == widget.id) {
       showDialog(
           context: context,
           builder: (context) {
             return DeleteMessageDialog(
-                groupId: groupId, timestamp: snapshot[MESSAGE_TIMESTAMP]);
+                groupId: widget.groupId,
+                timestamp: snapshot[MESSAGE_TIMESTAMP]);
           });
     }
   }
@@ -363,7 +358,7 @@ class ChatSegmentState extends State<ChatSegment> {
   void onSend(ChatMessage message) {
     print(message.toJson());
 
-    sendMessage(message, groupId, id, friendId, context);
+    sendMessage(message, widget.groupId, widget.id, widget.friendId, context);
 
     // var documentReference = Firestore.instance
     //     .collection('messages')
@@ -378,14 +373,14 @@ class ChatSegmentState extends State<ChatSegment> {
   }
 
   void systemMessage() {
-    Timer(Duration(milliseconds: 300), () {
+    Timer(const Duration(milliseconds: 300), () {
       if (i < 6) {
         setState(() {
           messages = [...messages, m[i]];
         });
         i++;
       }
-      Timer(Duration(milliseconds: 300), () {
+      Timer(const Duration(milliseconds: 300), () {
         _chatViewKey.currentState!.scrollController
           ..animateTo(
             _chatViewKey

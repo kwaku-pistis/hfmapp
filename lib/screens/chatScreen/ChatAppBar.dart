@@ -11,40 +11,34 @@ class ChatAppBar extends StatefulWidget {
   final String displayName;
   final String id;
   final String about;
-  ChatAppBar(
-      {required this.photoUri,
+
+  const ChatAppBar(
+      {Key? key,
+      required this.photoUri,
       required this.displayName,
       required this.id,
-      required this.about});
+      required this.about})
+      : super(key: key);
+
   @override
-  State<StatefulWidget> createState() => ChatAppBarState(
-      photoUri: photoUri, displayName: displayName, id: id, about: about);
+  State<StatefulWidget> createState() => ChatAppBarState();
 }
 
 class ChatAppBarState extends State<ChatAppBar> {
-  final String photoUri;
-  final String displayName;
-  final String id;
-  final String about;
   String userStatus = '';
 
-  late StreamSubscription<Event> stateListener;
+  late StreamSubscription<DatabaseEvent> stateListener;
 
-  ChatAppBarState(
-      {required this.photoUri,
-      required this.displayName,
-      required this.id,
-      required this.about});
   @override
   void initState() {
     super.initState();
     stateListener = FirebaseDatabase.instance
-        .reference()
-        .child('/status/$id')
+        .ref()
+        .child('/status/${widget.id}')
         .onValue
         .listen((event) {
       setState(() {
-        userStatus = event.snapshot.value['state'];
+        userStatus = event.snapshot.children.first.value.toString();
       });
     });
   }
@@ -55,35 +49,31 @@ class ChatAppBarState extends State<ChatAppBar> {
       child: Row(
         children: <Widget>[
           //user image
-          Container(
-            child: Material(
-              child: CachedNetworkImage(
-                placeholder: (context, url) => Container(
-                  child: CircularProgressIndicator(),
-                ),
-                imageUrl: photoUri,
-                width: APP_BAR_IMAGE_WIDTH,
-                height: APP_BAR_IMAGE_HEIGHT,
-              ),
-              borderRadius:
-                  BorderRadius.all(Radius.circular(APP_BAR_IMAGE_RADIUS)),
-              clipBehavior: Clip.antiAlias,
+          Material(
+            borderRadius:
+                const BorderRadius.all(Radius.circular(APP_BAR_IMAGE_RADIUS)),
+            clipBehavior: Clip.antiAlias,
+            child: CachedNetworkImage(
+              placeholder: (context, url) => const CircularProgressIndicator(),
+              imageUrl: widget.photoUri,
+              width: APP_BAR_IMAGE_WIDTH,
+              height: APP_BAR_IMAGE_HEIGHT,
             ),
           ),
           Container(
-            margin: EdgeInsets.only(left: 8.0),
+            margin: const EdgeInsets.only(left: 8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.only(top: 8.0, left: 10),
+                  margin: const EdgeInsets.only(top: 8.0, left: 10),
                   child: Text(
-                    displayName,
-                    style: TextStyle(color: Colors.white),
+                    widget.displayName,
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
                 Text(userStatus,
-                    style: TextStyle(fontSize: 10.0, color: Colors.white))
+                    style: const TextStyle(fontSize: 10.0, color: Colors.white))
               ],
             ),
           )

@@ -4,27 +4,23 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-final GoogleSignIn _googleSignIn = new GoogleSignIn();
+final GoogleSignIn _googleSignIn = GoogleSignIn();
 
 
 /// try to authenticate with google silently or with interaction
 /// return a firebase user
-Future<AuthResult> signInWithGoogle() async{
-  GoogleSignInAccount currentUser = _googleSignIn.currentUser;
+Future<UserCredential> signInWithGoogle() async{
+  GoogleSignInAccount? currentUser = _googleSignIn.currentUser;
   //try to sign in without user interaction
-  if(currentUser == null){
-    currentUser = await _googleSignIn.signInSilently();
-  }
+  currentUser ??= await _googleSignIn.signInSilently();
   //try to sign in with user interaction
-  if(currentUser == null){
-    currentUser = await _googleSignIn.signIn();
-  }
+  currentUser ??= await _googleSignIn.signIn();
 
   //get user authentication
-  GoogleSignInAuthentication userAuth = await currentUser.authentication;
+  GoogleSignInAuthentication userAuth = await currentUser!.authentication;
 
   //sign in with firebase
-  AuthCredential credential = GoogleAuthProvider.getCredential(
+  AuthCredential credential = GoogleAuthProvider.credential(
       idToken: userAuth.idToken,
       accessToken: userAuth.accessToken);
 
@@ -33,7 +29,7 @@ Future<AuthResult> signInWithGoogle() async{
 }
 
 ///sign out user from firebase and google
-Future<Null> signOutWithGoogle() async{
+Future<void> signOutWithGoogle() async{
   await _googleSignIn.disconnect();
   await _googleSignIn.signOut();
   await _firebaseAuth.signOut();

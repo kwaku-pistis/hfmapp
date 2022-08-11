@@ -15,7 +15,7 @@ class Comment {
       required this.ownerUid});
 
   Map<String, dynamic> toMap(Comment comment) {
-    var data = Map<String, dynamic>();
+    var data = <String, dynamic>{};
     data['ownerName'] = comment.ownerName;
     data['ownerPhotoUrl'] = comment.ownerPhotoUrl;
     data['comment'] = comment.comment;
@@ -25,10 +25,10 @@ class Comment {
   }
 
   Comment.fromMap(Map<String, dynamic> mapData) {
-    this.ownerName = mapData['ownerName'];
-    this.ownerPhotoUrl = mapData['ownerPhotoUrl'];
-    this.comment = mapData['comment'];
-    this.timeStamp = mapData['timestamp'];
-    this.ownerUid = mapData['ownerUid'];
+    ownerName = mapData['ownerName'];
+    ownerPhotoUrl = mapData['ownerPhotoUrl'];
+    comment = mapData['comment'];
+    timeStamp = mapData['timestamp'];
+    ownerUid = mapData['ownerUid'];
   }
 }

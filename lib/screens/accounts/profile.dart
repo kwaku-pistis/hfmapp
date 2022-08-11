@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:HFM/screens/home.dart';
 import 'package:HFM/themes/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,24 +12,24 @@ import 'package:toast/toast.dart';
 import 'package:HFM/models/user.dart';
 
 class Profile extends StatefulWidget {
-  @override
-  _ProfileState createState() =>
-      _ProfileState(data: this.data, user: this.user);
-
   final String data;
-  final FirebaseUser user;
+  final auth.User user;
 
-  Profile({required this.data, required this.user});
+  const Profile({Key? key, required this.data, required this.user})
+      : super(key: key);
+
+  @override
+  State<Profile> createState() => _ProfileState();
 }
 
-final Pattern emailPattern =
+const Pattern emailPattern =
     r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-final Pattern phonePattern = r'(^(?:[+0]+)?[0-9]{10,12}$)';
+const Pattern phonePattern = r'(^(?:[+0]+)?[0-9]{10,12}$)';
 
 String dropdownValue = '--Select Gender--';
 List<String> options = <String>['--Select Gender--', 'Male', 'Female'];
 
-final _formkey = GlobalKey<FormState>();
+final _formKey = GlobalKey<FormState>();
 TextEditingController firstNameController = TextEditingController();
 bool fnameValidate = false;
 bool lnameValidate = false;
@@ -43,65 +43,59 @@ int _state = 0;
 
 String? fname, lname, username, phoneOrEmail, gender;
 
-StorageReference _storage =
-    FirebaseStorage.instance.ref().child('User Profile Image');
+Reference _storage = FirebaseStorage.instance.ref().child('User Profile Image');
 
-final Firestore _firestore = Firestore.instance;
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 User? _user;
 
 class _ProfileState extends State<Profile> {
-  String data;
-  FirebaseUser user;
-
-  _ProfileState({required this.data, required this.user});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Back',
           style: TextStyle(color: Colors.white),
         ),
         elevation: 0,
         centerTitle: false,
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.white,
         ),
       ),
       body: SingleChildScrollView(
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               image: DecorationImage(
             image: AssetImage('assets/images/adinkra_pattern.png'),
             fit: BoxFit.cover,
           )),
-          padding: EdgeInsets.only(left: 20, right: 20),
+          padding: const EdgeInsets.only(left: 20, right: 20),
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: Column(
             children: <Widget>[
               Container(
-                margin: EdgeInsets.only(top: 20),
+                margin: const EdgeInsets.only(top: 20),
                 child: Text(
                   'First, Complete your Profile',
                   style:
-                      TextStyle(color: colortheme.primaryColor, fontSize: 26),
+                      TextStyle(color: colorTheme.primaryColor, fontSize: 26),
                 ),
               ),
               GestureDetector(
                 child: Container(
                   width: 150,
                   height: 150,
-                  margin: EdgeInsets.only(top: 10),
-                  padding: EdgeInsets.all(0),
+                  margin: const EdgeInsets.only(top: 10),
+                  padding: const EdgeInsets.all(0),
                   decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       // borderRadius: BorderRadius.all(Radius.circular(100.0)),
                       color: Colors.white,
                       image: DecorationImage(
                         image: _image == null
-                            ? AssetImage('assets/images/profile.png')
+                            ? const AssetImage('assets/images/profile.png')
                             : FileImage(_image!) as ImageProvider,
                         fit: BoxFit.cover,
                       )),
@@ -109,8 +103,8 @@ class _ProfileState extends State<Profile> {
                 onTap: () => getImage(),
               ),
               Container(
-                margin: EdgeInsets.only(top: 5),
-                child: Text(
+                margin: const EdgeInsets.only(top: 5),
+                child: const Text(
                   'Click to set Profile picture',
                   style: TextStyle(
                     color: Colors.black,
@@ -118,12 +112,12 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
               Form(
-                  key: _formkey,
+                  key: _formKey,
                   child: Column(
                     children: <Widget>[
                       Container(
                           alignment: Alignment.center,
-                          margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                          margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                           child: TextFormField(
                               controller: firstNameController,
                               autovalidateMode:
@@ -164,7 +158,7 @@ class _ProfileState extends State<Profile> {
                               textInputAction: TextInputAction.next,
                               keyboardType: TextInputType.text,
                               textCapitalization: TextCapitalization.words,
-                              style: TextStyle(color: Colors.black),
+                              style: const TextStyle(color: Colors.black),
                               onChanged: (text) {
                                 setState(() {
                                   fnameValidate = true;
@@ -172,7 +166,7 @@ class _ProfileState extends State<Profile> {
                               })),
                       Container(
                           alignment: Alignment.center,
-                          margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                           child: TextFormField(
                               controller: null,
                               autovalidateMode:
@@ -213,7 +207,7 @@ class _ProfileState extends State<Profile> {
                               textInputAction: TextInputAction.next,
                               keyboardType: TextInputType.text,
                               textCapitalization: TextCapitalization.words,
-                              style: TextStyle(color: Colors.black),
+                              style: const TextStyle(color: Colors.black),
                               onChanged: (text) {
                                 setState(() {
                                   lnameValidate = true;
@@ -221,7 +215,7 @@ class _ProfileState extends State<Profile> {
                               })),
                       Container(
                           alignment: Alignment.center,
-                          margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                           child: TextFormField(
                               controller: null,
                               autovalidateMode:
@@ -233,7 +227,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                                 hintText: 'enter a username',
                                 hintStyle: TextStyle(color: Colors.grey),
-                                labelText: 'Userame *',
+                                labelText: 'Username *',
                                 labelStyle: TextStyle(color: Color(0xff326b40)),
                                 contentPadding:
                                     EdgeInsets.only(bottom: 10, top: 10),
@@ -259,7 +253,7 @@ class _ProfileState extends State<Profile> {
                               textInputAction: TextInputAction.next,
                               keyboardType: TextInputType.text,
                               textCapitalization: TextCapitalization.none,
-                              style: TextStyle(color: Colors.black),
+                              style: const TextStyle(color: Colors.black),
                               onChanged: (text) {
                                 setState(() {
                                   usernameValidate = true;
@@ -267,12 +261,12 @@ class _ProfileState extends State<Profile> {
                               })),
                       Container(
                           alignment: Alignment.center,
-                          margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                           child: TextFormField(
                               controller: null,
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
-                              initialValue: data,
+                              initialValue: widget.data,
                               decoration: const InputDecoration(
                                 icon: Icon(
                                   Icons.email,
@@ -294,10 +288,10 @@ class _ProfileState extends State<Profile> {
                               },
                               validator: (String? value) {
                                 RegExp emailRegex =
-                                    new RegExp(emailPattern.toString());
+                                    RegExp(emailPattern.toString());
                                 //RegExp phoneRegex = new RegExp(phonePattern);
 
-                                if (value!.startsWith(new RegExp(r'[a-z]'))) {
+                                if (value!.startsWith(RegExp(r'[a-z]'))) {
                                   if (!emailRegex.hasMatch(value)) {
                                     return 'Not a valid email address';
                                   }
@@ -314,7 +308,7 @@ class _ProfileState extends State<Profile> {
                               textInputAction: TextInputAction.next,
                               keyboardType: TextInputType.emailAddress,
                               textCapitalization: TextCapitalization.none,
-                              style: TextStyle(color: Colors.black),
+                              style: const TextStyle(color: Colors.black),
                               onChanged: (text) {
                                 setState(() {
                                   peValidate = true;
@@ -324,43 +318,43 @@ class _ProfileState extends State<Profile> {
                   )),
               Container(
                   width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.all(0),
-                  margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                  padding: const EdgeInsets.all(0),
+                  margin: const EdgeInsets.fromLTRB(20, 20, 20, 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Container(
-                        margin: EdgeInsets.only(right: 16),
-                        child: Icon(Icons.person_outline,
+                        margin: const EdgeInsets.only(right: 16),
+                        child: const Icon(Icons.person_outline,
                             color: Color(0xff326b40)),
                       ),
                       Expanded(
-                        child: Container(
+                        child: SizedBox(
                           width: MediaQuery.of(context).size.width,
                           child: DropdownButton<String>(
                             value: dropdownValue,
-                            icon: Icon(Icons.arrow_drop_down),
+                            icon: const Icon(Icons.arrow_drop_down),
                             isExpanded: true,
                             iconSize: 30,
                             elevation: 0,
                             isDense: true,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.black,
                             ),
                             //hint: Text('-- Select your school --'),
                             selectedItemBuilder: (BuildContext context) {
                               return options.map((String value) {
                                 return Text(dropdownValue,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: Colors.black,
                                     ),
                                     textAlign: TextAlign.left);
                               }).toList();
                             },
                             underline: Container(
-                              margin: EdgeInsets.only(top: 5),
+                              margin: const EdgeInsets.only(top: 5),
                               height: 0.5,
-                              color: Color(0xff326b40),
+                              color: const Color(0xff326b40),
                             ),
                             onChanged: (String? newValue) {
                               setState(() {
@@ -381,12 +375,12 @@ class _ProfileState extends State<Profile> {
                   )),
               Container(
                 width: double.infinity,
-                margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                 height: 50,
                 child: RaisedButton(
                   child: _setUpButtonChild(),
                   textColor: Colors.white,
-                  color: colortheme.accentColor,
+                  color: colorTheme.accentColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(10.0),
                   ),
@@ -403,7 +397,7 @@ class _ProfileState extends State<Profile> {
   }
 
   Future getImage() async {
-    image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    image = await ImagePicker().pickImage(source: ImageSource.gallery);
     //var imageName = basename(image.path)
     setState(() {
       _image = image;
@@ -412,26 +406,26 @@ class _ProfileState extends State<Profile> {
 
   Widget _setUpButtonChild() {
     if (_state == 0) {
-      return Text(
+      return const Text(
         'DONE',
         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       );
     } else if (_state == 1) {
-      return CircularProgressIndicator(
+      return const CircularProgressIndicator(
         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
       );
     } else {
-      return Icon(Icons.check, color: Colors.white);
+      return const Icon(Icons.check, color: Colors.white);
     }
   }
 
   _validateForm() {
-    if (_formkey.currentState!.validate() &&
+    if (_formKey.currentState!.validate() &&
         dropdownValue != '--Select Gender--') {
       setState(() {
         _state = 1;
       });
-      _formkey.currentState!.save();
+      _formKey.currentState!.save();
 
       if (image != null) {
         _uploadImage();
@@ -439,19 +433,18 @@ class _ProfileState extends State<Profile> {
         _saveDataToFirebaseDB(null);
       }
     } else {
-      Toast.show('Please select your Gender', context,
-          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      Toast.show('Please select your Gender',
+          duration: Toast.lengthLong, gravity: Toast.bottom);
     }
   }
 
   _uploadImage() async {
-    StorageUploadTask uploadTask = _storage.child(user.uid).putFile(image);
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    await uploadTask.onComplete
-        .whenComplete(await _saveDataToFirebaseDB(taskSnapshot));
+    UploadTask uploadTask = _storage.child(widget.user.uid).putFile(image);
+    TaskSnapshot taskSnapshot = await uploadTask;
+    await uploadTask.whenComplete(await _saveDataToFirebaseDB(taskSnapshot));
   }
 
-  _saveDataToFirebaseDB(StorageTaskSnapshot? taskSnapshot) async {
+  _saveDataToFirebaseDB(TaskSnapshot? taskSnapshot) async {
     String downloadUrl =
         taskSnapshot != null ? await taskSnapshot.ref.getDownloadURL() : '';
     // DocumentReference storeReference =
@@ -466,12 +459,12 @@ class _ProfileState extends State<Profile> {
 
     _firestore
         .collection("display_names")
-        .document('$fname $lname')
-        .setData({'displayName': '$fname $lname'});
+        .doc('$fname $lname')
+        .set({'displayName': '$fname $lname'});
 
     _user = User(
-        uid: user.uid,
-        email: data,
+        uid: widget.user.uid,
+        email: widget.data,
         name: '$fname $lname',
         profileImage: downloadUrl,
         followers: '0',
@@ -486,8 +479,8 @@ class _ProfileState extends State<Profile> {
 
     _firestore
         .collection("User Info")
-        .document(user.uid)
-        .setData(_user!.toMap(_user!))
+        .doc(widget.user.uid)
+        .set(_user!.toMap(_user!))
         .then(moveToHome(downloadUrl));
   }
 
@@ -501,7 +494,7 @@ class _ProfileState extends State<Profile> {
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
             builder: (BuildContext context) => Home(
-                  user: user,
+                  user: widget.user,
                 )),
         ModalRoute.withName(''));
     //});
@@ -510,9 +503,9 @@ class _ProfileState extends State<Profile> {
   _saveUserDetails(String downloadUrl) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.setString('name', '$fname $lname');
-    await preferences.setString('emailOrPhone', data);
-    await preferences.setString('username', username);
+    await preferences.setString('emailOrPhone', widget.data);
+    await preferences.setString('username', username!);
     await preferences.setString('profileImage', downloadUrl);
-    await preferences.setString('gender', gender);
+    await preferences.setString('gender', gender!);
   }
 }

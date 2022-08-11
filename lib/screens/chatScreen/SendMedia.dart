@@ -8,23 +8,20 @@ class SendMedia extends StatefulWidget {
   final String id;
   final String friendId;
   final File imageFile;
-  SendMedia(
-      {required this.imageFile,
+
+  const SendMedia(
+      {Key? key,
+      required this.imageFile,
       required this.groupId,
       required this.id,
-      required this.friendId});
+      required this.friendId})
+      : super(key: key);
+
   @override
-  State<StatefulWidget> createState() =>
-      SendMediaState(imageFile, groupId, id, friendId);
+  State<StatefulWidget> createState() => SendMediaState();
 }
 
 class SendMediaState extends State<SendMedia> {
-  final String groupId;
-  final String id;
-  final String friendId;
-  final File imageFile;
-  SendMediaState(this.imageFile, this.groupId, this.id, this.friendId);
-
   @override
   Widget build(BuildContext context) {
     // var width = MediaQuery.of(context).size.width;
@@ -33,22 +30,22 @@ class SendMediaState extends State<SendMedia> {
       backgroundColor: Colors.black,
       appBar: _appBar(),
       body: Center(
-        child: Image.file(imageFile),
+        child: Image.file(widget.imageFile),
       ),
       floatingActionButton: FloatingActionButton(
-          backgroundColor: colortheme.accentColor,
-          child: Icon(Icons.send),
+          backgroundColor: colorTheme.primaryColorDark,
+          child: const Icon(Icons.send),
           onPressed: () => Navigator.pop(context, [true])),
     );
   }
 
   PreferredSizeWidget _appBar() {
     return AppBar(
-      title: Text(
+      title: const Text(
         'Send media',
         style: TextStyle(color: Colors.white),
       ),
-      iconTheme: IconThemeData(color: Colors.white),
+      iconTheme: const IconThemeData(color: Colors.white),
     );
   }
 }

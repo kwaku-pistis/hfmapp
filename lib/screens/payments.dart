@@ -6,21 +6,20 @@ import 'package:HFM/themes/colors.dart';
 import 'package:HFM/widgets/button_widget.dart';
 import 'package:HFM/widgets/switch_widget.dart';
 import 'package:HFM/widgets/vendor_widget.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
-import 'package:rave_flutter/rave_flutter.dart';
 
 class Payments extends StatefulWidget {
   final String extra;
 
-  Payments({required this.extra});
+  const Payments({Key? key, required this.extra}) : super(key: key);
 
   @override
-  _PaymentsState createState() => _PaymentsState();
+  State<Payments> createState() => _PaymentsState();
 }
 
 class _PaymentsState extends State<Payments> {
-  var _repository = Repository();
+  final _repository = Repository();
   late User _user;
 
   var scaffoldKey = GlobalKey<ScaffoldState>();
@@ -37,7 +36,7 @@ class _PaymentsState extends State<Payments> {
   bool live = false;
   bool preAuthCharge = false;
   bool addSubAccounts = false;
-  List<SubAccount> subAccounts = [];
+  List<dynamic> subAccounts = [];
   String email = '';
   double amount = 0.0;
   String publicKey = "FLWPUBK-795349cc358b4d96003546de855fabe5-X";
@@ -57,7 +56,7 @@ class _PaymentsState extends State<Payments> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
+    auth.User currentUser = await _repository.getCurrentUser();
     User user = await _repository.retrieveUserDetails(currentUser);
     setState(() {
       _user = user;
@@ -70,12 +69,12 @@ class _PaymentsState extends State<Payments> {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Make Payment',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: colortheme.primaryColor,
-        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: colorTheme.primaryColor,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SafeArea(
         top: true,
@@ -85,11 +84,11 @@ class _PaymentsState extends State<Payments> {
             child: Column(
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.only(left: 16),
+                  margin: const EdgeInsets.only(left: 16),
                   width: MediaQuery.of(context).size.width,
                   child: Text(
                     'Payment for ${widget.extra}',
-                    style: TextStyle(fontSize: 24),
+                    style: const TextStyle(fontSize: 24),
                   ),
                 ),
                 // SwitchWidget(
@@ -167,10 +166,10 @@ class _PaymentsState extends State<Payments> {
                         //   decoration: InputDecoration(hintText: 'Email'),
                         //   onSaved: (value) => email = value,
                         // ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         TextFormField(
-                          decoration:
-                              InputDecoration(hintText: 'Amount to charge (GHS)'),
+                          decoration: const InputDecoration(
+                              hintText: 'Amount to charge (GHS)'),
                           onSaved: (value) => amount = double.tryParse(value!)!,
                           keyboardType: TextInputType.number,
                         ),
@@ -192,24 +191,25 @@ class _PaymentsState extends State<Payments> {
                         //   validator: (value) =>
                         //       value.trim().isEmpty ? 'Field is required' : null,
                         // ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         TextFormField(
-                          decoration: InputDecoration(hintText: 'Narration'),
+                          decoration:
+                              const InputDecoration(hintText: 'Narration'),
                           onSaved: (value) => narration = value!,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         TextFormField(
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                               hintText: 'Currency code e.g GHS'),
                           onSaved: (value) => currency = value!,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         TextFormField(
-                          decoration:
-                              InputDecoration(hintText: 'Country code e.g GH'),
+                          decoration: const InputDecoration(
+                              hintText: 'Country code e.g GH'),
                           onSaved: (value) => country = value!,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         // TextFormField(
                         //   decoration: InputDecoration(hintText: 'First name'),
                         //   onSaved: (value) => firstName = value,
@@ -224,9 +224,8 @@ class _PaymentsState extends State<Payments> {
                   ),
                 ),
                 ElevatedButton(
-                  child: Text('Start Payment'), 
-                  onPressed: validateInputs
-                )
+                    onPressed: validateInputs,
+                    child: const Text('Start Payment'))
               ],
             ),
           ),
@@ -237,12 +236,12 @@ class _PaymentsState extends State<Payments> {
 
   Widget buildVendorRefs() {
     if (!addSubAccounts) {
-      return SizedBox();
+      return const SizedBox();
     }
 
     addSubAccount() async {
-      var subAccount = await showDialog<SubAccount>(
-          context: context, builder: (context) => AddVendorWidget());
+      var subAccount = await showDialog<dynamic>(
+          context: context, builder: (context) => const AddVendorWidget());
       if (subAccount != null) {
         // if (subAccounts == null) subAccounts = [];
         setState(() => subAccounts.add(subAccount));
@@ -252,15 +251,15 @@ class _PaymentsState extends State<Payments> {
     var buttons = <Widget>[
       ElevatedButton(
         onPressed: addSubAccount,
-        child: Text('Add vendor'),
+        child: const Text('Add vendor'),
       ),
-      SizedBox(
+      const SizedBox(
         width: 10,
         height: 10,
       ),
       ElevatedButton(
         onPressed: () => onAddAccountsChange(false),
-        child: Text('Clear'),
+        child: const Text('Clear'),
       ),
     ];
 
@@ -307,41 +306,41 @@ class _PaymentsState extends State<Payments> {
     }
 
     formState.save();
-    startPayment();
+    // startPayment();
   }
 
-  void startPayment() async {
-    var initializer = RavePayInitializer(
-        amount: amount,
-        publicKey: publicKey,
-        encryptionKey: encryptionKey,
-        subAccounts: subAccounts.isEmpty ? null : null)
-      ..country =
-          country = country != null && country.isNotEmpty ? country : "GH"
-      ..currency = currency != null && currency.isNotEmpty ? currency : "GHS"
-      ..email = _user.email
-      ..fName = _user.name
-      ..lName = _user.name
-      ..narration = narration
-      ..txRef = widget.extra
-      ..orderRef = orderRef
-      ..acceptMpesaPayments = acceptMpesaPayment
-      ..acceptAccountPayments = acceptAccountPayment
-      ..acceptCardPayments = acceptCardPayment
-      ..acceptAchPayments = acceptAchPayments
-      ..acceptGHMobileMoneyPayments = acceptGhMMPayments
-      ..acceptUgMobileMoneyPayments = acceptUgMMPayments
-      ..acceptMobileMoneyFrancophoneAfricaPayments = acceptMMFrancophonePayments
-      ..displayEmail = false
-      ..displayAmount = true
-      ..staging = !live
-      ..isPreAuth = preAuthCharge
-      ..displayFee = shouldDisplayFee;
+  // void startPayment() async {
+  //   var initializer = RavePayInitializer(
+  //       amount: amount,
+  //       publicKey: publicKey,
+  //       encryptionKey: encryptionKey,
+  //       subAccounts: subAccounts.isEmpty ? null : null)
+  //     ..country =
+  //         country = country != null && country.isNotEmpty ? country : "GH"
+  //     ..currency = currency != null && currency.isNotEmpty ? currency : "GHS"
+  //     ..email = _user.email
+  //     ..fName = _user.name
+  //     ..lName = _user.name
+  //     ..narration = narration
+  //     ..txRef = widget.extra
+  //     ..orderRef = orderRef
+  //     ..acceptMpesaPayments = acceptMpesaPayment
+  //     ..acceptAccountPayments = acceptAccountPayment
+  //     ..acceptCardPayments = acceptCardPayment
+  //     ..acceptAchPayments = acceptAchPayments
+  //     ..acceptGHMobileMoneyPayments = acceptGhMMPayments
+  //     ..acceptUgMobileMoneyPayments = acceptUgMMPayments
+  //     ..acceptMobileMoneyFrancophoneAfricaPayments = acceptMMFrancophonePayments
+  //     ..displayEmail = false
+  //     ..displayAmount = true
+  //     ..staging = !live
+  //     ..isPreAuth = preAuthCharge
+  //     ..displayFee = shouldDisplayFee;
 
-    var response = await RavePayManager()
-        .prompt(context: context, initializer: initializer);
-    print(response);
-    scaffoldKey.currentState!
-        .showSnackBar(SnackBar(content: Text(response.message)));
-  }
+  //   var response = await RavePayManager()
+  //       .prompt(context: context, initializer: initializer);
+  //   print(response);
+  //   scaffoldKey.currentState!
+  //       .showSnackBar(SnackBar(content: Text(response.message)));
+  // }
 }

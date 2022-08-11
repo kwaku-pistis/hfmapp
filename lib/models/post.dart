@@ -22,7 +22,7 @@ class Post {
       required this.postTime});
 
   Map<String, dynamic> toMap(Post post) {
-    var data = Map<String, dynamic>();
+    var data = <String, dynamic>{};
     data['ownerUid'] = post.currentUserUid;
     data['imgUrl'] = post.imgUrl;
     data['caption'] = post.caption;
@@ -35,13 +35,13 @@ class Post {
   }
 
   Post.fromMap(Map<String, dynamic> mapData) {
-    this.currentUserUid = mapData['ownerUid'];
-    this.imgUrl = mapData['imgUrl'];
-    this.caption = mapData['caption'];
-    this.location = mapData['location'];
-    this.time = mapData['time'];
-    this.postOwnerName = mapData['postOwnerName'];
-    this.postOwnerPhotoUrl = mapData['postOwnerPhotoUrl'];
-    this.postTime = mapData['postTime'];
+    currentUserUid = mapData['ownerUid'];
+    imgUrl = mapData['imgUrl'];
+    caption = mapData['caption'];
+    location = mapData['location'];
+    time = mapData['time'];
+    postOwnerName = mapData['postOwnerName'];
+    postOwnerPhotoUrl = mapData['postOwnerPhotoUrl'];
+    postTime = mapData['postTime'];
   }
 }

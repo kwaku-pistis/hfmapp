@@ -21,7 +21,7 @@ class User {
       this.username});
 
   Map<String, dynamic> toMap(User user) {
-    var data = Map<String, dynamic>();
+    var data = <String, dynamic>{};
     data['uid'] = user.uid;
     data['email'] = user.email;
     data['profileImage'] = user.profileImage;
@@ -35,14 +35,14 @@ class User {
   }
 
   User.fromMap(Map<String, dynamic> mapData) {
-    this.uid = mapData['uid'];
-    this.email = mapData['email'];
-    this.profileImage = mapData['profileImage'];
-    this.name = mapData['name'];
-    this.followers = mapData['followers'];
-    this.following = mapData['following'];
-    this.bio = mapData['bio'];
-    this.posts = mapData['posts'];
-    this.username = mapData['username'];
+    uid = mapData['uid'];
+    email = mapData['email'];
+    profileImage = mapData['profileImage'];
+    name = mapData['name'];
+    followers = mapData['followers'];
+    following = mapData['following'];
+    bio = mapData['bio'];
+    posts = mapData['posts'];
+    username = mapData['username'];
   }
 }

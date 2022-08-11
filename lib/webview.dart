@@ -8,11 +8,10 @@ class MyWebView extends StatefulWidget {
   final String title;
   final String selectedUrl;
 
-  MyWebView(this.title, this.selectedUrl);
+  const MyWebView({Key? key, required this.title, required this.selectedUrl}) : super(key: key);
 
   @override
-  _MyWebViewState createState() =>
-      _MyWebViewState(title: title, selectedUrl: selectedUrl);
+  _MyWebViewState createState() => _MyWebViewState(selectedUrl: '', title: '');
 }
 
 class _MyWebViewState extends State<MyWebView> {
@@ -39,8 +38,8 @@ class _MyWebViewState extends State<MyWebView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title, style: TextStyle(color: Colors.white),),
-        iconTheme: IconThemeData(color: Colors.white),
+        title: Text(title, style: const TextStyle(color: Colors.white),),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: IndexedStack(
         //key: UniqueKey(),
@@ -61,7 +60,7 @@ class _MyWebViewState extends State<MyWebView> {
               color: Colors.transparent,
               child: Center(
                 child: CircularProgressIndicator(
-                  backgroundColor: colortheme.accentColor,
+                  backgroundColor: colorTheme.primaryColorDark,
                 ),
               ),
             ),

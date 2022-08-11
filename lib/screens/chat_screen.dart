@@ -5,13 +5,14 @@ import 'package:HFM/themes/colors.dart';
 import 'package:flutter/material.dart';
 
 class ChatScreen extends StatefulWidget {
+  const ChatScreen({Key? key}) : super(key: key);
+
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  var _repository = Repository();
-  User _user = User();
+  final _repository = Repository();
   List<User> usersList = [];
 
   @override
@@ -32,15 +33,15 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: colortheme.primaryColor,
-          title: Text(
+          backgroundColor: colorTheme.primaryColor,
+          title: const Text(
             'Select user to start chat with',
             style: TextStyle(color: Colors.white),
           ),
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.search),
+              icon: const Icon(Icons.search),
               onPressed: () {
                 showSearch(
                     context: context,
@@ -87,7 +88,7 @@ class ChatSearch extends SearchDelegate<String> {
   List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
-        icon: Icon(Icons.clear),
+        icon: const Icon(Icons.clear),
         onPressed: () {
           query = "";
         },

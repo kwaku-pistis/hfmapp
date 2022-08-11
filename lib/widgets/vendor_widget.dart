@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:rave_flutter/rave_flutter.dart';
 
 class AddVendorWidget extends StatefulWidget {
+  const AddVendorWidget({Key? key}) : super(key: key);
+
   @override
-  _AddVendorWidgetState createState() => _AddVendorWidgetState();
+  State<AddVendorWidget> createState() => _AddVendorWidgetState();
 }
 
 class _AddVendorWidgetState extends State<AddVendorWidget> {
@@ -27,15 +28,14 @@ class _AddVendorWidgetState extends State<AddVendorWidget> {
     return AlertDialog(
       content: Form(
         key: formKey,
-        autovalidateMode: autoValidate
-            ? AutovalidateMode.always
-            : AutovalidateMode.disabled,
+        autovalidateMode:
+            autoValidate ? AutovalidateMode.always : AutovalidateMode.disabled,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             TextFormField(
-              decoration:
-                  InputDecoration(hintText: 'Your Vendor\'s Rave Reference'),
+              decoration: const InputDecoration(
+                  hintText: 'Your Vendor\'s Rave Reference'),
               onSaved: (value) => id = value,
               textCapitalization: TextCapitalization.words,
               focusNode: refFocusNode,
@@ -48,11 +48,12 @@ class _AddVendorWidgetState extends State<AddVendorWidget> {
               validator: (value) =>
                   value!.trim().isEmpty ? 'Field is required' : null,
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             TextFormField(
-              decoration: InputDecoration(hintText: 'Ratio for this vendor'),
+              decoration:
+                  const InputDecoration(hintText: 'Ratio for this vendor'),
               onSaved: (value) => ratio = value,
               keyboardType: TextInputType.number,
               focusNode: ratioFocusNode,
@@ -73,8 +74,8 @@ class _AddVendorWidgetState extends State<AddVendorWidget> {
       actions: <Widget>[
         ElevatedButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('CANCEL')),
-        ElevatedButton(onPressed: validateInputs, child: Text('ADD')),
+            child: const Text('CANCEL')),
+        ElevatedButton(onPressed: validateInputs, child: const Text('ADD')),
       ],
     );
   }
@@ -83,7 +84,7 @@ class _AddVendorWidgetState extends State<AddVendorWidget> {
     var formState = formKey.currentState;
     if (formState!.validate()) {
       formState.save();
-      Navigator.of(context).pop(SubAccount(id, ratio));
+      // Navigator.of(context).pop(SubAccount(id, ratio));
     } else {
       setState(() => autoValidate = true);
     }

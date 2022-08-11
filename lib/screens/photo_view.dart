@@ -4,7 +4,7 @@ import 'package:photo_view/photo_view.dart';
 class ImageView extends StatelessWidget {
   final String imageUrl;
 
-  ImageView({required this.imageUrl});
+  const ImageView({Key? key, required this.imageUrl}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class ImageView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,

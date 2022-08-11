@@ -3,27 +3,28 @@ import 'dart:io';
 import 'package:HFM/screens/upload_photo_screen.dart';
 import 'package:HFM/themes/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddPostScreen extends StatefulWidget {
+  const AddPostScreen({Key? key}) : super(key: key);
+
   @override
-  _AddPostScreenState createState() => _AddPostScreenState();
+  State<AddPostScreen> createState() => _AddPostScreenState();
 }
 
 class _AddPostScreenState extends State<AddPostScreen> {
   late File imageFile;
 
   Future<File> _pickImage(String action) async {
-    File selectedImage;
+    XFile? selectedImage;
 
     action == 'Gallery'
         ? selectedImage =
-            await ImagePicker.pickImage(source: ImageSource.gallery)
+            await ImagePicker().pickImage(source: ImageSource.gallery)
         : selectedImage =
-            await ImagePicker.pickImage(source: ImageSource.camera);
+            await ImagePicker().pickImage(source: ImageSource.camera);
 
-    return selectedImage;
+    return selectedImage as File;
   }
 
   _showImageDialog() {
@@ -34,7 +35,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
           return SimpleDialog(
             children: <Widget>[
               SimpleDialogOption(
-                child: Text('Choose from Gallery'),
+                child: const Text('Choose from Gallery'),
                 onPressed: () {
                   //Navigator.pop(context);
                   _pickImage('Gallery').then((selectedImage) {
@@ -44,15 +45,15 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: ((context) => UploadPhotoScreen(
-                                  //imageFile: imageFile,
+                            builder: ((context) => const UploadPhotoScreen(
+                                //imageFile: imageFile,
                                 ))));
                     //Navigator.of(context).pop();
                   });
                 },
               ),
               SimpleDialogOption(
-                child: Text('Take Photo'),
+                child: const Text('Take Photo'),
                 onPressed: () {
                   //Navigator.of(context).pop();
                   _pickImage('Camera').then((selectedImage) {
@@ -62,14 +63,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: ((context) => UploadPhotoScreen(
-                                  //imageFile: imageFile,
+                            builder: ((context) => const UploadPhotoScreen(
+                                //imageFile: imageFile,
                                 ))));
                   });
                 },
               ),
               SimpleDialogOption(
-                child: Text('Cancel'),
+                child: const Text('Cancel'),
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -83,25 +84,28 @@ class _AddPostScreenState extends State<AddPostScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colortheme.primaryColor,
-        title: Text(
+        backgroundColor: colorTheme.primaryColor,
+        title: const Text(
           'Add Photo',
           style: TextStyle(color: Colors.white),
         ),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.white,
         ),
       ),
       body: Center(
-          child: RaisedButton.icon(
-        splashColor: Colors.yellow,
-        shape: StadiumBorder(),
-        color: Colors.black,
-        label: Text(
+          child: ElevatedButton.icon(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(
+            colorTheme.primaryColor,
+          ),
+          shape: MaterialStateProperty.all(const StadiumBorder()),
+        ),
+        label: const Text(
           'Upload Image',
           style: TextStyle(color: Colors.white),
         ),
-        icon: Icon(
+        icon: const Icon(
           Icons.cloud_upload,
           color: Colors.white,
         ),

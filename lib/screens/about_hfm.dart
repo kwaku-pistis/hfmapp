@@ -2,33 +2,36 @@ import 'package:HFM/themes/colors.dart';
 import 'package:HFM/webview.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class AboutHfm extends StatefulWidget {
+  const AboutHfm({Key? key}) : super(key: key);
+
   @override
-  _AboutHfmState createState() => _AboutHfmState();
+  State<AboutHfm> createState() => _AboutHfmState();
 }
 
-final _fbUrl = 'https://www.facebook.com/harvestfieldsministries/';
-final _igUrl = 'https://www.instagram.com/harvestfieldsministries/';
-final _twitterUrl = 'https://twitter.com/harvestfieldsmn';
-final _scUrl = 'https://soundcloud.com/hfm-publicity';
+const _fbUrl = 'https://www.facebook.com/harvestfieldsministries/';
+const _igUrl = 'https://www.instagram.com/harvestfieldsministries/';
+const _twitterUrl = 'https://twitter.com/harvestfieldsmn';
+const _scUrl = 'https://soundcloud.com/hfm-publicity';
 
 class _AboutHfmState extends State<AboutHfm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'About HARVESTFIELDS',
           style: TextStyle(color: Colors.white),
         ),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.white,
         ),
-        backgroundColor: colortheme.primaryColor,
+        backgroundColor: colorTheme.primaryColor,
       ),
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           width: MediaQuery.of(context).size.width,
           // height: MediaQuery.of(context).size.height,
           child: Column(
@@ -36,7 +39,7 @@ class _AboutHfmState extends State<AboutHfm> {
               Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.35,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     image: DecorationImage(
                   image: AssetImage('assets/images/adinkra_pattern.png'),
                   fit: BoxFit.cover,
@@ -47,7 +50,7 @@ class _AboutHfmState extends State<AboutHfm> {
                     Container(
                       width: MediaQuery.of(context).size.width,
                       height: 192,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         // shape: BoxShape.circle,
                         image: DecorationImage(
                             image: AssetImage('assets/images/hfm.png'),
@@ -68,49 +71,51 @@ class _AboutHfmState extends State<AboutHfm> {
               ),
               Container(
                 width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.fromLTRB(25, 10, 25, 10),
+                margin: const EdgeInsets.fromLTRB(25, 10, 25, 10),
                 child: GestureDetector(
                   child: Row(
                     children: <Widget>[
                       Container(
                           width: 30,
                           height: 30,
-                          margin: EdgeInsets.only(
+                          margin: const EdgeInsets.only(
                               left: 10, right: 14, top: 10, bottom: 10),
-                          padding: EdgeInsets.all(4),
-                          decoration: BoxDecoration(color: Color(0xff333333)),
-                          child: Icon(
+                          padding: const EdgeInsets.all(4),
+                          decoration:
+                              const BoxDecoration(color: Color(0xff333333)),
+                          child: const Icon(
                             Icons.library_books,
                             color: Colors.white,
                           )),
-                      Text(
+                      const Text(
                         'Read About us Online',
                         style: TextStyle(fontSize: 16),
                       )
                     ],
                   ),
                   onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => MyWebView(
-                          'About the Ministry',
-                          'https://harvestfieldsministries.wordpress.com/about-the-ministry/'))),
+                      builder: (BuildContext context) => const MyWebView(
+                          title: 'About the Ministry',
+                          selectedUrl:
+                              'https://harvestfieldsministries.wordpress.com/about-the-ministry/'))),
                 ),
               ),
               Container(
                 width: double.infinity,
-                color: Color(0xff666666),
+                color: const Color(0xff666666),
                 height: 0.5,
-                margin: EdgeInsets.only(top: 0),
+                margin: const EdgeInsets.only(top: 0),
               ),
               Container(
-                padding: EdgeInsets.all(25.0),
+                padding: const EdgeInsets.all(25.0),
                 width: double.infinity,
                 child: Column(children: <Widget>[
                   Container(
-                    margin: EdgeInsets.only(top: 0, bottom: 25),
+                    margin: const EdgeInsets.only(top: 0, bottom: 25),
                     child: Text(
                       'Connect with Us',
                       style: TextStyle(
-                          color: colortheme.primaryColor, fontSize: 20),
+                          color: colorTheme.primaryColor, fontSize: 20),
                     ),
                   ),
                   GestureDetector(
@@ -119,15 +124,16 @@ class _AboutHfmState extends State<AboutHfm> {
                         Container(
                             width: 30,
                             height: 30,
-                            margin: EdgeInsets.only(
+                            margin: const EdgeInsets.only(
                                 left: 10, right: 14, top: 10, bottom: 10),
-                            padding: EdgeInsets.all(4),
-                            decoration: BoxDecoration(color: Color(0xff333333)),
-                            child: Icon(
+                            padding: const EdgeInsets.all(4),
+                            decoration:
+                                const BoxDecoration(color: Color(0xff333333)),
+                            child: const Icon(
                               Icons.location_on,
                               color: Colors.white,
                             )),
-                        Text(
+                        const Text(
                           'HarvestFields Ministries, \nDansoman High St, Accra, Ghana.',
                           style: TextStyle(fontSize: 16),
                         )
@@ -137,9 +143,9 @@ class _AboutHfmState extends State<AboutHfm> {
                   ),
                   Container(
                     width: double.infinity,
-                    color: Color(0xff666666),
+                    color: const Color(0xff666666),
                     height: 0.5,
-                    margin: EdgeInsets.only(top: 5),
+                    margin: const EdgeInsets.only(top: 5),
                   ),
                   GestureDetector(
                     child: Row(
@@ -147,12 +153,12 @@ class _AboutHfmState extends State<AboutHfm> {
                         Container(
                             width: 30,
                             height: 30,
-                            margin: EdgeInsets.only(
+                            margin: const EdgeInsets.only(
                                 left: 10, right: 14, top: 10, bottom: 10),
-                            child: Image(
+                            child: const Image(
                                 image: AssetImage(
                                     'assets/images/ic_facebook.png'))),
-                        Text(
+                        const Text(
                           'Like us on Facebook',
                           style: TextStyle(fontSize: 16),
                         )
@@ -162,9 +168,9 @@ class _AboutHfmState extends State<AboutHfm> {
                   ),
                   Container(
                     width: double.infinity,
-                    color: Color(0xff666666),
+                    color: const Color(0xff666666),
                     height: 0.5,
-                    margin: EdgeInsets.only(top: 5),
+                    margin: const EdgeInsets.only(top: 5),
                   ),
                   GestureDetector(
                     child: Row(
@@ -172,12 +178,12 @@ class _AboutHfmState extends State<AboutHfm> {
                         Container(
                             width: 30,
                             height: 30,
-                            margin: EdgeInsets.only(
+                            margin: const EdgeInsets.only(
                                 left: 10, right: 14, top: 10, bottom: 10),
-                            child: Image(
+                            child: const Image(
                                 image: AssetImage(
                                     'assets/images/ic_instagram.png'))),
-                        Text(
+                        const Text(
                           'Follow us on Instagram',
                           style: TextStyle(fontSize: 16),
                         )
@@ -187,9 +193,9 @@ class _AboutHfmState extends State<AboutHfm> {
                   ),
                   Container(
                     width: double.infinity,
-                    color: Color(0xff666666),
+                    color: const Color(0xff666666),
                     height: 0.5,
-                    margin: EdgeInsets.only(top: 5),
+                    margin: const EdgeInsets.only(top: 5),
                   ),
                   GestureDetector(
                     child: Row(
@@ -197,12 +203,12 @@ class _AboutHfmState extends State<AboutHfm> {
                         Container(
                             width: 30,
                             height: 30,
-                            margin: EdgeInsets.only(
+                            margin: const EdgeInsets.only(
                                 left: 10, right: 14, top: 10, bottom: 10),
-                            child: Image(
+                            child: const Image(
                                 image: AssetImage(
                                     'assets/images/ic_twitter.png'))),
-                        Text(
+                        const Text(
                           'Follow us on Twitter',
                           style: TextStyle(fontSize: 16),
                         )
@@ -212,9 +218,9 @@ class _AboutHfmState extends State<AboutHfm> {
                   ),
                   Container(
                     width: double.infinity,
-                    color: Color(0xff666666),
+                    color: const Color(0xff666666),
                     height: 0.5,
-                    margin: EdgeInsets.only(top: 5),
+                    margin: const EdgeInsets.only(top: 5),
                   ),
                   GestureDetector(
                     child: Row(
@@ -222,11 +228,11 @@ class _AboutHfmState extends State<AboutHfm> {
                         Container(
                             width: 30,
                             height: 30,
-                            margin: EdgeInsets.only(
+                            margin: const EdgeInsets.only(
                                 left: 10, right: 14, top: 10, bottom: 10),
-                            child: Image(
+                            child: const Image(
                                 image: AssetImage('assets/images/ic_sc.png'))),
-                        Text(
+                        const Text(
                           'Subscribe to our SoundCloud',
                           style: TextStyle(fontSize: 16),
                         )
@@ -236,41 +242,46 @@ class _AboutHfmState extends State<AboutHfm> {
                   ),
                   Container(
                     width: double.infinity,
-                    color: Color(0xff666666),
+                    color: const Color(0xff666666),
                     height: 0.5,
-                    margin: EdgeInsets.only(top: 5),
+                    margin: const EdgeInsets.only(top: 5),
                   ),
+
                   /// new feature
                   Container(
-                    margin: EdgeInsets.only(left: 10, right: 5, top: 20),
+                    margin: const EdgeInsets.only(left: 10, right: 5, top: 20),
                     child: Text(
                       'Office Lines',
                       style: TextStyle(
                         fontSize: 20,
-                        color: colortheme.primaryColor,
+                        color: colorTheme.primaryColor,
                       ),
                       textAlign: TextAlign.center,
                     ),
                   ),
                   GestureDetector(
                     child: Card(
-                      margin: EdgeInsets.fromLTRB(15, 20, 15, 5),
-                      color: colortheme.accentColor,
+                      margin: const EdgeInsets.fromLTRB(15, 20, 15, 5),
+                      color: colorTheme.primaryColorDark,
+                      elevation: 10,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           Container(
                             width: 40,
                             height: 40,
-                            padding: EdgeInsets.all(5),
-                            margin: EdgeInsets.only(right: 0),
-                            child: Image(
+                            padding: const EdgeInsets.all(5),
+                            margin: const EdgeInsets.only(right: 0),
+                            child: const Image(
                               image: AssetImage('assets/images/ic_phone.png'),
                               fit: BoxFit.fill,
                             ),
                           ),
-                          Expanded(
-                            child: Container(
+                          const Expanded(
+                            child: SizedBox(
                               width: double.maxFinite,
                               child: Text(
                                 '+233-205-589220',
@@ -283,32 +294,32 @@ class _AboutHfmState extends State<AboutHfm> {
                           ),
                         ],
                       ),
+                    ),
+                    onTap: () => launchUrlString('tel://+233-205-589220'),
+                  ),
+                  GestureDetector(
+                    child: Card(
+                      margin: const EdgeInsets.fromLTRB(15, 0, 15, 5),
+                      color: colorTheme.primaryColorDark,
                       elevation: 10,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                    ),
-                    onTap: () => launch('tel://+233-205-589220'),
-                  ),
-                  GestureDetector(
-                    child: Card(
-                      margin: EdgeInsets.fromLTRB(15, 0, 15, 5),
-                      color: colortheme.accentColor,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           Container(
                             width: 40,
                             height: 40,
-                            padding: EdgeInsets.all(5),
-                            margin: EdgeInsets.only(right: 0),
-                            child: Image(
+                            padding: const EdgeInsets.all(5),
+                            margin: const EdgeInsets.only(right: 0),
+                            child: const Image(
                               image: AssetImage('assets/images/ic_phone.png'),
                               fit: BoxFit.fill,
                             ),
                           ),
-                          Expanded(
-                            child: Container(
+                          const Expanded(
+                            child: SizedBox(
                               width: double.maxFinite,
                               child: Text(
                                 '+233-241-335434',
@@ -321,12 +332,8 @@ class _AboutHfmState extends State<AboutHfm> {
                           ),
                         ],
                       ),
-                      elevation: 10,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
                     ),
-                    onTap: () => launch('tel://+233-241-335434'),
+                    onTap: () => launchUrlString('tel://+233-241-335434'),
                   ),
                 ]),
               ),
@@ -338,13 +345,14 @@ class _AboutHfmState extends State<AboutHfm> {
   }
 
   void _launchMapsUrl() async {
-    final url =
-        'https://www.google.com/maps/place/Harvestfields+Ministries/@5.5417936,-0.2670196,17z/data=!4m12!1m6!3m5!1s0xfdf973b82720ed3:0x2d05252fea92d3a6!2sHarvestfields+Ministries!8m2!3d5.5417936!4d-0.2648309!3m4!1s0xfdf973b82720ed3:0x2d05252fea92d3a6!8m2!3d5.5417936!4d-0.2648309';
-    final appleUrl = 'https://maps.apple.com/?sll=${5.5417936},${-0.2670196}';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else if (await canLaunch(appleUrl)) {
-      await launch(appleUrl);
+    var url = Uri.parse(
+        'https://www.google.com/maps/place/Harvestfields+Ministries/@5.5417936,-0.2670196,17z/data=!4m12!1m6!3m5!1s0xfdf973b82720ed3:0x2d05252fea92d3a6!2sHarvestfields+Ministries!8m2!3d5.5417936!4d-0.2648309!3m4!1s0xfdf973b82720ed3:0x2d05252fea92d3a6!8m2!3d5.5417936!4d-0.2648309');
+    var appleUrl =
+        Uri.parse('https://maps.apple.com/?sll=${5.5417936},${-0.2670196}');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else if (await canLaunchUrl(appleUrl)) {
+      await launchUrl(appleUrl);
     } else {
       throw 'Could not launch $url';
     }
@@ -352,8 +360,8 @@ class _AboutHfmState extends State<AboutHfm> {
 
   // function to open any url
   void _launchUrl(final String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
     } else {
       throw 'Could not launch $url';
     }

@@ -13,23 +13,25 @@ import 'package:path_provider/path_provider.dart';
 class EditProfileScreen extends StatefulWidget {
   final String photoUrl, email, bio, name, username;
 
-  EditProfileScreen(
-      {required this.photoUrl,
+  const EditProfileScreen(
+      {Key? key,
+      required this.photoUrl,
       required this.email,
       required this.bio,
       required this.name,
-      required this.username});
+      required this.username})
+      : super(key: key);
 
   @override
-  _EditProfileScreenState createState() => _EditProfileScreenState();
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
-String _name = '', _bio = '', _username = '', _emailorPhone = '';
+String _name = '', _bio = '', _username = '', _emailOrPhone = '';
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  var _repository = Repository();
-  FirebaseAuth _auth = FirebaseAuth.instance;
-  FirebaseUser? currentUser;
+  final _repository = Repository();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  User? currentUser;
   final _nameController = TextEditingController();
   final _bioController = TextEditingController();
   final _emailController = TextEditingController();
@@ -53,12 +55,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   File? imageFile;
 
   Future<File> _pickImage(String action) async {
-    File? selectedImage;
+    var selectedImage;
 
     action == 'Gallery'
         ? selectedImage =
-            await ImagePicker.pickImage(source: ImageSource.gallery)
-        : await ImagePicker.pickImage(source: ImageSource.camera);
+            await ImagePicker().pickImage(source: ImageSource.gallery)
+        : await ImagePicker().pickImage(source: ImageSource.camera);
 
     return selectedImage!;
   }
@@ -67,21 +69,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colortheme.primaryColor,
+        backgroundColor: colorTheme.primaryColor,
         elevation: 1,
-        title: Text(
+        title: const Text(
           'Edit Profile',
           style: TextStyle(color: Colors.white),
         ),
         leading: GestureDetector(
-          child: Icon(Icons.close, color: Colors.white),
+          child: const Icon(Icons.close, color: Colors.white),
           onTap: () => Navigator.pop(context),
         ),
         actions: <Widget>[
           GestureDetector(
             child: Padding(
               padding: const EdgeInsets.only(right: 12.0),
-              child: Icon(Icons.done, color: colortheme.accentColor),
+              child: Icon(Icons.done, color: colorTheme.primaryColorDark),
             ),
             onTap: () {
               _repository
@@ -106,6 +108,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           Column(
             children: <Widget>[
               GestureDetector(
+                  onTap: _showImageDialog,
                   child: Padding(
                     padding: const EdgeInsets.only(top: 12.0),
                     child: Container(
@@ -115,23 +118,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           borderRadius: BorderRadius.circular(80.0),
                           image: DecorationImage(
                               image: widget.photoUrl.isEmpty
-                                  ? AssetImage('assets/no_image.png')
+                                  ? const AssetImage('assets/no_image.png')
                                   : NetworkImage(widget.photoUrl)
                                       as ImageProvider,
                               fit: BoxFit.cover),
                         )),
-                  ),
-                  onTap: _showImageDialog),
+                  )),
               GestureDetector(
+                onTap: _showImageDialog,
                 child: Padding(
                   padding: const EdgeInsets.only(top: 12.0),
                   child: Text('Change Photo',
                       style: TextStyle(
-                          color: colortheme.accentColor,
+                          color: colorTheme.primaryColorDark,
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold)),
                 ),
-                onTap: _showImageDialog,
               )
             ],
           ),
@@ -142,7 +144,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: TextField(
                   controller: _nameController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Name',
                     labelText: 'Name',
                   ),
@@ -159,7 +161,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 child: TextField(
                   controller: _bioController,
                   maxLines: 3,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Bio',
                     labelText: 'Bio',
                   ),
@@ -176,7 +178,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
                 child: TextField(
                   controller: _usernameController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       hintText: 'Username', labelText: 'Username'),
                   onChanged: ((value) {
                     setState(() {
@@ -185,9 +187,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   }),
                 ),
               ),
-              Divider(),
-              Padding(
-                padding: const EdgeInsets.only(left: 15.0),
+              const Divider(),
+              const Padding(
+                padding: EdgeInsets.only(left: 15.0),
                 child: Text(
                   'Private Information',
                   style: TextStyle(
@@ -201,12 +203,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
                 child: TextField(
                   controller: _emailController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       hintText: 'Email address or phone number',
                       labelText: 'Email / Phone'),
                   onChanged: ((value) {
                     setState(() {
-                      _emailorPhone = value;
+                      _emailOrPhone = value;
                     });
                   }),
                 ),
@@ -226,7 +228,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           return SimpleDialog(
             children: <Widget>[
               SimpleDialogOption(
-                child: Text('Choose from Gallery'),
+                child: const Text('Choose from Gallery'),
                 onPressed: () {
                   _pickImage('Gallery').then((selectedImage) {
                     setState(() {
@@ -242,7 +244,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
               ),
               SimpleDialogOption(
-                child: Text('Take Photo'),
+                child: const Text('Take Photo'),
                 onPressed: () {
                   _pickImage('Camera').then((selectedImage) {
                     setState(() {
@@ -258,7 +260,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
               ),
               SimpleDialogOption(
-                child: Text('Cancel'),
+                child: const Text('Cancel'),
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -274,11 +276,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final path = tempDir.path;
     int rand = Random().nextInt(10000);
 
-    Im.Image image = Im.decodeImage(imageFile!.readAsBytesSync());
+    Im.Image? image = Im.decodeImage(imageFile!.readAsBytesSync());
     //Im.copyResize(image, 500);
 
-    var newim2 = new File('$path/img_$rand.jpg')
-      ..writeAsBytesSync(Im.encodeJpg(image, quality: 85));
+    var newim2 = File('$path/img_$rand.jpg')
+      ..writeAsBytesSync(Im.encodeJpg(image!, quality: 85));
 
     setState(() {
       imageFile = newim2;

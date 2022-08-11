@@ -3,23 +3,24 @@ import 'package:HFM/screens/accounts/confirm_code.dart';
 import 'package:HFM/screens/home.dart';
 import 'package:HFM/screens/accounts/profile.dart';
 import 'package:HFM/themes/colors.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:international_phone_input/international_phone_input.dart';
-import 'package:material_dialog/material_dialog.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:material_dialogs/material_dialogs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
 class LoginOptions extends StatefulWidget {
+  const LoginOptions({Key? key}) : super(key: key);
+
   @override
-  _LoginOptionsState createState() => _LoginOptionsState();
+  State<LoginOptions> createState() => _LoginOptionsState();
 }
 
-//GlobalKey<State<StatefulWidget>> _scaffoldKey = GlobalKey(debugLabel: 'A');
-TextEditingController emailTextController = new TextEditingController();
+TextEditingController emailTextController = TextEditingController();
+TextEditingController numberTextController = TextEditingController();
 bool _phoneValidate = false;
 int _state = 0;
 String _emailAddress = '';
@@ -29,24 +30,26 @@ String emailAdd = '';
 var _repository = Repository();
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
-final GoogleSignIn _googleSignIn = GoogleSignIn(
-    // scopes: [
-    //   'email',
-    //   'https://www.googleapis.com/auth/contacts.readonly',
-    // ]
-    );
-// FirebaseUser _user;
+final GoogleSignIn _googleSignIn = GoogleSignIn();
 
 class _LoginOptionsState extends State<LoginOptions>
     with WidgetsBindingObserver {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  String phoneNumber = '';
+  PhoneNumber number = PhoneNumber();
+  String parsableNumber = '';
+  String phoneIsoCode = '';
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
     _retrieveDynamicLink();
+    number = await PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber);
+    setState(() {
+      parsableNumber = number.parseNumber();
+    });
   }
 
   @override
@@ -57,7 +60,7 @@ class _LoginOptionsState extends State<LoginOptions>
         title: Text(
           'Welcome to HarvestFields',
           style: TextStyle(
-            color: colortheme.primaryColor,
+            color: colorTheme.primaryColor,
             fontSize: 30,
           ),
         ),
@@ -69,7 +72,7 @@ class _LoginOptionsState extends State<LoginOptions>
       body: SingleChildScrollView(
         child: Container(
             height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                   image: AssetImage('assets/images/adinkra_pattern.png'),
                   fit: BoxFit.cover),
@@ -78,9 +81,9 @@ class _LoginOptionsState extends State<LoginOptions>
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  margin:
-                      EdgeInsets.only(bottom: 40, top: 40, left: 20, right: 20),
-                  child: Text(
+                  margin: const EdgeInsets.only(
+                      bottom: 40, top: 40, left: 20, right: 20),
+                  child: const Text(
                     'Use any of the following means to register for HarverstFields Ministries app',
                     style: TextStyle(
                       color: Colors.black,
@@ -93,7 +96,7 @@ class _LoginOptionsState extends State<LoginOptions>
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     height: 192,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       // shape: BoxShape.circle,
                       image: DecorationImage(
                           image: AssetImage('assets/images/hfm.png'),
@@ -101,89 +104,113 @@ class _LoginOptionsState extends State<LoginOptions>
                     ),
                   ),
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 Container(
                   width: MediaQuery.of(context).size.width * 0.6,
-                  margin: EdgeInsets.only(
+                  margin: const EdgeInsets.only(
                     top: 40,
                   ),
-                  child: RaisedButton(
+                  child: ElevatedButton(
                     onPressed: () {
                       showPhoneDialog(
                           context: context, child: _openPhoneDialog());
                     },
-                    child: Text(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        colorTheme.primaryColorDark,
+                      ),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
                       'ENTER YOUR PHONE NUMBER',
                       style: TextStyle(
                         color: Colors.white,
                       ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    color: colortheme.accentColor,
                   ),
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width * 0.6,
-                  margin: EdgeInsets.only(
+                  margin: const EdgeInsets.only(
                     top: 5,
                   ),
-                  child: RaisedButton(
+                  child: ElevatedButton(
                     onPressed: () {
                       showPhoneDialog(
                           context: context, child: _openEmailDialog());
                     },
-                    child: Text(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        colorTheme.primaryColor,
+                      ),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
                       'ENTER YOUR EMAIL ADDRESS',
                       style: TextStyle(
                         color: Colors.white,
                       ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    color: colortheme.primaryColor,
                   ),
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width * 0.6,
-                  margin: EdgeInsets.only(
+                  margin: const EdgeInsets.only(
                     top: 5,
                   ),
-                  child: RaisedButton(
+                  child: ElevatedButton(
                     onPressed: () {
                       setState(() {
                         _state = 1;
                       });
-                      Toast.show('Loading...', context,
-                          gravity: Toast.BOTTOM, duration: Toast.LENGTH_SHORT);
+                      Toast.show('Loading...',
+                          gravity: Toast.bottom, duration: Toast.lengthShort);
                       _signInWithGoogle();
                     },
-                    child: _setUpDialogChild(),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color(0xffDB4437),
+                      ),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
                     ),
-                    color: Color(0xffDB4437),
+                    child: _setUpDialogChild(),
                   ),
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width * 0.6,
-                  margin: EdgeInsets.only(
+                  margin: const EdgeInsets.only(
                     top: 5,
                   ),
-                  child: RaisedButton(
+                  child: ElevatedButton(
                     onPressed: () {},
-                    child: Text(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        Colors.blue[900]!,
+                      ),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
                       'LOG IN WITH FACEBOOK',
                       style: TextStyle(
                         color: Colors.white,
                       ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    color: Colors.blue[900],
                   ),
                 ),
               ],
@@ -200,7 +227,7 @@ class _LoginOptionsState extends State<LoginOptions>
     ).then<void>((T? value) {
       // The value passed to Navigator.pop() or null.
       if (value != null) {
-        _scaffoldKey.currentState!.showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('You selected: $value'),
         ));
       }
@@ -208,43 +235,39 @@ class _LoginOptionsState extends State<LoginOptions>
   }
 
   _openPhoneDialog() {
-    return MaterialDialog(
-      enableFullWidth: true,
-      enableFullHeight: true,
-      title: Text('Phone Number Sign Up'),
-      //subTitle: Text('Subtitle'),
-      content: Container(
-        // child: InternationalPhoneNumberInput(
-        //   onInputChanged: (PhoneNumber number) {
-        //     _number = number.phoneNumber;
-        //     print(number.phoneNumber);
-        //   },
-        //   inputDecoration: InputDecoration(
-
-        //   ),
-        //   isEnabled: true,
-        //   autoValidate: _phoneValidate,
-        //   formatInput: true,
-        //   textFieldController: phoneTextController,
-        //   errorMessage: _phoneValidate ? 'Please enter a phone number' : null,
-        // ),
-        child: InternationalPhoneInput(
-          onPhoneNumberChange: onPhoneNumberChange,
-          initialPhoneNumber: phoneNumber,
-          initialSelection: phoneIsoCode,
-          enabledCountries: [
-            '+233',
-          ],
+    return Dialogs.materialDialog(
+      title: 'Phone Number Sign Up',
+      customView: InternationalPhoneNumberInput(
+        onInputChanged: (PhoneNumber number) {
+          print(number.phoneNumber);
+        },
+        onInputValidated: (bool value) {
+          print(value);
+        },
+        selectorConfig: const SelectorConfig(
+          selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
         ),
+        ignoreBlank: false,
+        autoValidateMode: AutovalidateMode.disabled,
+        selectorTextStyle: const TextStyle(color: Colors.black),
+        initialValue: number,
+        textFieldController: numberTextController,
+        formatInput: false,
+        keyboardType:
+            const TextInputType.numberWithOptions(signed: true, decimal: true),
+        inputBorder: const OutlineInputBorder(),
+        onSaved: (PhoneNumber number) {
+          print('On Saved: $number');
+        },
       ),
       actions: <Widget>[
-        FlatButton(
+        ElevatedButton(
           child: Text(
             'VERIFY NUMBER',
             style: Theme.of(context)
                 .textTheme
                 .button!
-                .copyWith(fontSize: 16.0, color: colortheme.accentColor),
+                .copyWith(fontSize: 16.0, color: colorTheme.primaryColorDark),
           ),
           onPressed: () {
             if (phoneNumber.length == 9) {
@@ -255,6 +278,7 @@ class _LoginOptionsState extends State<LoginOptions>
           },
         ),
       ],
+      context: context,
     );
   }
 
@@ -267,34 +291,30 @@ class _LoginOptionsState extends State<LoginOptions>
   }
 
   _openEmailDialog() {
-    return MaterialDialog(
-      enableFullWidth: true,
-      enableFullHeight: true,
-      title: Text('Email Sign Up'),
-      content: Container(
-        child: TextField(
-          controller: emailTextController,
-          decoration: InputDecoration(
-            hintText: 'Enter your email address',
-            errorText: _phoneValidate ? 'Please enter an email address' : null,
-          ),
-          onChanged: (text) {},
-          keyboardType: TextInputType.emailAddress,
+    return Dialogs.materialDialog(
+      title: 'Email Sign Up',
+      customView: TextField(
+        controller: emailTextController,
+        decoration: InputDecoration(
+          hintText: 'Enter your email address',
+          errorText: _phoneValidate ? 'Please enter an email address' : null,
         ),
+        onChanged: (text) {},
+        keyboardType: TextInputType.emailAddress,
       ),
       actions: <Widget>[
-        FlatButton(
+        ElevatedButton(
           child: Text(
             'VERIFY EMAIL',
             style: Theme.of(context)
                 .textTheme
                 .button!
-                .copyWith(fontSize: 16.0, color: colortheme.accentColor),
+                .copyWith(fontSize: 16.0, color: colorTheme.primaryColorDark),
           ),
           onPressed: () {
             if (emailTextController.text.isNotEmpty) {
-              Toast.show('verifying email...', context,
-                  gravity: Toast.CENTER, duration: Toast.LENGTH_SHORT);
+              Toast.show('verifying email...',
+                  gravity: Toast.center, duration: Toast.lengthShort);
               Navigator.of(context).pop();
               // setState(() {
               //   _state = 1;
@@ -307,11 +327,9 @@ class _LoginOptionsState extends State<LoginOptions>
           },
         ),
       ],
+      context: context,
     );
   }
-
-  String phoneNumber = '';
-  String phoneIsoCode = '';
 
   void onPhoneNumberChange(
       String number, String internationalizedPhoneNumber, String isoCode) {
@@ -321,82 +339,82 @@ class _LoginOptionsState extends State<LoginOptions>
     });
   }
 
-  _sendVerificationLink(String _email) async {
+  _sendVerificationLink(String email) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //String emailAdd = (prefs.getString('emailAddress') ?? null);
-    await prefs.setString('emailAddress', _email);
+    await prefs.setString('emailAddress', email);
+
+    var acs = ActionCodeSettings(
+        url: 'https://hfmapp.page.link/harverstfields',
+        handleCodeInApp: true,
+        iOSBundleId: 'com.ministry.hfmapp',
+        androidPackageName: 'com.ministry.hfmapp',
+        // installIfNotAvailable
+        androidInstallApp: true,
+        // minimumVersion
+        androidMinimumVersion: '10');
 
     await _auth
-        .sendSignInWithEmailLink(
-            email: _email,
-            androidInstallIfNotAvailable: true,
-            iOSBundleID: "com.ministry.hfmapp",
-            androidMinimumVersion: "16",
-            androidPackageName: "com.ministry.hfmapp",
-            url: "https://hfmapp.page.link/harverstfields",
-            handleCodeInApp: true)
+        .sendSignInLinkToEmail(email: email, actionCodeSettings: acs)
         .then((onValue) {
       Toast.show(
           'A verification link has been sent to $_emailAddress. Please go and verify the link to sign in.',
-          context,
-          duration: Toast.LENGTH_LONG,
-          gravity: Toast.CENTER);
+          duration: Toast.lengthLong,
+          gravity: Toast.center);
     });
   }
 
   _retrieveDynamicLink() async {
-    final PendingDynamicLinkData data =
-        await FirebaseDynamicLinks.instance.retrieveDynamicLink();
+    final PendingDynamicLinkData? data = await FirebaseDynamicLinks.instance
+        .getDynamicLink(Uri.parse('https://hfmapp.page.link/harverstfields'));
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    emailAdd = (prefs.getString('emailAddress') ?? null)!;
+    emailAdd = (prefs.getString('emailAddress'))!;
 
-    final Uri deepLink = data.link;
+    final Uri deepLink = data!.link;
     print(deepLink.toString());
 
-    if (deepLink.toString() != null && emailAdd != null) {
-      _link = deepLink.toString();
-      Toast.show('Siging in...', context,
-          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-      _signInWithEmailAndLink();
-    }
+    _link = deepLink.toString();
+    Toast.show('Signing in...',
+        duration: Toast.lengthLong, gravity: Toast.bottom);
+    _signInWithEmailAndLink();
     return deepLink.toString();
   }
 
   _signInWithEmailAndLink() async {
-    bool validLink = await _auth.isSignInWithEmailLink(_link);
+    bool validLink = _auth.isSignInWithEmailLink(_link);
     if (validLink) {
       try {
         await _auth
-            .signInWithEmailAndLink(email: emailAdd, link: _link)
+            .signInWithEmailLink(email: emailAdd, emailLink: _link)
             .then((authResult) {
           // _user = authResult.user;
-          Toast.show('Sign in successful', context,
-              duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+          Toast.show('Sign in successful',
+              duration: Toast.lengthLong, gravity: Toast.bottom);
 
           Navigator.of(context).push(MaterialPageRoute(
               builder: (BuildContext context) =>
-                  Profile(data: emailAdd, user: authResult.user)));
+                  Profile(data: emailAdd, user: authResult.user!)));
         });
       } catch (e) {
         print(e);
         //_showDialog(e.toString());
-        Toast.show('An error occured. Email not sent', context,
-            duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
+        Toast.show('An error occurred. Email not sent',
+            duration: Toast.lengthLong, gravity: Toast.center);
       }
     }
   }
 
   Widget _setUpDialogChild() {
     if (_state == 0) {
-      return Text(
+      return const Text(
         'SIGN IN WITH GOOGLE',
         style: TextStyle(
           color: Colors.white,
         ),
       );
     } else if (_state == 1) {
-      return CircularProgressIndicator(
+      return const CircularProgressIndicator(
         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
       );
     } else {
@@ -406,9 +424,9 @@ class _LoginOptionsState extends State<LoginOptions>
   }
 
   _signInWithGoogle() async {
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+        await googleUser!.authentication;
 
     // final authHeaders = _googleSignIn.currentUser.authHeaders;
     // final httpClient = GoogleHttpClient(authHeaders);
@@ -422,17 +440,17 @@ class _LoginOptionsState extends State<LoginOptions>
 
     //PeopleApi(httpClient).people.get(resourceName)
 
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
+    final AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
 
     //final FirebaseUser user =
     await _auth.signInWithCredential(credential).then((onValue) {
-      _repository.addDataToDb(onValue.user).then((value) {
+      _repository.addDataToDb(onValue.user!).then((value) {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) {
-          return Home(user: null);
+          return const Home(user: null);
         }));
       });
     });

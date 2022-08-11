@@ -2,9 +2,8 @@ import 'package:HFM/models/user.dart';
 import 'package:HFM/resources/repository.dart';
 import 'package:HFM/themes/colors.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:intl/intl.dart';
 import 'package:toast/toast.dart';
@@ -12,23 +11,23 @@ import 'package:toast/toast.dart';
 class Pledges extends StatefulWidget {
   final String extra;
 
-  Pledges({required this.extra});
+  const Pledges({Key? key, required this.extra}) : super(key: key);
 
   @override
-  _PledgesState createState() => _PledgesState();
+  State<Pledges> createState() => _PledgesState();
 }
 
-final format = new DateFormat("dd-MM-yyyy");
+final format = DateFormat("dd-MM-yyyy");
 var dateTextController = TextEditingController();
 var amountController = TextEditingController();
 bool _dateValidate = false;
 bool _amtValidate = false;
 
 class _PledgesState extends State<Pledges> {
-  var _repository = Repository();
+  final _repository = Repository();
   late User _user;
   late String name;
- 
+
   @override
   void initState() {
     retrieveUserDetails();
@@ -36,7 +35,7 @@ class _PledgesState extends State<Pledges> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
+    auth.User currentUser = await _repository.getCurrentUser();
     User user = await _repository.retrieveUserDetails(currentUser);
     setState(() {
       _user = user;
@@ -49,29 +48,29 @@ class _PledgesState extends State<Pledges> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Financial Pledges',
           style: TextStyle(color: Colors.white),
         ),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.white,
         ),
-        backgroundColor: colortheme.primaryColor,
+        backgroundColor: colorTheme.primaryColor,
       ),
       body: SingleChildScrollView(
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
                 width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.only(bottom: 10),
+                margin: const EdgeInsets.only(bottom: 10),
                 child: Text(
                   'Pledge into ${widget.extra}',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
               ),
               // Expanded(
@@ -80,13 +79,13 @@ class _PledgesState extends State<Pledges> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  Container(
+                  SizedBox(
                     width: MediaQuery.of(context).size.width * 0.8,
                     child: TextField(
                       controller: amountController,
                       decoration: InputDecoration(
                         hintText: 'Amount to pledge',
-                        hintStyle: TextStyle(fontSize: 16),
+                        hintStyle: const TextStyle(fontSize: 16),
                         errorText: _amtValidate
                             ? 'Enter an amount greater than 0'
                             : null,
@@ -94,7 +93,7 @@ class _PledgesState extends State<Pledges> {
                       keyboardType: TextInputType.number,
                     ),
                   ),
-                  Container(
+                  const SizedBox(
                     child: Text(
                       'GHS',
                       style: TextStyle(fontSize: 20),
@@ -104,10 +103,10 @@ class _PledgesState extends State<Pledges> {
               ),
               Container(
                 width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.only(top: 16),
-                child: Text(
+                margin: const EdgeInsets.only(top: 16),
+                child: const Text(
                   'Redeem pledge by:',
-                  style: TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                 ),
               ),
               Row(
@@ -115,36 +114,39 @@ class _PledgesState extends State<Pledges> {
                 children: <Widget>[
                   Container(
                     //width: MediaQuery.of(context).size.width * 0.5,
-                    margin: EdgeInsets.only(top: 16, right: 16),
-                    child: FlatButton(
+                    margin: const EdgeInsets.only(top: 16, right: 16),
+                    child: ElevatedButton(
                       onPressed: () {},
-                      child: Icon(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            colorTheme.primaryColor),
+                      ),
+                      child: const Icon(
                         Icons.date_range,
                         color: Colors.white,
                       ),
-                      color: colortheme.accentColor,
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     width: MediaQuery.of(context).size.width * 0.6,
                     child: DateTimeField(
                       format: format,
                       controller: dateTextController,
                       decoration: InputDecoration(
                         hintText: 'date to redeem pledge',
-                        hintStyle: TextStyle(fontSize: 16),
+                        hintStyle: const TextStyle(fontSize: 16),
                         errorText: _dateValidate ? 'Please pick a date' : null,
                         //contentPadding: EdgeInsets.only(left: 10, right: 10),
                       ),
-                      style: TextStyle(color: Colors.black),
+                      style: const TextStyle(color: Colors.black),
                       onShowPicker: (context, currentValue) {
                         return showDatePicker(
                             context: context,
                             firstDate: DateTime(1900),
-                            initialDate: currentValue,
+                            initialDate: currentValue!,
                             lastDate: DateTime(2100));
                       },
-                      autovalidate: false,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
                         return null;
                       },
@@ -154,8 +156,8 @@ class _PledgesState extends State<Pledges> {
               ),
               Container(
                 width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.only(top: 16),
-                child: RaisedButton(
+                margin: const EdgeInsets.only(top: 16),
+                child: ElevatedButton(
                   onPressed: () {
                     if (amountController.text.isEmpty ||
                         amountController.text == '0') {
@@ -179,16 +181,19 @@ class _PledgesState extends State<Pledges> {
                     }
 
                     if (!_amtValidate && !_dateValidate) {
-                      Toast.show('sending pledge', context,
-                          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                      Toast.show('sending pledge',
+                          duration: Toast.lengthLong, gravity: Toast.bottom);
                       _makeAPledge();
                     }
                   },
-                  child: Text(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        colorTheme.primaryColorDark),
+                  ),
+                  child: const Text(
                     'MAKE A PLEDGE',
                     style: TextStyle(color: Colors.white),
                   ),
-                  color: colortheme.accentColor,
                 ),
               ),
             ],

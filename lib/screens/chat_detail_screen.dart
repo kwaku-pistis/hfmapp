@@ -15,17 +15,21 @@ class ChatDetailScreen extends StatefulWidget {
   final String name;
   final String receiverUid;
 
-  ChatDetailScreen(
-      {required this.photoUrl, required this.name, required this.receiverUid});
+  const ChatDetailScreen(
+      {Key? key,
+      required this.photoUrl,
+      required this.name,
+      required this.receiverUid})
+      : super(key: key);
 
   @override
-  _ChatDetailScreenState createState() => _ChatDetailScreenState();
+  State<ChatDetailScreen> createState() => _ChatDetailScreenState();
 }
 
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
-  var _formKey = GlobalKey<FormState>();
-  late String _senderuid;
-  TextEditingController _messageController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  late String senderUid;
+  final TextEditingController _messageController = TextEditingController();
   final _repository = Repository();
   late String receiverPhotoUrl, senderPhotoUrl, receiverName, senderName;
   late StreamSubscription<DocumentSnapshot> subscription;
@@ -37,9 +41,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     print("RCID : ${widget.receiverUid}");
     _repository.getCurrentUser().then((user) {
       setState(() {
-        _senderuid = user.uid;
+        senderUid = user.uid;
       });
-      _repository.fetchUserDetailsById(_senderuid).then((user) {
+      _repository.fetchUserDetailsById(senderUid).then((user) {
         setState(() {
           senderPhotoUrl = user.profileImage!;
           senderName = user.name!;
@@ -65,7 +69,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     return Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
-          backgroundColor: colortheme.primaryColor,
+          backgroundColor: colorTheme.primaryColor,
           elevation: 1,
           title: Row(
             children: <Widget>[
@@ -74,23 +78,22 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
-                child: Text(widget.name, style: TextStyle(color: Colors.white)),
+                child: Text(widget.name,
+                    style: const TextStyle(color: Colors.white)),
               ),
             ],
           ),
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
         body: Form(
           key: _formKey,
-          child: _senderuid.isEmpty
-              ? Container(
-                  child: CircularProgressIndicator(),
-                )
+          child: senderUid.isEmpty
+              ? const CircularProgressIndicator()
               : Column(
                   children: <Widget>[
                     chatMessagesListWidget(),
                     chatInputWidget(),
-                    SizedBox(
+                    const SizedBox(
                       height: 20.0,
                     )
                   ],
@@ -119,7 +122,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: IconButton(
-                    icon: Icon(Icons.gradient),
+                    icon: const Icon(Icons.gradient),
                     color: Colors.black,
                     onPressed: () {
                       pickImage(source: 'Gallery');
@@ -132,7 +135,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                     child: Text(
                       'Send',
                       style: TextStyle(
-                          color: colortheme.accentColor,
+                          color: colorTheme.primaryColorDark,
                           fontWeight: FontWeight.bold,
                           fontSize: 16.0),
                     ),
@@ -146,7 +149,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               ],
             ),
             prefixIcon: IconButton(
-              icon: Icon(Icons.camera_alt),
+              icon: const Icon(Icons.camera_alt),
               onPressed: () {
                 pickImage(source: 'Camera');
               },
@@ -162,16 +165,16 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   }
 
   Future<void> pickImage({String? source}) async {
-    var selectedImage = await ImagePicker.pickImage(
+    var selectedImage = await ImagePicker().pickImage(
         source: source == 'Gallery' ? ImageSource.gallery : ImageSource.camera);
 
     setState(() {
-      imageFile = selectedImage;
+      imageFile = selectedImage as File;
     });
     compressImage();
     _repository.uploadImageToStorage(imageFile).then((url) {
       print("URL: $url");
-      _repository.uploadImageMsgToDb(url, widget.receiverUid, _senderuid);
+      _repository.uploadImageMsgToDb(url, widget.receiverUid, senderUid);
     });
     return;
   }
@@ -182,10 +185,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     final path = tempDir.path;
     int rand = Random().nextInt(10000);
 
-    Im.Image image = Im.decodeImage(imageFile.readAsBytesSync());
-    Im.copyResize(image);
+    Im.Image? image = Im.decodeImage(imageFile.readAsBytesSync());
+    Im.copyResize(image!);
 
-    var newim2 = new File('$path/img_$rand.jpg')
+    var newim2 = File('$path/img_$rand.jpg')
       ..writeAsBytesSync(Im.encodeJpg(image, quality: 85));
 
     setState(() {
@@ -198,41 +201,40 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     print("Inside send message");
     var text = _messageController.text;
     print(text);
-    Message _message = Message(
+    Message message = Message(
         receiverUid: widget.receiverUid,
-        senderUid: _senderuid,
+        senderUid: senderUid,
         message: text,
         timestamp: FieldValue.serverTimestamp(),
         type: 'text');
     print(
-        "receiverUid: ${widget.receiverUid} , senderUid : $_senderuid , message: $text");
-    print(
-        "timestamp: ${DateTime.now().millisecond}, type: ${text != null ? 'text' : 'image'}");
-    _repository.addMessageToDb(_message, widget.receiverUid).then((v) {
+        "receiverUid: ${widget.receiverUid} , senderUid : $senderUid , message: $text");
+    print("timestamp: ${DateTime.now().millisecond}, type: $text");
+    _repository.addMessageToDb(message, widget.receiverUid).then((v) {
       _messageController.text = "";
       print("Message added to db");
     });
   }
 
   Widget chatMessagesListWidget() {
-    print("SENDERUID : $_senderuid");
+    print("SENDER_UID : $senderUid");
     return Flexible(
       child: StreamBuilder(
-        stream: Firestore.instance
+        stream: FirebaseFirestore.instance
             .collection('messages')
-            .document(_senderuid)
+            .doc(senderUid)
             .collection(widget.receiverUid)
             .orderBy('timestamp', descending: false)
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           } else {
             //listItem = snapshot.data.documents;
             return ListView.builder(
-              padding: EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(10.0),
               itemBuilder: (context, index) => chatMessageItem(snapshot),
               // itemCount: snapshot.data[],
               itemCount: 10,
@@ -250,11 +252,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         Padding(
           padding: const EdgeInsets.all(12.0),
           child: Row(
-            mainAxisAlignment: snapshot.data['senderUid'] == _senderuid
+            mainAxisAlignment: snapshot.data['senderUid'] == senderUid
                 ? MainAxisAlignment.end
                 : MainAxisAlignment.start,
             children: <Widget>[
-              snapshot.data['senderUid'] == _senderuid
+              snapshot.data['senderUid'] == senderUid
                   ? senderLayout(snapshot)
                   : receiverLayout(snapshot)
             ],
@@ -274,12 +276,13 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Text(snapshot.data['message'],
-                    style: TextStyle(color: Colors.black, fontSize: 16.0))),
+                    style:
+                        const TextStyle(color: Colors.black, fontSize: 16.0))),
           )
         : FadeInImage(
             fit: BoxFit.cover,
             image: NetworkImage(snapshot.data['photoUrl']),
-            placeholder: AssetImage('assets/blankimage.png'),
+            placeholder: const AssetImage('assets/blankimage.png'),
             width: 250.0,
             height: 300.0,
           );
@@ -295,11 +298,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         padding: const EdgeInsets.all(15.0),
         child: snapshot.data['type'] == 'text'
             ? Text(snapshot.data['message'],
-                style: TextStyle(color: Colors.black, fontSize: 16.0))
+                style: const TextStyle(color: Colors.black, fontSize: 16.0))
             : FadeInImage(
                 fit: BoxFit.cover,
                 image: NetworkImage(snapshot.data['photoUrl']),
-                placeholder: AssetImage('assets/blankimage.png'),
+                placeholder: const AssetImage('assets/blankimage.png'),
                 width: 200.0,
                 height: 200.0,
               ),

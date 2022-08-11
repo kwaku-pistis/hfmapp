@@ -22,23 +22,23 @@ class Message {
       required this.photoUrl});
 
   Map<String, dynamic> toMap() {
-    var map = Map<String, dynamic>();
-    map['senderUid'] = this.senderUid;
-    map['receiverUid'] = this.receiverUid;
-    map['type'] = this.type;
-    map['message'] = this.message;
-    map['timestamp'] = this.timestamp;
+    var map = <String, dynamic>{};
+    map['senderUid'] = senderUid;
+    map['receiverUid'] = receiverUid;
+    map['type'] = type;
+    map['message'] = message;
+    map['timestamp'] = timestamp;
     return map;
   }
 
   Message fromMap(Map<String, dynamic> map) {
-    Message _message = Message(
+    Message message = Message(
         message: '', receiverUid: '', senderUid: '', timestamp: null, type: '');
-    _message.senderUid = map['senderUid'];
-    _message.receiverUid = map['receiverUid'];
-    _message.type = map['type'];
-    _message.message = map['message'];
-    _message.timestamp = map['timestamp'];
-    return _message;
+    message.senderUid = map['senderUid'];
+    message.receiverUid = map['receiverUid'];
+    message.type = map['type'];
+    message.message = map['message'];
+    message.timestamp = map['timestamp'];
+    return message;
   }
 }

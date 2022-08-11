@@ -1,16 +1,10 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:HFM/screens/accounts/login_options.dart';
 import 'package:HFM/screens/tabs/first.dart';
 import 'package:HFM/screens/tabs/fourth.dart';
 import 'package:HFM/screens/tabs/second.dart';
 import 'package:HFM/screens/tabs/third.dart';
 import 'package:HFM/themes/colors.dart';
-import 'package:HFM/utils/Communication.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -18,20 +12,20 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../main.dart';
 
 class Home extends StatefulWidget {
+  final User? user;
+
+  const Home({Key? key, required this.user}) : super(key: key);
+
   @override
-  _HomeState createState() => _HomeState(user: this.user);
-
-  final FirebaseUser? user;
-
-  Home({required this.user});
+  State<Home> createState() => _HomeState();
 }
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  late FirebaseUser? user;
+  late User? user;
 
-  _HomeState({required this.user});
+  // _HomeState({required this.user});
 
   late TabController controller;
   //GoogleSignIn _googleSignIn;
@@ -40,12 +34,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     isLoggedIn = false;
-    FirebaseAuth.instance.currentUser().then((user) => user != null
-        ? setState(() {
-            isLoggedIn = true;
-          })
-        : Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => LoginOptions())));
+    user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        isLoggedIn = true;
+      });
+    } else {
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (BuildContext context) => LoginOptions()));
+    }
 
     super.initState();
 
@@ -114,23 +111,23 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   TabBar getTabBar() {
     return TabBar(
-      tabs: <Tab>[
+      tabs: const <Tab>[
         Tab(
           // set icon to the tab
           icon: Icon(
-            FontAwesomeIcons.home,
+            FontAwesomeIcons.iCursor,
             color: Colors.white,
           ),
         ),
         Tab(
           icon: Icon(
-            FontAwesomeIcons.church,
+            FontAwesomeIcons.house,
             color: Colors.white,
           ),
         ),
         Tab(
           icon: Icon(
-            FontAwesomeIcons.donate,
+            FontAwesomeIcons.gift,
             color: Colors.white,
           ),
         ),
@@ -143,7 +140,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ],
       // setup the controller
       controller: controller,
-      indicatorColor: colortheme.accentColor,
+      indicatorColor: colorTheme.primaryColorDark,
     );
   }
 
@@ -160,16 +157,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'HarvestFields',
           style: TextStyle(color: Colors.white),
         ),
         elevation: 4,
         centerTitle: false,
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.white,
         ),
-        backgroundColor: colortheme.primaryColor,
+        backgroundColor: colorTheme.primaryColor,
         bottom: getTabBar(),
       ),
       body: getTabBarView(<Widget>[FeedScreen(), Second(), Third(), Fourth()]),

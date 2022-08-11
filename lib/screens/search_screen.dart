@@ -8,14 +8,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class SearchScreen extends StatefulWidget {
+  const SearchScreen({Key? key}) : super(key: key);
+
   @override
-  _SearchScreenState createState() => _SearchScreenState();
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  var _repository = Repository();
+  final _repository = Repository();
   List<DocumentSnapshot> list = [];
-  User _user = User();
+  final User _user = User();
   late User currentUser;
   List<User> usersList = [];
 
@@ -25,7 +27,7 @@ class _SearchScreenState extends State<SearchScreen> {
     _repository.getCurrentUser().then((user) {
       _user.uid = user.uid;
       _user.name = user.displayName;
-      _user.profileImage = user.photoUrl;
+      _user.profileImage = user.photoURL;
       _repository.fetchUserDetailsById(user.uid).then((user) {
         setState(() {
           currentUser = user;
@@ -50,26 +52,26 @@ class _SearchScreenState extends State<SearchScreen> {
     print("INSIDE BUILD");
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colortheme.primaryColor,
-        title: Text(
+        backgroundColor: colorTheme.primaryColor,
+        title: const Text(
           'Search Posts or Users',
           style: TextStyle(color: Colors.white),
         ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
             onPressed: () {
               showSearch(
                   context: context, delegate: DataSearch(userList: usersList));
             },
           )
         ],
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: GridView.builder(
           //  shrinkWrap: true,
           itemCount: list.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3, crossAxisSpacing: 4.0, mainAxisSpacing: 4.0),
           itemBuilder: ((context, index) {
             print("LIST : ${list.length}");
@@ -96,14 +98,14 @@ class _SearchScreenState extends State<SearchScreen> {
             //   },
             // );
 
-            var img = list[index].data['imgUrl'];
+            var img = list[index]['imgUrl'];
             return GestureDetector(
               child: img != ""
                   ? CachedNetworkImage(
-                      imageUrl: list[index].data['imgUrl'],
+                      imageUrl: list[index]['imgUrl'],
                       placeholder: ((context, s) => Center(
                             child: img != ""
-                                ? CircularProgressIndicator()
+                                ? const CircularProgressIndicator()
                                 : Container(),
                           )),
                       width: 125.0,
@@ -113,13 +115,13 @@ class _SearchScreenState extends State<SearchScreen> {
                   : Container(
                       width: 125.0,
                       height: 125.0,
-                      padding: EdgeInsets.all(5),
+                      padding: const EdgeInsets.all(5),
+                      alignment: Alignment.center,
                       child: Text(
-                        list[index].data['caption'],
-                        style: TextStyle(color: Colors.black),
+                        list[index]['caption'],
+                        style: const TextStyle(color: Colors.black),
                         textAlign: TextAlign.left,
                       ),
-                      alignment: Alignment.center,
                     ),
               onTap: () {
                 print("SNAPSHOT : ${list[index].reference.path}");
@@ -146,7 +148,7 @@ class DataSearch extends SearchDelegate<String> {
   List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
-        icon: Icon(Icons.clear),
+        icon: const Icon(Icons.clear),
         onPressed: () {
           query = "";
         },

@@ -8,21 +8,20 @@ import 'package:flutter/material.dart';
 
 class Chat extends StatefulWidget {
   final String friendId, id;
-  Chat({required this.friendId, required this.id});
+
+  const Chat({Key? key, required this.friendId, required this.id})
+      : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => ChatState(friendId: friendId);
+  State<StatefulWidget> createState() => ChatState();
 }
 
 class ChatState extends State<Chat> {
-  final String friendId;
   late String friendDisplayName;
   late String friendPhotoUri;
   late String groupId;
   //String id;
   late String about;
-  ChatState({required this.friendId});
-  var _repository = Repository();
 
   @override
   void initState() {
@@ -32,10 +31,10 @@ class ChatState extends State<Chat> {
     //     id = user.uid;
     //   });
     // });
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('User Info')
-        .document(widget.id)
-        .updateData({'chattingWith': widget.friendId});
+        .doc(widget.id)
+        .update({'chattingWith': widget.friendId});
     super.initState();
     _init();
   }
@@ -43,34 +42,34 @@ class ChatState extends State<Chat> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
+      onWillPop: onBackPress,
       child: Scaffold(
         backgroundColor: CHAT_SCREEN_BACKGROUND,
-        body: (friendPhotoUri == null || friendDisplayName == null)
-            ? Center(child: CircularProgressIndicator())
+        body: (friendDisplayName == null)
+            ? const Center(child: CircularProgressIndicator())
             : _chatScreenBody(),
         appBar: AppBar(
-          title: (friendPhotoUri == null || friendDisplayName == null)
+          title: (friendDisplayName == null)
               ? null
               : ChatAppBar(
                   photoUri: friendPhotoUri,
                   displayName: friendDisplayName,
-                  id: friendId,
+                  id: widget.friendId,
                   about: about),
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              Firestore.instance
+              FirebaseFirestore.instance
                   .collection('User Info')
-                  .document(widget.id)
-                  .updateData({'chattingWith': null});
+                  .doc(widget.id)
+                  .update({'chattingWith': null});
               Navigator.pop(context);
             },
           ),
           actions: _appBarActions(),
         ),
       ),
-      onWillPop: onBackPress,
     );
   }
 
@@ -80,15 +79,16 @@ class ChatState extends State<Chat> {
 
   Widget _chatScreenBody() {
     return Container(
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.all(10),
+      decoration: const BoxDecoration(
           image: DecorationImage(
         image: AssetImage('assets/images/adinkra_pattern.png'),
         fit: BoxFit.cover,
       )),
       child: Column(
         children: <Widget>[
-          ChatSegment(groupId: groupId, id: widget.id, friendId: friendId),
+          ChatSegment(
+              groupId: groupId, id: widget.id, friendId: widget.friendId),
           // InputSegment(
           //   groupId: groupId,
           //   id: widget.id,
@@ -107,29 +107,26 @@ class ChatState extends State<Chat> {
   _setGroupChatId() async {
     // var sp = await SharedPreferences.getInstance();
     // id = sp.get(SHARED_PREFERENCES_USER_ID);
-    if (widget.id.hashCode < friendId.hashCode) {
-      groupId = '$friendId-${widget.id}';
+    if (widget.id.hashCode < widget.friendId.hashCode) {
+      groupId = '${widget.friendId}-${widget.id}';
     } else {
-      groupId = '${widget.id}-$friendId';
+      groupId = '${widget.id}-${widget.friendId}';
     }
   }
 
   _getFriendInfo() async {
-    var document = await getFriendById(friendId);
-    about =
-        document[USER_ABOUT_FIELD] != null ? document[USER_ABOUT_FIELD] : '...';
+    var document = await getFriendById(widget.friendId);
+    about = document[USER_ABOUT_FIELD] ?? '...';
     friendDisplayName = document[USER_DISPLAY_NAME];
-    friendPhotoUri = document[USER_PHOTO_URI] != null
-        ? document[USER_PHOTO_URI]
-        : USER_IMAGE_PLACE_HOLDER;
+    friendPhotoUri = document[USER_PHOTO_URI] ?? USER_IMAGE_PLACE_HOLDER;
     setState(() {});
   }
 
   Future<bool> onBackPress() {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('User Info')
-        .document(widget.id)
-        .updateData({'chattingWith': null});
+        .doc(widget.id)
+        .update({'chattingWith': null});
     Navigator.pop(context);
 
     return Future.value(false);

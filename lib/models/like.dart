@@ -13,7 +13,7 @@ class Like {
       required this.timeStamp});
 
   Map<String, dynamic> toMap(Like like) {
-    var data = Map<String, dynamic>();
+    var data = <String, dynamic>{};
     data['ownerName'] = like.ownerName;
     data['ownerPhotoUrl'] = like.ownerPhotoUrl;
     data['ownerUid'] = like.ownerUid;
@@ -22,9 +22,9 @@ class Like {
   }
 
   Like.fromMap(Map<String, dynamic> mapData) {
-    this.ownerName = mapData['ownerName'];
-    this.ownerPhotoUrl = mapData['ownerPhotoUrl'];
-    this.ownerUid = mapData['ownerUid'];
-    this.timeStamp = mapData['timestamp'];
+    ownerName = mapData['ownerName'];
+    ownerPhotoUrl = mapData['ownerPhotoUrl'];
+    ownerUid = mapData['ownerUid'];
+    timeStamp = mapData['timestamp'];
   }
 }

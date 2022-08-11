@@ -4,42 +4,42 @@ import 'package:HFM/resources/repository.dart';
 import 'package:HFM/screens/home.dart';
 import 'package:HFM/themes/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoder2/geocoder2.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'package:flutter/services.dart';
-import 'package:geocoder/geocoder.dart';
 import 'package:image/image.dart' as Im;
 import 'package:path_provider/path_provider.dart';
 import 'dart:math';
 
 class UploadPhotoScreen extends StatefulWidget {
+  const UploadPhotoScreen({Key? key}) : super(key: key);
+
   // File imageFile;
   // UploadPhotoScreen({this.imageFile});
 
   @override
-  _UploadPhotoScreenState createState() => _UploadPhotoScreenState();
+  State<UploadPhotoScreen> createState() => _UploadPhotoScreenState();
 }
 
 class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
   late File? imageFile;
-  var _locationController;
-  var _captionController;
+  final _locationController = TextEditingController();
+  final _captionController = TextEditingController();
   final _repository = Repository();
   late String caption, location;
 
   @override
   void initState() {
     super.initState();
-    _locationController = TextEditingController();
-    _captionController = TextEditingController();
   }
 
   @override
   void dispose() {
     super.dispose();
-    _locationController?.dispose();
-    _captionController?.dispose();
+    _locationController.dispose();
+    _captionController.dispose();
   }
 
   bool _visibility = true;
@@ -54,12 +54,12 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'New Post',
           style: TextStyle(color: Colors.white),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: colortheme.primaryColor,
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: colorTheme.primaryColor,
         elevation: 1.0,
         actions: <Widget>[
           Padding(
@@ -67,7 +67,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
             child: GestureDetector(
               child: Icon(
                 Icons.send,
-                color: colortheme.accentColor,
+                color: colorTheme.primaryColorDark,
               ),
               onTap: () {
                 // To show the CircularProgressIndicator
@@ -123,7 +123,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           width: MediaQuery.of(context).size.width,
           // height: double.infinity,
           child: Column(
@@ -138,7 +138,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                         controller: _captionController,
                         keyboardType: TextInputType.multiline,
                         textCapitalization: TextCapitalization.sentences,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'Write a message...',
                           contentPadding: EdgeInsets.only(bottom: 20, top: 16),
                         ),
@@ -163,7 +163,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                       location = value;
                     });
                   }),
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Add location',
                   ),
                 ),
@@ -172,7 +172,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                 padding: const EdgeInsets.only(left: 12.0, right: 12.0),
                 child: FutureBuilder(
                     future: locateUser(),
-                    builder: ((context, AsyncSnapshot<List<Address>> snapshot) {
+                    builder: ((context, AsyncSnapshot<GeoData?> snapshot) {
                       //  if (snapshot.hasData) {
                       if (snapshot.hasData) {
                         return Row(
@@ -180,14 +180,12 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                           children: <Widget>[
                             GestureDetector(
                               child: Chip(
-                                label: Text(snapshot.data!.first.locality == null
-                                    ? 'No location found'
-                                    : snapshot.data!.first.locality),
+                                label: Text(snapshot.data!.city),
                               ),
                               onTap: () {
                                 setState(() {
                                   _locationController.text =
-                                      snapshot.data!.first.locality;
+                                      snapshot.data!.city;
                                 });
                               },
                             ),
@@ -209,40 +207,19 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                                   //         ),
                                   label: RichText(
                                     text: TextSpan(
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             color: Colors.black, fontSize: 12),
                                         children: [
-                                          TextSpan(
-                                              text: snapshot.data!.first
-                                                          .subAdminArea ==
-                                                      null
-                                                  ? 'No sub Area found'
-                                                  : snapshot
-                                                      .data!.first.subAdminArea),
-                                          TextSpan(text: ', '),
-                                          TextSpan(
-                                              text: snapshot.data!.first
-                                                          .subLocality ==
-                                                      null
-                                                  ? 'No sub-locality found'
-                                                  : snapshot
-                                                      .data!.first.subLocality),
+                                          TextSpan(text: snapshot.data!.state),
+                                          const TextSpan(text: ', '),
+                                          TextSpan(text: snapshot.data!.state),
                                         ]),
                                   ),
                                 ),
                                 onTap: () {
                                   setState(() {
                                     _locationController.text =
-                                        snapshot.data!.first.subAdminArea != null
-                                            ? snapshot.data!.first.subAdminArea
-                                            : '' +
-                                                        ", " +
-                                                        snapshot.data!.first
-                                                            .subLocality !=
-                                                    null
-                                                ? snapshot
-                                                    .data!.first.subLocality
-                                                : '';
+                                        snapshot.data!.city;
                                   });
                                 },
                               ),
@@ -251,7 +228,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                         );
                       } else {
                         print("Connection State : ${snapshot.connectionState}");
-                        return CircularProgressIndicator();
+                        return const CircularProgressIndicator();
                       }
                     })),
               ),
@@ -265,27 +242,32 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                       image: DecorationImage(
                           fit: BoxFit.fill,
                           image: imageFile == null
-                              ? AssetImage('')
+                              ? const AssetImage('')
                               : FileImage(imageFile!) as ImageProvider)),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 50.0),
                 child: Offstage(
-                  child: CircularProgressIndicator(),
                   offstage: _visibility,
+                  child: const CircularProgressIndicator(),
                 ),
               ),
               Center(
-                  child: RaisedButton.icon(
-                splashColor: Colors.yellow,
-                shape: StadiumBorder(),
-                color: Colors.black,
-                label: Text(
+                  child: ElevatedButton.icon(
+                // splashColor: Colors.yellow,
+                // shape: const StadiumBorder(),
+                // color: Colors.black,
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all(const StadiumBorder()),
+                  backgroundColor: MaterialStateProperty.all(Colors.black),
+                  splashFactory: NoSplash.splashFactory,
+                ),
+                label: const Text(
                   'Add Image',
                   style: TextStyle(color: Colors.white),
                 ),
-                icon: Icon(
+                icon: const Icon(
                   Icons.add_a_photo,
                   color: Colors.white,
                 ),
@@ -304,10 +286,10 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
     final path = tempDir.path;
     int rand = Random().nextInt(10000);
 
-    Im.Image image = Im.decodeImage(imageFile!.readAsBytesSync());
-    Im.copyResize(image, width: 500, height: 500);
+    Im.Image? image = Im.decodeImage(imageFile!.readAsBytesSync());
+    Im.copyResize(image!, width: 500, height: 500);
 
-    var newim2 = new File('$path/img_$rand.jpg')
+    var newim2 = File('$path/img_$rand.jpg')
       ..writeAsBytesSync(Im.encodeJpg(image, quality: 85));
 
     setState(() {
@@ -316,11 +298,11 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
     print('done');
   }
 
-  Future<List<Address>> locateUser() async {
+  Future<GeoData?> locateUser() async {
     LocationData? currentLocation;
-    Future<List<Address>>? addresses;
+    Future<GeoData>? addresses;
 
-    var location = new Location();
+    var location = Location();
 
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
@@ -330,10 +312,14 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
           'LATITUDE : ${currentLocation.latitude} && LONGITUDE : ${currentLocation.longitude}');
 
       // From coordinates
-      final coordinates =
-          new Coordinates(currentLocation.latitude, currentLocation.longitude);
+      // final coordinates =
+      //      Coordinates(currentLocation.latitude, currentLocation.longitude);
 
-      addresses = (Geocoder.local.findAddressesFromCoordinates(coordinates));
+      addresses = (Geocoder2.getDataFromCoordinates(
+        latitude: currentLocation.latitude!,
+        longitude: currentLocation.longitude!,
+        googleMapApiKey: "GOOGLE_MAPS_API_KEY",
+      ));
 
       //addresses = findAddressesFromCoordinates()
       //var kdkd = addresses.first;
@@ -347,7 +333,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
     if (addresses != null) {
       return addresses;
     } else {
-      return [];
+      return null;
     }
   }
 
@@ -359,11 +345,11 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
           return SimpleDialog(
             children: <Widget>[
               SimpleDialogOption(
-                child: Text('Choose from Gallery'),
+                child: const Text('Choose from Gallery'),
                 onPressed: () {
                   //Navigator.pop(context);
                   _pickImage('Gallery').then((selectedImage) async {
-                    await ImageCropper.cropImage(
+                    await ImageCropper.platform.cropImage(
                       sourcePath: selectedImage.path,
                       aspectRatioPresets: [
                         CropAspectRatioPreset.square,
@@ -372,19 +358,9 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                         // CropAspectRatioPreset.ratio4x3,
                         // CropAspectRatioPreset.ratio16x9
                       ],
-                      androidUiSettings: AndroidUiSettings(
-                          toolbarTitle: 'Zoom to Edit Photo',
-                          toolbarColor: Color(0xff132028),
-                          toolbarWidgetColor: Colors.white,
-                          backgroundColor: Color(0xff132028),
-                          initAspectRatio: CropAspectRatioPreset.original,
-                          lockAspectRatio: false),
-                      iosUiSettings: IOSUiSettings(
-                        minimumAspectRatio: 1.0,
-                      ),
                     ).then((onValue) {
                       setState(() {
-                        imageFile = onValue;
+                        imageFile = onValue as File?;
                       });
                     });
 
@@ -399,12 +375,12 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                 },
               ),
               SimpleDialogOption(
-                child: Text('Take Photo'),
+                child: const Text('Take Photo'),
                 onPressed: () {
                   //Navigator.of(context).pop();
                   _pickImage('Camera').then((selectedImage) {
                     setState(() {
-                      imageFile = selectedImage;
+                      imageFile = selectedImage as File?;
                     });
                     // Navigator.push(
                     //     context,
@@ -417,7 +393,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                 },
               ),
               SimpleDialogOption(
-                child: Text('Cancel'),
+                child: const Text('Cancel'),
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -429,14 +405,14 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
 
   //File imageFile;
 
-  Future<File> _pickImage(String action) async {
-    File selectedImage;
+  Future<XFile> _pickImage(String action) async {
+    XFile selectedImage;
 
     action == 'Gallery'
         ? selectedImage =
-            await ImagePicker.pickImage(source: ImageSource.gallery)
+            (await ImagePicker().pickImage(source: ImageSource.gallery))!
         : selectedImage =
-            await ImagePicker.pickImage(source: ImageSource.camera);
+            (await ImagePicker().pickImage(source: ImageSource.camera))!;
 
     return selectedImage;
   }

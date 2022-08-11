@@ -14,19 +14,18 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class FriendProfileScreen extends StatefulWidget {
   final String name;
-  FriendProfileScreen({required this.name});
+  const FriendProfileScreen({Key? key, required this.name}) : super(key: key);
 
   @override
-  _FriendProfileScreenState createState() => _FriendProfileScreenState();
+  State<FriendProfileScreen> createState() => _FriendProfileScreenState();
 }
-
 class _FriendProfileScreenState extends State<FriendProfileScreen> {
   late String currentUserId, followingUserId;
-  var _repository = Repository();
-  Color _gridColor = colortheme.accentColor;
+  final _repository = Repository();
+  Color _gridColor = colorTheme.primaryColorDark;
   Color _listColor = Colors.grey;
   bool _isGridActive = true;
-  late User _user, currentuser;
+  late User _user, currentUser;
   late IconData icon;
   late Color color;
   late Future<List<DocumentSnapshot>> _future;
@@ -61,7 +60,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
     _repository.getCurrentUser().then((user) {
       _repository.fetchUserDetailsById(user.uid).then((currentUser) {
         setState(() {
-          currentuser = currentUser;
+          currentUser = currentUser;
         });
       });
       _repository.checkIsFollowing(widget.name, user.uid).then((value) {
@@ -87,7 +86,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
     });
   }
 
-  unfollowUser() {
+  unFollowUser() {
     _repository.unFollowUser(
         currentUserId: currentUserId, followingUserId: followingUserId);
     setState(() {
@@ -98,7 +97,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
 
   Widget buildButton(
       {required String text,
-      required Color backgroundcolor,
+      required Color backgroundColor,
       required Color textColor,
       required Color borderColor,
       required Function()? function}) {
@@ -108,7 +107,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
         width: 210.0,
         height: 30.0,
         decoration: BoxDecoration(
-            color: backgroundcolor,
+            color: backgroundColor,
             borderRadius: BorderRadius.circular(4.0),
             border: Border.all(color: borderColor)),
         child: Center(
@@ -123,10 +122,10 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
     if (isFollowing) {
       return buildButton(
         text: "Unfollow",
-        backgroundcolor: Colors.white,
+        backgroundColor: Colors.white,
         textColor: Colors.black,
         borderColor: Colors.grey,
-        function: unfollowUser,
+        function: unFollowUser,
       );
     }
 
@@ -134,16 +133,16 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
     if (!isFollowing) {
       return buildButton(
         text: "Follow",
-        backgroundcolor: colortheme.accentColor,
+        backgroundColor: colorTheme.primaryColorDark,
         textColor: Colors.white,
-        borderColor: colortheme.accentColor,
+        borderColor: colorTheme.primaryColorDark,
         function: followUser,
       );
     }
 
     return buildButton(
         text: "loading...",
-        backgroundcolor: Colors.white,
+        backgroundColor: Colors.white,
         textColor: Colors.black,
         borderColor: Colors.grey,
         function: () {});
@@ -154,13 +153,13 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: colortheme.primaryColor,
+          backgroundColor: colorTheme.primaryColor,
           elevation: 1,
-          title: Text(
+          title: const Text(
             'Profile',
             style: TextStyle(color: Colors.white),
           ),
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
         body: _user != null
             ? ListView(
@@ -169,10 +168,10 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           image: DecorationImage(
                             image:
-                                AssetImage('assets/images/adinkra_pattern.png'),
+                              AssetImage('assets/images/adinkra_pattern.png'),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -188,7 +187,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                                     borderRadius: BorderRadius.circular(80.0),
                                     image: DecorationImage(
                                         image: _user.profileImage!.isEmpty
-                                            ? AssetImage(
+                                            ? const AssetImage(
                                                 'assets/images/profile.png')
                                             : NetworkImage(_user.profileImage!)
                                                 as ImageProvider,
@@ -199,7 +198,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                               padding:
                                   const EdgeInsets.only(left: 0.0, top: 10.0),
                               child: Text(_user.name!,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20.0)),
@@ -211,7 +210,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                                   _user.username!.isEmpty
                                       ? '@username'
                                       : _user.username!,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.normal,
                                       fontSize: 16.0)),
@@ -240,9 +239,9 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                                                     .toString(),
                                                 'posts');
                                           } else {
-                                            return Center(
+                                            return const Center(
                                               child:
-                                                  CircularProgressIndicator(),
+                                                 CircularProgressIndicator(),
                                             );
                                           }
                                         }),
@@ -268,9 +267,9 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                                                   'followers'),
                                             );
                                           } else {
-                                            return Center(
+                                            return const Center(
                                               child:
-                                                  CircularProgressIndicator(),
+                                                 CircularProgressIndicator(),
                                             );
                                           }
                                         }),
@@ -296,7 +295,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                                                   'following'),
                                             );
                                           } else {
-                                            return Center(
+                                            return const Center(
                                               child:
                                                   CircularProgressIndicator(),
                                             );
@@ -328,8 +327,8 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                     child:
                         _user.bio!.isNotEmpty ? Text(_user.bio!) : Container(),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 0.0),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 0.0),
                     child: Divider(),
                   ),
                   Padding(
@@ -345,7 +344,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                           onTap: () {
                             setState(() {
                               _isGridActive = true;
-                              _gridColor = colortheme.accentColor;
+                              _gridColor = colorTheme.primaryColorDark;
                               _listColor = Colors.grey;
                             });
                           },
@@ -358,7 +357,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                           onTap: () {
                             setState(() {
                               _isGridActive = false;
-                              _listColor = colortheme.accentColor;
+                              _listColor = colorTheme.primaryColorDark;
                               _gridColor = Colors.grey;
                             });
                           },
@@ -366,8 +365,8 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12.0),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 12.0),
                     child: Divider(),
                   ),
                   Padding(
@@ -376,7 +375,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                   ),
                 ],
               )
-            : Center(child: CircularProgressIndicator()),
+            : const Center(child: CircularProgressIndicator()),
       ),
     );
   }
@@ -392,7 +391,7 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                   return GridView.builder(
                     shrinkWrap: true,
                     itemCount: snapshot.data!.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
                         crossAxisSpacing: 4.0,
                         mainAxisSpacing: 4.0),
@@ -415,19 +414,19 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                       //         MaterialPageRoute(
                       //             builder: ((context) => PostDetailScreen(
                       //                   user: _user,
-                      //                   currentuser: currentuser,
+                      //                   currentUser: currentUser,
                       //                   documentSnapshot: snapshot.data[index],
                       //                 ))));
                       //   },
                       // );
-                      var img = snapshot.data![index].data['imgUrl'];
+                      var img = snapshot.data![index]['imgUrl'];
                       return GestureDetector(
                         child: img != ""
                             ? CachedNetworkImage(
-                                imageUrl: snapshot.data![index].data['imgUrl'],
+                                imageUrl: snapshot.data![index]['imgUrl'],
                                 placeholder: ((context, s) => Center(
                                       child: img != ""
-                                          ? CircularProgressIndicator()
+                                          ? const CircularProgressIndicator()
                                           : Container(),
                                     )),
                                 width: 125.0,
@@ -437,13 +436,13 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                             : Container(
                                 width: 125.0,
                                 height: 125.0,
-                                padding: EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(5),
+                                alignment: Alignment.center,
                                 child: Text(
-                                  snapshot.data![index].data['caption'],
-                                  style: TextStyle(color: Colors.black),
+                                  snapshot.data![index]['caption'],
+                                  style: const TextStyle(color: Colors.black),
                                   textAlign: TextAlign.left,
                                 ),
-                                alignment: Alignment.center,
                               ),
                         onTap: () {
                           print(
@@ -461,14 +460,14 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                     }),
                   );
                 } else if (snapshot.hasError) {
-                  return Center(
+                  return const Center(
                     child: Text('No Posts Found'),
                   );
                 }
               } else {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }),
           )
         : FutureBuilder(
@@ -487,15 +486,15 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
                                 list: snapshot.data!,
                                 index: index,
                                 user: _user,
-                                currentuser: currentuser)))),
+                                currentUser: currentUser)))),
                   );
                 } else {
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(),
                   );
                 }
               } else {
-                return Center(
+                return const Center(
                   child: CircularProgressIndicator(),
                 );
               }
@@ -507,14 +506,14 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
     return Column(
       children: <Widget>[
         Text(count,
-            style: TextStyle(
+            style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18.0,
                 color: Colors.black)),
         Padding(
           padding: const EdgeInsets.only(top: 4.0),
           child:
-              Text(label, style: TextStyle(fontSize: 16.0, color: Colors.grey)),
+              Text(label, style: const TextStyle(fontSize: 16.0, color: Colors.grey)),
         )
       ],
     );
@@ -522,24 +521,24 @@ class _FriendProfileScreenState extends State<FriendProfileScreen> {
 }
 
 class ListItem extends StatefulWidget {
-  List<DocumentSnapshot> list;
-  User user, currentuser;
-  int index;
+  final List<DocumentSnapshot> list;
+  final User user, currentUser;
+  final int index;
 
-  ListItem(
-      {required this.list,
+  const ListItem(
+      {Key? key, required this.list,
       required this.user,
       required this.index,
-      required this.currentuser});
+      required this.currentUser}) : super(key: key);
 
   @override
-  _ListItemState createState() => _ListItemState();
+  State<ListItem> createState() => _ListItemState();
 }
 
 class _ListItemState extends State<ListItem> {
-  var _repository = Repository();
+  final _repository = Repository();
   bool _isLiked = false;
-  late Future<List<DocumentSnapshot>> _future;
+  // late Future<List<DocumentSnapshot>> _future;
 
   Widget commentWidget(DocumentReference reference) {
     return FutureBuilder(
@@ -549,7 +548,7 @@ class _ListItemState extends State<ListItem> {
           return GestureDetector(
             child: Text(
               'View all ${snapshot.data!.length} comments',
-              style: TextStyle(color: Colors.grey),
+              style: const TextStyle(color: Colors.grey),
             ),
             onTap: () {
               Navigator.push(
@@ -557,12 +556,12 @@ class _ListItemState extends State<ListItem> {
                   MaterialPageRoute(
                       builder: ((context) => CommentsScreen(
                             documentReference: reference,
-                            user: widget.currentuser,
+                            user: widget.currentUser,
                           ))));
             },
           );
         } else {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
       }),
     );
@@ -588,37 +587,37 @@ class _ListItemState extends State<ListItem> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  new Container(
+                  Container(
                     height: 40.0,
                     width: 40.0,
-                    decoration: new BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      image: new DecorationImage(
+                      image: DecorationImage(
                           fit: BoxFit.fill,
-                          image: new NetworkImage(widget.user.profileImage!)),
+                          image: NetworkImage(widget.user.profileImage!)),
                     ),
                   ),
-                  new SizedBox(
+                  const SizedBox(
                     width: 10.0,
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      new Text(
+                      Text(
                         widget.user.name!,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      widget.list[widget.index].data['location'] != null
-                          ? new Text(
-                              widget.list[widget.index].data['location'],
-                              style: TextStyle(color: Colors.grey),
+                      widget.list[widget.index]['location'] != null
+                          ? Text(
+                              widget.list[widget.index]['location'],
+                              style: const TextStyle(color: Colors.grey),
                             )
                           : Container(),
                     ],
                   )
                 ],
               ),
-              new IconButton(
+              const IconButton(
                 icon: Icon(Icons.more_vert),
                 onPressed: null,
               )
@@ -626,8 +625,8 @@ class _ListItemState extends State<ListItem> {
           ),
         ),
         CachedNetworkImage(
-          imageUrl: widget.list[widget.index].data['imgUrl'],
-          placeholder: ((context, s) => Center(
+          imageUrl: widget.list[widget.index]['imgUrl'],
+          placeholder: ((context, s) => const Center(
                 child: CircularProgressIndicator(),
               )),
           width: 125.0,
@@ -639,16 +638,16 @@ class _ListItemState extends State<ListItem> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              new Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   GestureDetector(
                       child: _isLiked
-                          ? Icon(
+                          ? const Icon(
                               Icons.favorite,
                               color: Colors.red,
                             )
-                          : Icon(
+                          : const Icon(
                               FontAwesomeIcons.heart,
                               color: null,
                             ),
@@ -667,7 +666,7 @@ class _ListItemState extends State<ListItem> {
                           postUnlike(widget.list[widget.index].reference);
                         }
                       }),
-                  new SizedBox(
+                  const SizedBox(
                     width: 16.0,
                   ),
                   GestureDetector(
@@ -678,20 +677,20 @@ class _ListItemState extends State<ListItem> {
                               builder: ((context) => CommentsScreen(
                                     documentReference:
                                         widget.list[widget.index].reference,
-                                    user: widget.currentuser,
+                                    user: widget.currentUser,
                                   ))));
                     },
-                    child: new Icon(
+                    child: const Icon(
                       FontAwesomeIcons.comment,
                     ),
                   ),
-                  new SizedBox(
+                  const SizedBox(
                     width: 16.0,
                   ),
-                  new Icon(FontAwesomeIcons.paperPlane),
+                  const Icon(FontAwesomeIcons.paperPlane),
                 ],
               ),
-              new Icon(FontAwesomeIcons.bookmark)
+              const Icon(FontAwesomeIcons.bookmark)
             ],
           ),
         ),
@@ -716,34 +715,34 @@ class _ListItemState extends State<ListItem> {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: likesSnapshot.data!.length > 1
                       ? Text(
-                          "Liked by ${likesSnapshot.data![0].data['ownerName']} and ${(likesSnapshot.data!.length - 1).toString()} others",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          "Liked by ${likesSnapshot.data![0]['ownerName']} and ${(likesSnapshot.data!.length - 1).toString()} others",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         )
                       : Text(likesSnapshot.data!.length == 1
-                          ? "Liked by ${likesSnapshot.data![0].data['ownerName']}"
+                          ? "Liked by ${likesSnapshot.data![0]['ownerName']}"
                           : "0 Likes"),
                 ),
               );
             } else {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: const CircularProgressIndicator());
             }
           }),
         ),
         Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: widget.list[widget.index].data['caption'] != null
+            child: widget.list[widget.index]['caption'] != null
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Wrap(
                         children: <Widget>[
                           Text(widget.user.name!,
-                              style: TextStyle(fontWeight: FontWeight.bold)),
+                              style: const TextStyle(fontWeight: FontWeight.bold)),
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0),
                             child:
-                                Text(widget.list[widget.index].data['caption']),
+                                Text(widget.list[widget.index]['caption']),
                           )
                         ],
                       ),
@@ -754,8 +753,8 @@ class _ListItemState extends State<ListItem> {
                     ],
                   )
                 : commentWidget(widget.list[widget.index].reference)),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text("1 Day Ago", style: TextStyle(color: Colors.grey)),
         )
       ],
@@ -764,14 +763,14 @@ class _ListItemState extends State<ListItem> {
 
   void postLike(DocumentReference reference) {
     var _like = Like(
-        ownerName: widget.currentuser.name!,
-        ownerPhotoUrl: widget.currentuser.profileImage!,
-        ownerUid: widget.currentuser.uid!,
+        ownerName: widget.currentUser.name!,
+        ownerPhotoUrl: widget.currentUser.profileImage!,
+        ownerUid: widget.currentUser.uid!,
         timeStamp: FieldValue.serverTimestamp());
     reference
         .collection('likes')
-        .document(widget.currentuser.uid)
-        .setData(_like.toMap(_like))
+        .doc(widget.currentUser.uid)
+        .set(_like.toMap(_like))
         .then((value) {
       print("Post Liked");
     });
@@ -780,7 +779,7 @@ class _ListItemState extends State<ListItem> {
   void postUnlike(DocumentReference reference) {
     reference
         .collection("likes")
-        .document(widget.currentuser.uid)
+        .doc(widget.currentUser.uid)
         .delete()
         .then((value) {
       print("Post Unliked");

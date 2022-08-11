@@ -7,14 +7,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:toast/toast.dart';
 
 class FriendsScreen extends StatefulWidget {
+  const FriendsScreen({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => FriendsScreenState();
 }
 
-Firestore _firestore = Firestore.instance;
+FirebaseFirestore _firestore = FirebaseFirestore.instance;
 var _repository = Repository();
 
 FirebaseAuth _auth = FirebaseAuth.instance;
@@ -44,7 +45,7 @@ class FriendsScreenState extends State<FriendsScreen> {
   }
 
   _retrieveFollowingIds() async {
-    FirebaseUser user = await _auth.currentUser();
+    User user = _auth.currentUser!;
     _repository.fetchFollowingUids(user).then((onValue) {
       setState(() {
         _followingIds = onValue;
@@ -56,11 +57,11 @@ class FriendsScreenState extends State<FriendsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Users',
           style: TextStyle(color: Colors.white),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: _friendsScreenBody(),
     );
@@ -74,17 +75,17 @@ class FriendsScreenState extends State<FriendsScreen> {
       stream: _firestore.collection("User Info").snapshots(),
       builder:
           (BuildContext buildContext, AsyncSnapshot<QuerySnapshot> snapshots) {
-        if (!snapshots.hasData) return Text('no data');
-        if (snapshots.connectionState == ConnectionState.waiting)
-          return CircularProgressIndicator();
-        else {
+        if (!snapshots.hasData) return const Text('no data');
+        if (snapshots.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else {
           return _followingIds.isNotEmpty
               ? ListView.builder(
-                  itemCount: snapshots.data!.documents.length,
+                  itemCount: snapshots.data!.docs.length,
                   itemBuilder: (context, index) =>
-                      _friendTileBuilder(snapshots.data!.documents[index]),
+                      _friendTileBuilder(snapshots.data!.docs[index]),
                 )
-              : CircularProgressIndicator();
+              : const CircularProgressIndicator();
         }
       },
     );
@@ -97,23 +98,19 @@ class FriendsScreenState extends State<FriendsScreen> {
       title: Row(
         children: <Widget>[
           Container(
-            margin: EdgeInsets.all(FRIENDS_PHOTO_MARGIN),
+            margin: const EdgeInsets.all(FRIENDS_PHOTO_MARGIN),
             child: Material(
+              borderRadius:
+                  const BorderRadius.all(Radius.circular(FRIENDS_PHOTO_RADIUS)),
+              clipBehavior: Clip.antiAlias,
               child: CachedNetworkImage(
-                placeholder: (context, url) => Container(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
-                  ),
+                placeholder: (context, url) => const CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
                 ),
-                imageUrl: document[USER_PHOTO_URI] != null
-                    ? document[USER_PHOTO_URI]
-                    : USER_IMAGE_PLACE_HOLDER,
+                imageUrl: document[USER_PHOTO_URI] ?? USER_IMAGE_PLACE_HOLDER,
                 width: FRIENDS_PHOTO_WIDTH,
                 height: FRIENDS_PHOTO_HEIGHT,
               ),
-              borderRadius:
-                  BorderRadius.all(Radius.circular(FRIENDS_PHOTO_RADIUS)),
-              clipBehavior: Clip.antiAlias,
             ),
           ),
           Text(document[USER_DISPLAY_NAME])

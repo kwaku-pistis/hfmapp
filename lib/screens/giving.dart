@@ -4,8 +4,10 @@ import 'package:HFM/themes/colors.dart';
 import 'package:flutter/material.dart';
 
 class Giving extends StatefulWidget {
+  const Giving({Key? key}) : super(key: key);
+
   @override
-  _GivingState createState() => _GivingState();
+  State<Giving> createState() => _GivingState();
 }
 
 class _GivingState extends State<Giving> {
@@ -13,20 +15,20 @@ class _GivingState extends State<Giving> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'HARVESTFIELDS',
             style: TextStyle(color: Colors.white),
           ),
-          iconTheme: IconThemeData(
+          iconTheme: const IconThemeData(
             color: Colors.white,
           ),
-          backgroundColor: colortheme.primaryColor,
+          backgroundColor: colorTheme.primaryColor,
         ),
         body: SingleChildScrollView(
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
-            padding: EdgeInsets.all(5),
+            padding: const EdgeInsets.all(5),
             color: Colors.grey[300],
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -35,18 +37,18 @@ class _GivingState extends State<Giving> {
                   elevation: 10,
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: Column(
                       children: <Widget>[
-                        Container(
+                        SizedBox(
                           width: MediaQuery.of(context).size.width,
-                          child: Text(
+                          child: const Text(
                             'Give your church offering...',
                             textAlign: TextAlign.left,
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.only(top: 10),
+                          margin: const EdgeInsets.only(top: 10),
                           //padding: EdgeInsets.only(left: 10, right: 10),
                           width: MediaQuery.of(context).size.width,
                           alignment: Alignment.bottomRight,
@@ -54,33 +56,40 @@ class _GivingState extends State<Giving> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
                               Container(
-                                margin: EdgeInsets.only(right: 10),
-                                child: RaisedButton(
+                                margin: const EdgeInsets.only(right: 10),
+                                child: ElevatedButton(
                                   onPressed: () {
                                     Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (BuildContext context) =>
-                                                Pledges(
+                                                const Pledges(
                                                   extra: 'Church Offering',
                                                 )));
                                   },
-                                  child: Text(
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        colorTheme.primaryColorDark),
+                                  ),
+                                  child: const Text(
                                     'PLEDGE',
                                     style: TextStyle(color: Colors.white),
                                   ),
-                                  color: colortheme.accentColor,
                                 ),
                               ),
-                              RaisedButton(
+                              ElevatedButton(
                                 onPressed: () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        Payments(extra: 'Church Offering'))),
-                                child: Text(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            const Payments(
+                                                extra: 'Church Offering'))),
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      colorTheme.primaryColorDark),
+                                ),
+                                child: const Text(
                                   'GIVE',
                                   style: TextStyle(color: Colors.white),
                                 ),
-                                color: colortheme.accentColor,
                               ),
                             ],
                           ),
@@ -93,18 +102,18 @@ class _GivingState extends State<Giving> {
                   elevation: 10,
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: Column(
                       children: <Widget>[
-                        Container(
+                        SizedBox(
                           width: MediaQuery.of(context).size.width,
-                          child: Text(
+                          child: const Text(
                             'Give your First Fruits offering...',
                             textAlign: TextAlign.left,
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.only(top: 10),
+                          margin: const EdgeInsets.only(top: 10),
                           //padding: EdgeInsets.only(left: 10, right: 10),
                           width: MediaQuery.of(context).size.width,
                           alignment: Alignment.bottomRight,
@@ -112,33 +121,40 @@ class _GivingState extends State<Giving> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
                               Container(
-                                margin: EdgeInsets.only(right: 10),
-                                child: RaisedButton(
+                                margin: const EdgeInsets.only(right: 10),
+                                child: ElevatedButton(
                                   onPressed: () {
                                     Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (BuildContext context) =>
-                                                Pledges(
+                                                const Pledges(
                                                   extra: 'First Fruits',
                                                 )));
                                   },
-                                  child: Text(
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        colorTheme.primaryColorDark),
+                                  ),
+                                  child: const Text(
                                     'PLEDGE',
                                     style: TextStyle(color: Colors.white),
                                   ),
-                                  color: colortheme.accentColor,
                                 ),
                               ),
-                              RaisedButton(
+                              ElevatedButton(
                                 onPressed: () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        Payments(extra: 'First Fruits'))),
-                                child: Text(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            const Payments(
+                                                extra: 'First Fruits'))),
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      colorTheme.primaryColorDark),
+                                ),
+                                child: const Text(
                                   'GIVE',
                                   style: TextStyle(color: Colors.white),
                                 ),
-                                color: colortheme.accentColor,
                               ),
                             ],
                           ),
@@ -151,18 +167,18 @@ class _GivingState extends State<Giving> {
                   elevation: 10,
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: Column(
                       children: <Widget>[
-                        Container(
+                        SizedBox(
                           width: MediaQuery.of(context).size.width,
-                          child: Text(
+                          child: const Text(
                             'Give your Projects offering...',
                             textAlign: TextAlign.left,
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.only(top: 10),
+                          margin: const EdgeInsets.only(top: 10),
                           //padding: EdgeInsets.only(left: 10, right: 10),
                           width: MediaQuery.of(context).size.width,
                           alignment: Alignment.bottomRight,
@@ -170,33 +186,40 @@ class _GivingState extends State<Giving> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
                               Container(
-                                margin: EdgeInsets.only(right: 10),
-                                child: RaisedButton(
+                                margin: const EdgeInsets.only(right: 10),
+                                child: ElevatedButton(
                                   onPressed: () {
                                     Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (BuildContext context) =>
-                                                Pledges(
+                                                const Pledges(
                                                   extra: 'Project Offering',
                                                 )));
                                   },
-                                  child: Text(
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        colorTheme.primaryColorDark),
+                                  ),
+                                  child: const Text(
                                     'PLEDGE',
                                     style: TextStyle(color: Colors.white),
                                   ),
-                                  color: colortheme.accentColor,
                                 ),
                               ),
-                              RaisedButton(
+                              ElevatedButton(
                                 onPressed: () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        Payments(extra: 'Project Offering'))),
-                                child: Text(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            const Payments(
+                                                extra: 'Project Offering'))),
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      colorTheme.primaryColorDark),
+                                ),
+                                child: const Text(
                                   'GIVE',
                                   style: TextStyle(color: Colors.white),
                                 ),
-                                color: colortheme.accentColor,
                               ),
                             ],
                           ),
@@ -209,18 +232,18 @@ class _GivingState extends State<Giving> {
                   elevation: 10,
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: Column(
                       children: <Widget>[
-                        Container(
+                        SizedBox(
                           width: MediaQuery.of(context).size.width,
-                          child: Text(
+                          child: const Text(
                             'Special Pledges redeemed by Members...',
                             textAlign: TextAlign.left,
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.only(top: 10),
+                          margin: const EdgeInsets.only(top: 10),
                           //padding: EdgeInsets.only(left: 10, right: 10),
                           width: MediaQuery.of(context).size.width,
                           alignment: Alignment.bottomRight,
@@ -228,33 +251,40 @@ class _GivingState extends State<Giving> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
                               Container(
-                                margin: EdgeInsets.only(right: 10),
-                                child: RaisedButton(
+                                margin: const EdgeInsets.only(right: 10),
+                                child: ElevatedButton(
                                   onPressed: () {
                                     Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (BuildContext context) =>
-                                                Pledges(
+                                                const Pledges(
                                                   extra: 'Special Pledges',
                                                 )));
                                   },
-                                  child: Text(
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        colorTheme.primaryColorDark),
+                                  ),
+                                  child: const Text(
                                     'PLEDGE',
                                     style: TextStyle(color: Colors.white),
                                   ),
-                                  color: colortheme.accentColor,
                                 ),
                               ),
-                              RaisedButton(
+                              ElevatedButton(
                                 onPressed: () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        Payments(extra: 'Special Pledges'))),
-                                child: Text(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            const Payments(
+                                                extra: 'Special Pledges'))),
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      colorTheme.primaryColorDark),
+                                ),
+                                child: const Text(
                                   'GIVE',
                                   style: TextStyle(color: Colors.white),
                                 ),
-                                color: colortheme.accentColor,
                               ),
                             ],
                           ),
@@ -267,18 +297,18 @@ class _GivingState extends State<Giving> {
                   elevation: 10,
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: Column(
                       children: <Widget>[
-                        Container(
+                        SizedBox(
                           width: MediaQuery.of(context).size.width,
-                          child: Text(
+                          child: const Text(
                             'Give your Thanksgiving offering...',
                             textAlign: TextAlign.left,
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.only(top: 10),
+                          margin: const EdgeInsets.only(top: 10),
                           //padding: EdgeInsets.only(left: 10, right: 10),
                           width: MediaQuery.of(context).size.width,
                           alignment: Alignment.bottomRight,
@@ -286,34 +316,42 @@ class _GivingState extends State<Giving> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
                               Container(
-                                margin: EdgeInsets.only(right: 10),
-                                child: RaisedButton(
+                                margin: const EdgeInsets.only(right: 10),
+                                child: ElevatedButton(
                                   onPressed: () {
                                     Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (BuildContext context) =>
-                                                Pledges(
+                                                const Pledges(
                                                   extra:
                                                       'Thanksgiving Offering',
                                                 )));
                                   },
-                                  child: Text(
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        colorTheme.primaryColorDark),
+                                  ),
+                                  child: const Text(
                                     'PLEDGE',
                                     style: TextStyle(color: Colors.white),
                                   ),
-                                  color: colortheme.accentColor,
                                 ),
                               ),
-                              RaisedButton(
+                              ElevatedButton(
                                 onPressed: () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        Payments(extra: 'Thanksgiving Offering'))),
-                                child: Text(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            const Payments(
+                                                extra:
+                                                    'Thanksgiving Offering'))),
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      colorTheme.primaryColorDark),
+                                ),
+                                child: const Text(
                                   'GIVE',
                                   style: TextStyle(color: Colors.white),
                                 ),
-                                color: colortheme.accentColor,
                               ),
                             ],
                           ),

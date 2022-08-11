@@ -5,20 +5,20 @@ import 'package:HFM/models/message.dart';
 import 'package:HFM/models/user.dart';
 import 'package:HFM/resources/firebase_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 
 class Repository {
   final _firebaseProvider = FirebaseProvider();
 
-  Future<void> addDataToDb(FirebaseUser user) =>
+  Future<void> addDataToDb(auth.User user) =>
       _firebaseProvider.addDataToDb(user);
 
-  Future<FirebaseUser> signIn() => _firebaseProvider.signIn();
+  Future<auth.User> signIn() => _firebaseProvider.signIn();
 
-  Future<bool> authenticateUser(FirebaseUser user) =>
+  Future<bool> authenticateUser(auth.User user) =>
       _firebaseProvider.authenticateUser(user);
 
-  Future<FirebaseUser> getCurrentUser() => _firebaseProvider.getCurrentUser();
+  Future<auth.User> getCurrentUser() => _firebaseProvider.getCurrentUser();
 
   Future<void> signOut() => _firebaseProvider.signOut();
 
@@ -29,7 +29,7 @@ class Repository {
           User currentUser, String imgUrl, String caption, String location) =>
       _firebaseProvider.addPostToDb(currentUser, imgUrl, caption, location);
 
-  Future<User> retrieveUserDetails(FirebaseUser user) =>
+  Future<User> retrieveUserDetails(auth.User user) =>
       _firebaseProvider.retrieveUserDetails(user);
 
   Future<List<DocumentSnapshot>> retrieveUserPosts(String userId) =>
@@ -46,10 +46,10 @@ class Repository {
           String userId, DocumentReference reference) =>
       _firebaseProvider.checkIfUserLikedOrNot(userId, reference);
 
-  Future<List<DocumentSnapshot>> retrievePosts(FirebaseUser user) =>
+  Future<List<DocumentSnapshot>> retrievePosts(auth.User user) =>
       _firebaseProvider.retrievePosts(user);
 
-  Future<List<String>> fetchAllUserNames(FirebaseUser user) =>
+  Future<List<String>> fetchAllUserNames(auth.User user) =>
       _firebaseProvider.fetchAllUserNames(user);
 
   Future<String> fetchUidBySearchedName(String name) =>
@@ -81,22 +81,22 @@ class Repository {
           String uid, String name, String bio, String email, String username) =>
       _firebaseProvider.updateDetails(uid, name, bio, email, username);
 
-  Future<List<String>> fetchUserNames(FirebaseUser user) =>
+  Future<List<String>> fetchUserNames(auth.User user) =>
       _firebaseProvider.fetchUserNames(user);
 
-  Future<List<User>> fetchAllUsers(FirebaseUser user) =>
+  Future<List<User>> fetchAllUsers(auth.User user) =>
       _firebaseProvider.fetchAllUsers(user);
 
-  void uploadImageMsgToDb(String url, String receiverUid, String senderuid) =>
-      _firebaseProvider.uploadImageMsgToDb(url, receiverUid, senderuid);
+  void uploadImageMsgToDb(String url, String receiverUid, String senderUid) =>
+      _firebaseProvider.uploadImageMsgToDb(url, receiverUid, senderUid);
 
   Future<void> addMessageToDb(Message message, String receiverUid) =>
       _firebaseProvider.addMessageToDb(message, receiverUid);
 
-  Future<List<DocumentSnapshot>> fetchFeed(FirebaseUser user) =>
+  Future<List<DocumentSnapshot>> fetchFeed(auth.User user) =>
       _firebaseProvider.fetchFeed(user);
 
-  Future<List<String>> fetchFollowingUids(FirebaseUser user) =>
+  Future<List<String>> fetchFollowingUids(auth.User user) =>
       _firebaseProvider.fetchFollowingUids(user);
 
   //Future<List<DocumentSnapshot>> retrievePostByUID(String uid) => _firebaseProvider.retrievePostByUID(uid);

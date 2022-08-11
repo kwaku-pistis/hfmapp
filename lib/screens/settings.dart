@@ -4,12 +4,14 @@ import 'package:HFM/themes/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Settings extends StatefulWidget {
+  const Settings({Key? key}) : super(key: key);
+
   @override
-  _SettingsState createState() => _SettingsState();
+  State<Settings> createState() => _SettingsState();
 }
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -30,32 +32,32 @@ class _SettingsState extends State<Settings> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colortheme.primaryColor,
-        title: Text(
+        backgroundColor: colorTheme.primaryColor,
+        title: const Text(
           'Settings',
           style: TextStyle(color: Colors.white),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         child: Container(
           width: MediaQuery.of(context).size.width,
           // height: MediaQuery.of(context).size.height,
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
                 width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.only(bottom: 10),
+                margin: const EdgeInsets.only(bottom: 10),
                 child: Text(
                   'Notification Settings',
-                  style: TextStyle(color: colortheme.primaryColor),
+                  style: TextStyle(color: colorTheme.primaryColor),
                 ),
               ),
               Container(
                 width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.only(bottom: 0),
+                margin: const EdgeInsets.only(bottom: 0),
                 child: CheckboxListTile(
                   value: _isChecked,
                   onChanged: (value) {
@@ -64,13 +66,13 @@ class _SettingsState extends State<Settings> {
                     });
                     print('Checked State: $_isChecked');
                   },
-                  title: Text('Receive notifications'),
-                  activeColor: colortheme.accentColor,
+                  title: const Text('Receive notifications'),
+                  activeColor: colorTheme.primaryColorDark,
                 ),
               ),
               Container(
                 width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.only(bottom: 10),
+                margin: const EdgeInsets.only(bottom: 10),
                 child: CheckboxListTile(
                   value: isPmChecked,
                   onChanged: (value) {
@@ -79,16 +81,16 @@ class _SettingsState extends State<Settings> {
                     });
                     print('Checked State: $isPmChecked');
                   },
-                  title: Text('Get notified about private messages'),
-                  activeColor: colortheme.accentColor,
+                  title: const Text('Get notified about private messages'),
+                  activeColor: colorTheme.primaryColorDark,
                 ),
               ),
               Container(
                 width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.only(bottom: 10),
+                margin: const EdgeInsets.only(bottom: 10),
                 child: Text(
                   'Help & Support',
-                  style: TextStyle(color: colortheme.primaryColor),
+                  style: TextStyle(color: colorTheme.primaryColor),
                 ),
               ),
               GestureDetector(
@@ -100,20 +102,20 @@ class _SettingsState extends State<Settings> {
                         Container(
                           child: Icon(
                             Icons.email,
-                            color: colortheme.accentColor,
+                            color: colorTheme.primaryColorDark,
                             size: 30,
                           ),
                         ),
                         Expanded(
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.8,
-                            margin: EdgeInsets.only(left: 25, top: 10),
+                            margin: const EdgeInsets.only(left: 25, top: 10),
                             child: Column(
                               children: <Widget>[
                                 Container(
                                   width:
                                       MediaQuery.of(context).size.width * 0.8,
-                                  child: Text(
+                                  child: const Text(
                                     'Email Help Center',
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
@@ -124,9 +126,9 @@ class _SettingsState extends State<Settings> {
                                 Container(
                                   width:
                                       MediaQuery.of(context).size.width * 0.8,
-                                  child: Text(
+                                  child: const Text(
                                     "We'd LOVE to hear from you! Tell us how we're doing, give us feedback, or just drop in to say hi!",
-                                    style: TextStyle(),
+                                    style: const TextStyle(),
                                     textAlign: TextAlign.left,
                                   ),
                                 ),
@@ -140,7 +142,7 @@ class _SettingsState extends State<Settings> {
                   onTap: () {
                     _contactEmailCenter();
                   }),
-              Divider(
+              const Divider(
                 height: 30.0,
               ),
               GestureDetector(
@@ -152,21 +154,21 @@ class _SettingsState extends State<Settings> {
                       Container(
                         child: Icon(
                           Icons.phone,
-                          color: colortheme.accentColor,
+                          color: colorTheme.primaryColorDark,
                           size: 30,
                         ),
                       ),
                       Expanded(
                         child: Container(
                           width: MediaQuery.of(context).size.width * 0.8,
-                          margin: EdgeInsets.only(left: 25, top: 10),
+                          margin: const EdgeInsets.only(left: 25, top: 10),
                           child: Column(
                             children: <Widget>[
                               Container(
                                 width: MediaQuery.of(context).size.width * 0.8,
-                                child: Text(
+                                child: const Text(
                                   'Call Us With Your Local Network',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18),
                                   textAlign: TextAlign.left,
@@ -174,7 +176,7 @@ class _SettingsState extends State<Settings> {
                               ),
                               Container(
                                 width: MediaQuery.of(context).size.width * 0.8,
-                                child: Text(
+                                child: const Text(
                                   "Our client support staff are ready to hear from you",
                                   style: TextStyle(),
                                   textAlign: TextAlign.left,
@@ -193,22 +195,22 @@ class _SettingsState extends State<Settings> {
               ),
               Container(
                 width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.only(bottom: 10, top: 40),
+                margin: const EdgeInsets.only(bottom: 10, top: 40),
                 child: Text(
                   'About the Church',
-                  style: TextStyle(color: colortheme.primaryColor),
+                  style: TextStyle(color: colorTheme.primaryColor),
                 ),
               ),
               GestureDetector(
                 child: Container(
                   width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.only(left: 0, top: 10),
+                  margin: const EdgeInsets.only(left: 0, top: 10),
                   child: Column(
                     children: <Widget>[
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        margin: EdgeInsets.only(bottom: 7),
-                        child: Text(
+                        margin: const EdgeInsets.only(bottom: 7),
+                        child: const Text(
                           'About HARVERTFIELDS',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 18),
@@ -217,9 +219,9 @@ class _SettingsState extends State<Settings> {
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        child: Text(
+                        child: const Text(
                           "Important information about the church and its activities",
-                          style: TextStyle(),
+                          style: const TextStyle(),
                           textAlign: TextAlign.left,
                         ),
                       ),
@@ -227,27 +229,26 @@ class _SettingsState extends State<Settings> {
                   ),
                 ),
                 onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => AboutHfm()
-                )),
+                    builder: (BuildContext context) => AboutHfm())),
               ),
               Container(
                 width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.only(bottom: 10, top: 40),
+                margin: const EdgeInsets.only(bottom: 10, top: 40),
                 child: Text(
                   'About the Developer',
-                  style: TextStyle(color: colortheme.primaryColor),
+                  style: TextStyle(color: colorTheme.primaryColor),
                 ),
               ),
               GestureDetector(
                 child: Container(
                   width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.only(left: 0, top: 10),
+                  margin: const EdgeInsets.only(left: 0, top: 10),
                   child: Column(
                     children: <Widget>[
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        margin: EdgeInsets.only(bottom: 7),
-                        child: Text(
+                        margin: const EdgeInsets.only(bottom: 7),
+                        child: const Text(
                           'About Deemiensa',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 18),
@@ -256,7 +257,7 @@ class _SettingsState extends State<Settings> {
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        child: Text(
+                        child: const Text(
                           "Deemiensa is software and technology company based in Ghana. We deal in all kinds of softwares aimed at providing solutions to problems all around us. \n\nContact Deemiensa for your app",
                           style: TextStyle(),
                           textAlign: TextAlign.left,
@@ -271,33 +272,33 @@ class _SettingsState extends State<Settings> {
               ),
               Container(
                 width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.only(bottom: 10, top: 40),
+                margin: const EdgeInsets.only(bottom: 10, top: 40),
                 child: Text(
                   'Privacy & Security',
-                  style: TextStyle(color: colortheme.primaryColor),
+                  style: TextStyle(color: colorTheme.primaryColor),
                 ),
               ),
               GestureDetector(
                 child: Container(
                   width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.only(left: 0, top: 10),
+                  margin: const EdgeInsets.only(left: 0, top: 10),
                   child: Column(
                     children: <Widget>[
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        margin: EdgeInsets.only(bottom: 7),
-                        child: Text(
+                        margin: const EdgeInsets.only(bottom: 7),
+                        child: const Text(
                           'Privacy Policy',
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 18),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        child: Text(
+                        child: const Text(
                           "Review our privacy policy here",
-                          style: TextStyle(),
+                          style: const TextStyle(),
                           textAlign: TextAlign.left,
                         ),
                       ),
@@ -307,23 +308,23 @@ class _SettingsState extends State<Settings> {
               ),
               Container(
                 width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.only(bottom: 10, top: 40),
+                margin: const EdgeInsets.only(bottom: 10, top: 40),
                 child: Text(
                   'About this App',
-                  style: TextStyle(color: colortheme.primaryColor),
+                  style: TextStyle(color: colorTheme.primaryColor),
                 ),
               ),
               GestureDetector(
                 child: Container(
                   width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.only(left: 0, top: 10),
+                  margin: const EdgeInsets.only(left: 0, top: 10),
                   child: Column(
                     children: <Widget>[
                       Container(
                         width: MediaQuery.of(context).size.width,
                         child: Text(
                           "version $version-HFM-release build 100",
-                          style: TextStyle(),
+                          style: const TextStyle(),
                           textAlign: TextAlign.left,
                         ),
                       ),
@@ -399,7 +400,7 @@ class _SettingsState extends State<Settings> {
               'Call Us',
               style: TextStyle(
                   fontSize: 20,
-                  color: colortheme.accentColor,
+                  color: colorTheme.primaryColorDark,
                   fontWeight: FontWeight.bold),
             ),
             content: Container(
@@ -409,15 +410,16 @@ class _SettingsState extends State<Settings> {
                     Container(
                       width: MediaQuery.of(context).size.width * 0.4,
                       height: 50,
-                      margin: EdgeInsets.only(
+                      margin: const EdgeInsets.only(
                         top: 20,
                       ),
                       child: RaisedButton(
-                        child: Text(
+                        child: const Text(
                           'MTN',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                          style: const TextStyle(
+                              fontSize: 16, color: Colors.white),
                         ),
-                        color: colortheme.primaryColor,
+                        color: colorTheme.primaryColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: new BorderRadius.circular(30.0),
                         ),
@@ -429,15 +431,16 @@ class _SettingsState extends State<Settings> {
                     Container(
                       width: MediaQuery.of(context).size.width * 0.4,
                       height: 50,
-                      margin: EdgeInsets.only(
+                      margin: const EdgeInsets.only(
                         top: 20,
                       ),
                       child: RaisedButton(
-                        child: Text(
+                        child: const Text(
                           'VODAFONE',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                          style: const TextStyle(
+                              fontSize: 16, color: Colors.white),
                         ),
-                        color: colortheme.primaryColor,
+                        color: colorTheme.primaryColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: new BorderRadius.circular(30.0),
                         ),
@@ -449,15 +452,15 @@ class _SettingsState extends State<Settings> {
                     Container(
                       width: MediaQuery.of(context).size.width * 0.4,
                       height: 50,
-                      margin: EdgeInsets.only(
+                      margin: const EdgeInsets.only(
                         top: 20,
                       ),
                       child: RaisedButton(
-                        child: Text(
+                        child: const Text(
                           'AIRTELTIGO',
                           style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
-                        color: colortheme.primaryColor,
+                        color: colorTheme.primaryColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: new BorderRadius.circular(30.0),
                         ),

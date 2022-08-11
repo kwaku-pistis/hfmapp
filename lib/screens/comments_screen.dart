@@ -7,15 +7,17 @@ import 'package:flutter/material.dart';
 class CommentsScreen extends StatefulWidget {
   final DocumentReference documentReference;
   final User user;
-  CommentsScreen({required this.documentReference, required this.user});
+  const CommentsScreen(
+      {Key? key, required this.documentReference, required this.user})
+      : super(key: key);
 
   @override
-  _CommentsScreenState createState() => _CommentsScreenState();
+  State<CommentsScreen> createState() => _CommentsScreenState();
 }
 
 class _CommentsScreenState extends State<CommentsScreen> {
-  TextEditingController _commentController = TextEditingController();
-  var _formKey = GlobalKey<FormState>();
+  final TextEditingController _commentController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -28,19 +30,19 @@ class _CommentsScreenState extends State<CommentsScreen> {
     return Scaffold(
       appBar: AppBar(
         elevation: 1,
-        backgroundColor: colortheme.primaryColor,
-        title: Text(
+        backgroundColor: colorTheme.primaryColor,
+        title: const Text(
           'Comments',
           style: TextStyle(color: Colors.white),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Form(
         key: _formKey,
         child: Column(
           children: <Widget>[
             commentsListWidget(),
-            Divider(
+            const Divider(
               height: 20.0,
               color: Colors.grey,
             ),
@@ -78,7 +80,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   return null;
                 },
                 controller: _commentController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Add a comment...",
                 ),
                 onFieldSubmitted: (value) {
@@ -90,8 +92,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
           GestureDetector(
             child: Container(
               margin: const EdgeInsets.only(right: 8.0),
-              child:
-                  Text('Post', style: TextStyle(color: colortheme.accentColor)),
+              child: Text('Post',
+                  style: TextStyle(color: colorTheme.primaryColorDark)),
             ),
             onTap: () {
               if (_formKey.currentState!.validate()) {
@@ -105,7 +107,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
   }
 
   postComment() {
-    var _comment = Comment(
+    var comment = Comment(
         comment: _commentController.text,
         timeStamp: FieldValue.serverTimestamp(),
         ownerName: widget.user.name!,
@@ -113,8 +115,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
         ownerUid: widget.user.uid!);
     widget.documentReference
         .collection("comments")
-        .document()
-        .setData(_comment.toMap(_comment))
+        .doc()
+        .set(comment.toMap(comment))
         .whenComplete(() {
       _commentController.text = "";
     });
@@ -130,12 +132,12 @@ class _CommentsScreenState extends State<CommentsScreen> {
             .snapshots(),
         builder: ((context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else {
             return ListView.builder(
-              itemCount: snapshot.data!.documents.length,
+              itemCount: snapshot.data!.docs.length,
               itemBuilder: ((context, index) =>
-                  commentItem(snapshot.data!.documents[index])),
+                  commentItem(snapshot.data!.docs[index])),
             );
           }
         }),
@@ -162,22 +164,22 @@ class _CommentsScreenState extends State<CommentsScreen> {
           Padding(
             padding: const EdgeInsets.only(left: 8.0),
             child: CircleAvatar(
-              backgroundImage: NetworkImage(snapshot.data['ownerPhotoUrl']),
+              backgroundImage: NetworkImage(snapshot['ownerPhotoUrl']),
               radius: 20,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 15.0,
           ),
           Row(
             children: <Widget>[
-              Text(snapshot.data['ownerName'],
-                  style: TextStyle(
+              Text(snapshot['ownerName'],
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                   )),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
-                child: Text(snapshot.data['comment']),
+                child: Text(snapshot['comment']),
               ),
             ],
           )

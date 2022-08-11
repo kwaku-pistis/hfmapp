@@ -9,34 +9,29 @@ class UserProfile extends StatefulWidget {
   final String username;
   final String about;
   final String id;
-  UserProfile(
-      {required this.imageUrl,
+
+  const UserProfile(
+      {Key? key,
+      required this.imageUrl,
       required this.username,
       required this.about,
-      required this.id});
+      required this.id})
+      : super(key: key);
 
   @override
-  State<StatefulWidget> createState() =>
-      UserProfileState(imageUrl, username, about, id);
+  State<StatefulWidget> createState() => UserProfileState();
 }
 
 class UserProfileState extends State<UserProfile> {
-  var height;
-  var width;
-  var myId;
-
-  final String imageUrl;
-  final String username;
-  final String about;
-  final String userId;
-
-  UserProfileState(this.imageUrl, this.username, this.about, this.userId);
+  var height = 0.0;
+  var width = 0.0;
+  var myId = '';
 
   @override
   void initState() {
     super.initState();
     SharedPreferences.getInstance().then((sp) {
-      myId = sp.getString(SHARED_PREFERENCES_USER_ID);
+      myId = sp.getString(SHARED_PREFERENCES_USER_ID)!;
     });
   }
 
@@ -46,9 +41,9 @@ class UserProfileState extends State<UserProfile> {
     height = size.height;
     width = size.width;
     return Scaffold(
-      appBar: AppBar(title: Text('profile')),
+      appBar: AppBar(title: const Text('profile')),
       body: Card(
-        margin: EdgeInsets.all(8.0),
+        margin: const EdgeInsets.all(8.0),
         elevation: 8.0,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,28 +54,29 @@ class UserProfileState extends State<UserProfile> {
                 width: width,
                 height: height * 0.45,
                 fit: BoxFit.cover,
-                imageUrl: imageUrl,
-                placeholder: (context, url) => CircularProgressIndicator(),
+                imageUrl: widget.imageUrl,
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
               ),
             ),
             Card(
                 elevation: 4.0,
                 child: Container(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   width: width,
                   child: Text(
-                    username,
-                    style: TextStyle(fontSize: 22.0),
+                    widget.username,
+                    style: const TextStyle(fontSize: 22.0),
                   ),
                 )),
             Card(
                 elevation: 4.0,
                 child: Container(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   width: width,
                   child: Text(
-                    about,
-                    style: TextStyle(fontSize: 18.0),
+                    widget.about,
+                    style: const TextStyle(fontSize: 18.0),
                   ),
                 )),
           ],
@@ -88,7 +84,7 @@ class UserProfileState extends State<UserProfile> {
       ),
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.redAccent,
-          child: Icon(
+          child: const Icon(
             Icons.delete,
           ),
           onPressed: () => _deleteFriend()),
@@ -97,7 +93,7 @@ class UserProfileState extends State<UserProfile> {
 
   _deleteFriend() {
     //deleteUser
-    deleteUser(userId, myId).then((v) {
+    deleteUser(widget.id, myId).then((v) {
       //redirect to MainScreen
       Navigator.of(context).pop();
       Navigator.of(context).pop();

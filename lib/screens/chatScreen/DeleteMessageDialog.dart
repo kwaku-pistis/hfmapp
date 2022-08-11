@@ -3,34 +3,31 @@ import 'package:flutter/material.dart';
 class DeleteMessageDialog extends StatefulWidget {
   final String groupId;
   final String timestamp;
-  DeleteMessageDialog({required this.groupId, required this.timestamp});
+
+  const DeleteMessageDialog(
+      {Key? key, required this.groupId, required this.timestamp})
+      : super(key: key);
+
   @override
-  State<StatefulWidget> createState() => DeleteMessageDialogState(
-        groupId: groupId,
-        timestamp: timestamp,
-      );
+  State<StatefulWidget> createState() => DeleteMessageDialogState();
 }
 
 class DeleteMessageDialogState extends State<DeleteMessageDialog> {
-  final String groupId;
-  final String timestamp;
-  DeleteMessageDialogState({required this.groupId, required this.timestamp});
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('delete'),
-      content: Text('do you want to delete this message?'),
+      title: const Text('delete'),
+      content: const Text('do you want to delete this message?'),
       actions: <Widget>[
-        FlatButton(
-          child: Text('delete'),
+        ElevatedButton(
+          child: const Text('delete'),
           onPressed: () {
             Navigator.pop(context);
             // _deleteMessage(timestamp, groupId);
           },
         ),
-        FlatButton(
-          child: Text('cancel'),
+        ElevatedButton(
+          child: const Text('cancel'),
           onPressed: () => Navigator.pop(context),
         )
       ],

@@ -16,7 +16,8 @@ final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
 final BehaviorSubject<String> selectNotificationSubject =
     BehaviorSubject<String>();
 
-NotificationAppLaunchDetails notificationAppLaunchDetails = NotificationAppLaunchDetails(true, "true");
+NotificationAppLaunchDetails notificationAppLaunchDetails =
+    const NotificationAppLaunchDetails(true, "true");
 
 class ReceivedNotification {
   final int id;
@@ -36,43 +37,44 @@ Future<void> main() async {
   // needed if you intend to initialize in the `main` function
   WidgetsFlutterBinding.ensureInitialized();
 
-  notificationAppLaunchDetails =
-      await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+  notificationAppLaunchDetails = (await flutterLocalNotificationsPlugin
+      .getNotificationAppLaunchDetails())!;
 
   var initializationSettingsAndroid =
-      new AndroidInitializationSettings('notification_icon');
-  var initializationSettingsIOS = new IOSInitializationSettings(
-    requestAlertPermission: false,
+      const AndroidInitializationSettings('notification_icon');
+  var initializationSettingsIOS = IOSInitializationSettings(
+      requestAlertPermission: false,
       requestBadgePermission: false,
       requestSoundPermission: false,
       onDidReceiveLocalNotification:
-          (int id, String title, String body, String payload) async {
+          (int id, String? title, String? body, String? payload) async {
         didReceiveLocalNotificationSubject.add(ReceivedNotification(
-            id: id, title: title, body: body, payload: payload));
-    }
-  );
-  var initializationSettings = new InitializationSettings(
-      initializationSettingsAndroid, initializationSettingsIOS);
+            id: id, title: title!, body: body!, payload: payload!));
+      });
+  var initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onSelectNotification: (String payload) async {
+      onSelectNotification: (String? payload) async {
     if (payload != null) {
-      debugPrint('notification payload: ' + payload);
+      debugPrint('notification payload: $payload');
     }
-    selectNotificationSubject.add(payload);
+    selectNotificationSubject.add(payload!);
   });
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
-const InitialRoute = '/';
-const WebViewRoute = '/web_view';
-const ChatPage = '/chat_page';
+const initialRoute = '/';
+const webViewRoute = '/web_view';
+const chatPage = '/chat_page';
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   // This widget is the root of your application.
   @override
-  _MyAppState createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -81,10 +83,10 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primaryColor: colortheme.primaryColor,
+        primaryColor: colorTheme.primaryColor,
       ),
       // home: MyHomePage(title: 'Flutter Demo Home Page'),
-      home: SplashScreenPage(),
+      home: const SplashScreenPage(),
       onGenerateRoute: _routes(),
     );
   }
@@ -95,12 +97,12 @@ RouteFactory _routes() {
     //final Map<String, dynamic> arguments = settings.arguments;
     Widget screen;
     switch (settings.name) {
-      case InitialRoute:
+      case initialRoute:
         screen = Home(
           user: null,
         );
         break;
-      case ChatPage:
+      case chatPage:
         screen = Messages();
         break;
       default:

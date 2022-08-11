@@ -1,6 +1,7 @@
 import 'package:HFM/resources/repository.dart';
 import 'package:HFM/screens/chatExtra/Friends.dart';
 import 'package:HFM/screens/chatScreen/Chat.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
 import 'package:HFM/Consts.dart';
@@ -9,15 +10,17 @@ import 'package:HFM/utils/Communication.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:connectivity/connectivity.dart';
 
 class Messages extends StatefulWidget {
+  const Messages({Key? key}) : super(key: key);
+
   @override
-  _MessagesState createState() => _MessagesState();
+  State<Messages> createState() => _MessagesState();
 }
 
-Firestore _firestore = Firestore.instance;
+FirebaseFirestore _firestore = FirebaseFirestore.instance;
 var _repository = Repository();
+// String SHARED_PREFERENCES_USER_ID = "shared_preferences_user_id";
 
 class _MessagesState extends State<Messages> {
   late String id;
@@ -27,7 +30,7 @@ class _MessagesState extends State<Messages> {
     //get id
     SharedPreferences.getInstance().then((sp) {
       setState(() {
-        id = sp.get(SHARED_PREFERENCES_USER_ID);
+        id = sp.get(SHARED_PREFERENCES_USER_ID).toString();
       });
     });
 
@@ -54,12 +57,12 @@ class _MessagesState extends State<Messages> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colortheme.primaryColor,
-        title: Text(
+        backgroundColor: colorTheme.primaryColor,
+        title: const Text(
           'Chats',
           style: TextStyle(color: Colors.white),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       floatingActionButton: FloatingActionButton(
         // onPressed: () => Navigator.of(context).push(
@@ -67,11 +70,11 @@ class _MessagesState extends State<Messages> {
         onPressed: () {
           _showFriends();
         },
-        child: Icon(
+        backgroundColor: colorTheme.primaryColorDark,
+        child: const Icon(
           Icons.chat,
           color: Colors.white,
         ),
-        backgroundColor: colortheme.accentColor,
       ),
       body: _mainScreenBody(),
     );
@@ -81,7 +84,7 @@ class _MessagesState extends State<Messages> {
     return StreamBuilder(
       stream: _firestore
           .collection(USERS_COLLECTION)
-          .document(id)
+          .doc(id)
           .collection(FRIENDS_COLLECTION)
           .orderBy(FRIEND_TIME_ADDED)
           .snapshots(),
@@ -89,15 +92,17 @@ class _MessagesState extends State<Messages> {
       //     .collection(MESSAGES_COLLECTION)
       //     .document(id).,
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasError)
+        if (snapshot.hasError) {
           return Center(
             child: Text(snapshot.error.toString()),
           );
-        if (snapshot.connectionState == ConnectionState.waiting)
-          return Center(
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
             child: CircularProgressIndicator(),
           );
-        if (snapshot.data!.documents.isEmpty)
+        }
+        if (snapshot.data!.docs.isEmpty) {
           return Center(
               child: GestureDetector(
             child: Column(
@@ -105,20 +110,21 @@ class _MessagesState extends State<Messages> {
               children: <Widget>[
                 Icon(
                   Icons.message,
-                  color: colortheme.accentColor,
+                  color: colorTheme.primaryColorDark,
                   size: 50,
                 ),
-                Text('No chats yet. Click here to start a chat')
+                const Text('No chats yet. Click here to start a chat')
               ],
             ),
             onTap: () {
               _showFriends();
             },
           ));
+        }
         return ListView.builder(
-            itemCount: snapshot.data!.documents.length,
+            itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) =>
-                _friendTileBuilder(snapshot.data!.documents[index]));
+                _friendTileBuilder(snapshot.data!.docs[index]));
       },
     );
   }
@@ -127,50 +133,50 @@ class _MessagesState extends State<Messages> {
     return StreamBuilder(
       stream: Stream.fromFuture(getFriendById(document[FRIEND_ID])),
       builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        if (snapshot.hasError)
+        if (snapshot.hasError) {
           return Center(child: Text(snapshot.error.toString()));
-        if (snapshot.connectionState == ConnectionState.waiting)
-          return Center(
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
             child: CircularProgressIndicator(),
           );
+        }
         return ListTile(
-          title: Text(snapshot.data!.data[USER_DISPLAY_NAME]),
+          title: Text(snapshot.data![USER_DISPLAY_NAME]),
           // subtitle: Text(document[FRIEND_LATEST_MESSAGE] == null
           //     ? '...'
           //     : document[FRIEND_LATEST_MESSAGE]),
           subtitle: Text(
-            'A conversation with ${snapshot.data!.data[USER_DISPLAY_NAME]}',
-            style: TextStyle(fontStyle: FontStyle.italic),
+            'A conversation with ${snapshot.data![USER_DISPLAY_NAME]}',
+            style: const TextStyle(fontStyle: FontStyle.italic),
           ),
           leading: Container(
-            margin: EdgeInsets.all(MAINSCREEN_FRIEND_PHOTO_MARGIN),
+            margin: const EdgeInsets.all(MAINSCREEN_FRIEND_PHOTO_MARGIN),
             child: Material(
+              borderRadius: const BorderRadius.all(
+                  Radius.circular(MAINSCREEN_FRIEND_PHOTO_RADIUS)),
+              clipBehavior: Clip.antiAlias,
               child: CachedNetworkImage(
-                placeholder: (context, url) => Container(
+                placeholder: (context, url) => const SizedBox(
                   child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
                   ),
                 ),
-                imageUrl: snapshot.data!.data[USER_PHOTO_URI] != null
-                    ? snapshot.data!.data[USER_PHOTO_URI]
-                    : USER_IMAGE_PLACE_HOLDER,
+                imageUrl:
+                    snapshot.data![USER_PHOTO_URI] ?? USER_IMAGE_PLACE_HOLDER,
                 width: MAINSCREEN_FRIEND_PHOTO_WIDTH,
                 height: MAINSCREEN_FRIEND_PHOTO_HEIGHT,
               ),
-              borderRadius: BorderRadius.all(
-                  Radius.circular(MAINSCREEN_FRIEND_PHOTO_RADIUS)),
-              clipBehavior: Clip.antiAlias,
             ),
           ),
           //navigate to chatScreen
           onTap: () => Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => Chat(
-                    friendId: snapshot.data!.data[USER_ID],
+                    friendId: snapshot.data![USER_ID],
                     id: id,
                   ))),
           onLongPress: () => _longPressAlertDialog(
-              snapshot.data!.data[USER_DISPLAY_NAME],
-              snapshot.data!.data[USER_ID]),
+              snapshot.data![USER_DISPLAY_NAME], snapshot.data![USER_ID]),
         );
       },
     );
@@ -181,14 +187,14 @@ class _MessagesState extends State<Messages> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Align(
+            title: const Align(
                 alignment: Alignment.centerLeft, child: Icon(Icons.delete)),
             content: Text('Do you want to delete chat with $displayName?'),
             actions: <Widget>[
-              FlatButton(
+              ElevatedButton(
                 child: Text(
                   'Delete',
-                  style: TextStyle(color: colortheme.accentColor),
+                  style: TextStyle(color: colorTheme.primaryColorDark),
                 ),
                 onPressed: () {
                   Navigator.pop(context);
@@ -200,7 +206,7 @@ class _MessagesState extends State<Messages> {
               ElevatedButton(
                 child: Text(
                   'Cancel',
-                  style: TextStyle(color: colortheme.accentColor),
+                  style: TextStyle(color: colorTheme.primaryColorDark),
                 ),
                 onPressed: () => Navigator.pop(context),
               )

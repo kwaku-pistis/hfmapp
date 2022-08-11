@@ -14,33 +14,37 @@ class PostDetailScreen extends StatefulWidget {
   final DocumentSnapshot documentSnapshot;
   final User user, currentUser;
 
-  PostDetailScreen({required this.documentSnapshot, required this.user, required this.currentUser});
+  const PostDetailScreen(
+      {Key? key,
+      required this.documentSnapshot,
+      required this.user,
+      required this.currentUser})
+      : super(key: key);
 
   @override
-  _PostDetailScreenState createState() => _PostDetailScreenState();
+  State<PostDetailScreen> createState() => _PostDetailScreenState();
 }
 
 class _PostDetailScreenState extends State<PostDetailScreen> {
-  var _repository = Repository();
+  final _repository = Repository();
   bool _isLiked = false;
   var timeDiff;
 
   @override
   Widget build(BuildContext context) {
-
-    var temp = widget.documentSnapshot.data['postTime'];
+    var temp = widget.documentSnapshot['postTime'];
     var diff = DateTime.parse(temp);
-    timeDiff =  Jiffy(diff).fromNow();
+    timeDiff = Jiffy(diff).fromNow();
 
     return Scaffold(
         appBar: AppBar(
           elevation: 1,
-          backgroundColor: colortheme.primaryColor,
-          title: Text(
+          backgroundColor: colorTheme.primaryColor,
+          title: const Text(
             'Post Detail',
             style: TextStyle(color: Colors.white),
           ),
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -63,19 +67,19 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           //               name: list[index].data['postOwnerName'],
                           //             ))));
                         },
-                        child: new Container(
+                        child: Container(
                           height: 40.0,
                           width: 40.0,
-                          decoration: new BoxDecoration(
+                          decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            image: new DecorationImage(
+                            image: DecorationImage(
                                 fit: BoxFit.fill,
-                                image: new NetworkImage(widget.documentSnapshot
-                                    .data['postOwnerPhotoUrl'])),
+                                image: NetworkImage(widget
+                                    .documentSnapshot['postOwnerPhotoUrl'])),
                           ),
                         ),
                       ),
-                      new SizedBox(
+                      const SizedBox(
                         width: 10.0,
                       ),
                       Column(
@@ -90,22 +94,23 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                               //               name: list[index].data['postOwnerName'],
                               //             ))));
                             },
-                            child: new Text(
-                              widget.documentSnapshot.data['postOwnerName'],
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                            child: Text(
+                              widget.documentSnapshot['postOwnerName'],
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
-                          widget.documentSnapshot.data['location'] != null
-                              ? new Text(
-                                  widget.documentSnapshot.data['location'],
-                                  style: TextStyle(color: Colors.grey),
+                          widget.documentSnapshot['location'] != null
+                              ? Text(
+                                  widget.documentSnapshot['location'],
+                                  style: const TextStyle(color: Colors.grey),
                                 )
                               : Container(),
                         ],
                       )
                     ],
                   ),
-                  new IconButton(
+                  const IconButton(
                     icon: Icon(Icons.more_vert),
                     onPressed: null,
                   )
@@ -115,7 +120,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: widget.documentSnapshot.data['caption'] != null
+                child: widget.documentSnapshot['caption'] != null
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -125,8 +130,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                               //     style: TextStyle(fontWeight: FontWeight.bold)),
                               Padding(
                                 padding: const EdgeInsets.only(left: 0.0),
-                                child: Text(
-                                    widget.documentSnapshot.data['caption']),
+                                child: Text(widget.documentSnapshot['caption']),
                               )
                             ],
                           ),
@@ -134,10 +138,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       )
                     : commentWidget(widget.documentSnapshot.reference)),
             CachedNetworkImage(
-              imageUrl: widget.documentSnapshot.data['imgUrl'],
+              imageUrl: widget.documentSnapshot['imgUrl'],
               placeholder: ((context, s) => Center(
-                    child: widget.documentSnapshot.data['imgUrl'] == null
-                        ? CircularProgressIndicator()
+                    child: widget.documentSnapshot['imgUrl'] == null
+                        ? const CircularProgressIndicator()
                         : Container(),
                   )),
               width: 125.0,
@@ -152,11 +156,11 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 children: <Widget>[
                   GestureDetector(
                       child: _isLiked
-                          ? Icon(
+                          ? const Icon(
                               Icons.favorite,
                               color: Colors.red,
                             )
-                          : Icon(
+                          : const Icon(
                               FontAwesomeIcons.heart,
                               color: null,
                             ),
@@ -195,7 +199,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         // updateValues(
                         //     snapshot.data[index].reference);
                       }),
-                  new SizedBox(
+                  const SizedBox(
                     width: 16.0,
                   ),
                   GestureDetector(
@@ -209,14 +213,14 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                     user: widget.currentUser,
                                   ))));
                     },
-                    child: new Icon(
+                    child: const Icon(
                       FontAwesomeIcons.comment,
                     ),
                   ),
-                  new SizedBox(
+                  const SizedBox(
                     width: 16.0,
                   ),
-                  new Icon(FontAwesomeIcons.shareSquare),
+                  const Icon(FontAwesomeIcons.share),
                   // Row(
                   //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   //   children: <Widget>[
@@ -251,16 +255,17 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: likesSnapshot.data!.length > 1
                               ? Text(
-                                  "Liked by ${likesSnapshot.data![0].data['ownerName']} and ${(likesSnapshot.data!.length - 1).toString()} others",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  "Liked by ${likesSnapshot.data![0]['ownerName']} and ${(likesSnapshot.data!.length - 1).toString()} others",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
                                 )
                               : Text(likesSnapshot.data!.length == 1
-                                  ? "Liked by ${likesSnapshot.data![0].data['ownerName']}"
+                                  ? "Liked by ${likesSnapshot.data![0]['ownerName']}"
                                   : "0 Likes"),
                         ),
                       );
                     } else {
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     }
                   }),
                 ),
@@ -273,7 +278,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Text("$timeDiff", style: TextStyle(color: Colors.grey)),
+              child:
+                  Text("$timeDiff", style: const TextStyle(color: Colors.grey)),
             )
           ],
         ));
@@ -287,7 +293,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           return GestureDetector(
             child: Text(
               'View all ${snapshot.data!.length} comments',
-              style: TextStyle(color: Colors.grey),
+              style: const TextStyle(color: Colors.grey),
             ),
             onTap: () {
               Navigator.push(
@@ -300,7 +306,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             },
           );
         } else {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
       }),
     );
@@ -314,8 +320,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         timeStamp: FieldValue.serverTimestamp());
     reference
         .collection('likes')
-        .document(widget.currentUser.uid)
-        .setData(_like.toMap(_like))
+        .doc(widget.currentUser.uid)
+        .set(_like.toMap(_like))
         .then((value) {
       print("Post Liked");
     });
@@ -324,7 +330,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   void postUnlike(DocumentReference reference) {
     reference
         .collection("likes")
-        .document(widget.currentUser.uid)
+        .doc(widget.currentUser.uid)
         .delete()
         .then((value) {
       print("Post Unliked");

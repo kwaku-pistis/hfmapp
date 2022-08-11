@@ -8,25 +8,27 @@ import 'package:HFM/screens/post_detail_screen.dart';
 import 'package:HFM/themes/colors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jiffy/jiffy.dart';
 
 class ProfileDetails extends StatefulWidget {
+  const ProfileDetails({Key? key}) : super(key: key);
+
   @override
-  _ProfileDetailsState createState() => _ProfileDetailsState();
+  State<ProfileDetails> createState() => _ProfileDetailsState();
 }
 
 String name = '', username = '', profileImage = '', uuid = '';
 late User _user;
 bool _isGridActive = true;
-Color _gridColor = colortheme.accentColor;
+Color _gridColor = colorTheme.primaryColorDark;
 Color _listColor = Colors.grey;
 var timeDiff;
 
 class _ProfileDetailsState extends State<ProfileDetails> {
-  var _repository = Repository();
+  final _repository = Repository();
   late Future<List<DocumentSnapshot>> _future;
 
   @override
@@ -38,7 +40,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   }
 
   retrieveUserDetails() async {
-    FirebaseUser currentUser = await _repository.getCurrentUser();
+    auth.User currentUser = await _repository.getCurrentUser();
     User user = await _repository.retrieveUserDetails(currentUser);
     setState(() {
       _user = user;
@@ -53,20 +55,20 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   @override
   Widget build(BuildContext context) {
     //final _width = MediaQuery.of(context).size.width;
-    final _height = MediaQuery.of(context).size.height;
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Profile',
           style: TextStyle(color: Colors.white),
         ),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.white,
         ),
-        backgroundColor: colortheme.primaryColor,
+        backgroundColor: colorTheme.primaryColor,
       ),
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           child: Column(
@@ -74,7 +76,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
               Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.4,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     image: DecorationImage(
                   image: AssetImage('assets/images/adinkra_pattern.png'),
                   fit: BoxFit.cover,
@@ -90,26 +92,26 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                           shape: BoxShape.circle,
                           image: DecorationImage(
                             image: profileImage == null
-                                ? AssetImage('assets/images/profile.png')
+                                ? const AssetImage('assets/images/profile.png')
                                 : NetworkImage(profileImage) as ImageProvider,
                             fit: BoxFit.fill,
                           ),
                         ),
                       ),
-                      Container(
+                      SizedBox(
                         width: MediaQuery.of(context).size.width,
                         child: Text(
-                          name != null ? name : 'name',
-                          style: TextStyle(
+                          name,
+                          style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      Container(
+                      SizedBox(
                         width: MediaQuery.of(context).size.width,
                         child: Text(
                           username != null ? '@$username' : '@username',
-                          style: TextStyle(),
+                          style: const TextStyle(),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -119,14 +121,14 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                               top: 12.0, left: 20.0, right: 20.0),
                           child: Container(
                             alignment: Alignment.bottomCenter,
-                            margin: EdgeInsets.only(top: 40),
+                            margin: const EdgeInsets.only(top: 40),
                             width: 210.0,
                             height: 30.0,
                             decoration: BoxDecoration(
-                                color: colortheme.accentColor,
+                                color: colorTheme.primaryColorDark,
                                 borderRadius: BorderRadius.circular(4.0),
                                 border: Border.all(color: Colors.grey)),
-                            child: Center(
+                            child: const Center(
                               child: Text('Edit Profile',
                                   style: TextStyle(color: Colors.white)),
                             ),
@@ -150,11 +152,11 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                   ),
                 ),
               ),
-              new Divider(
-                height: _height / 30,
+              Divider(
+                height: height / 30,
                 color: Colors.black,
               ),
-              new Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   StreamBuilder(
@@ -167,7 +169,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         return detailsWidget(
                             snapshot.data!.length.toString(), 'posts');
                       } else {
-                        return Center(
+                        return const Center(
                           child: CircularProgressIndicator(),
                         );
                       }
@@ -186,7 +188,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                               snapshot.data!.length.toString(), 'followers'),
                         );
                       } else {
-                        return Center(
+                        return const Center(
                           child: CircularProgressIndicator(),
                         );
                       }
@@ -205,7 +207,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                               snapshot.data!.length.toString(), 'following'),
                         );
                       } else {
-                        return Center(
+                        return const Center(
                           child: CircularProgressIndicator(),
                         );
                       }
@@ -213,7 +215,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                   ),
                 ],
               ),
-              new Divider(height: _height / 30, color: Colors.black),
+              Divider(height: height / 30, color: Colors.black),
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Row(
@@ -222,12 +224,12 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     GestureDetector(
                       child: Icon(
                         Icons.grid_on,
-                        color: colortheme.accentColor,
+                        color: colorTheme.primaryColorDark,
                       ),
                       onTap: () {
                         setState(() {
                           _isGridActive = true;
-                          _gridColor = colortheme.accentColor;
+                          _gridColor = colorTheme.primaryColorDark;
                           _listColor = Colors.grey;
                         });
                       },
@@ -240,7 +242,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       onTap: () {
                         setState(() {
                           _isGridActive = false;
-                          _listColor = colortheme.accentColor;
+                          _listColor = colorTheme.primaryColorDark;
                           _gridColor = Colors.grey;
                         });
                       },
@@ -248,8 +250,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 12.0),
+              const Padding(
+                padding: EdgeInsets.only(top: 12.0),
                 child: Divider(),
               ),
               Expanded(
@@ -265,15 +267,15 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     );
   }
 
-  Widget rowCell(int count, String type) => new Expanded(
-          child: new Column(
+  Widget rowCell(int count, String type) => Expanded(
+          child: Column(
         children: <Widget>[
-          new Text(
+          Text(
             '$count',
-            style: new TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black),
           ),
-          new Text(type,
-              style: new TextStyle(
+          Text(type,
+              style: const TextStyle(
                   color: Colors.black, fontWeight: FontWeight.normal))
         ],
       ));
@@ -297,19 +299,20 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                   return GridView.builder(
                     shrinkWrap: true,
                     itemCount: snapshot.data!.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 4.0,
-                        mainAxisSpacing: 4.0),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 4.0,
+                            mainAxisSpacing: 4.0),
                     itemBuilder: ((context, index) {
-                      var img = snapshot.data![index].data['imgUrl'];
+                      var img = snapshot.data![index]['imgUrl'];
                       return GestureDetector(
                         child: img != ""
                             ? CachedNetworkImage(
-                                imageUrl: snapshot.data![index].data['imgUrl'],
+                                imageUrl: snapshot.data![index]['imgUrl'],
                                 placeholder: ((context, s) => Center(
                                       child: img != ""
-                                          ? CircularProgressIndicator()
+                                          ? const CircularProgressIndicator()
                                           : Container(),
                                     )),
                                 width: 125.0,
@@ -319,13 +322,13 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                             : Container(
                                 width: 125.0,
                                 height: 125.0,
-                                padding: EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(5),
+                                alignment: Alignment.center,
                                 child: Text(
-                                  snapshot.data![index].data['caption'],
-                                  style: TextStyle(color: Colors.black),
+                                  snapshot.data![index]['caption'],
+                                  style: const TextStyle(color: Colors.black),
                                   textAlign: TextAlign.left,
                                 ),
-                                alignment: Alignment.center,
                               ),
                         onTap: () {
                           print(
@@ -343,15 +346,15 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     }),
                   );
                 } else if (snapshot.hasError) {
-                  return Center(
+                  return const Center(
                     child: Text('No Posts Found'),
                   );
                 }
               } else {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
 
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(),
               );
             }),
@@ -372,12 +375,12 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                               index: index,
                               user: _user))));
                 } else {
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(),
                   );
                 }
               } else {
-                return Center(
+                return const Center(
                   child: CircularProgressIndicator(),
                 );
               }
@@ -389,14 +392,14 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     return Column(
       children: <Widget>[
         Text(count,
-            style: TextStyle(
+            style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18.0,
                 color: Colors.black)),
         Padding(
           padding: const EdgeInsets.only(top: 4.0),
-          child:
-              Text(label, style: TextStyle(fontSize: 16.0, color: Colors.grey)),
+          child: Text(label,
+              style: const TextStyle(fontSize: 16.0, color: Colors.grey)),
         )
       ],
     );
@@ -408,14 +411,16 @@ class ListItem extends StatefulWidget {
   final User user;
   final int index;
 
-  ListItem({required this.list, required this.user, required this.index});
+  const ListItem(
+      {Key? key, required this.list, required this.user, required this.index})
+      : super(key: key);
 
   @override
-  _ListItemState createState() => _ListItemState();
+  State<ListItem> createState() => _ListItemState();
 }
 
 class _ListItemState extends State<ListItem> {
-  var _repository = Repository();
+  final _repository = Repository();
   bool _isLiked = false;
   //Future<List<DocumentSnapshot>> _future;
 
@@ -427,7 +432,7 @@ class _ListItemState extends State<ListItem> {
           return GestureDetector(
             child: Text(
               'View all ${snapshot.data!.length} comments',
-              style: TextStyle(color: Colors.grey),
+              style: const TextStyle(color: Colors.grey),
             ),
             onTap: () {
               Navigator.push(
@@ -440,7 +445,7 @@ class _ListItemState extends State<ListItem> {
             },
           );
         } else {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
       }),
     );
@@ -455,7 +460,7 @@ class _ListItemState extends State<ListItem> {
 
   @override
   Widget build(BuildContext context) {
-    var temp = widget.list[widget.index].data['postTime'];
+    var temp = widget.list[widget.index]['postTime'];
     var diff = DateTime.parse(temp);
     timeDiff = Jiffy(diff).fromNow();
 
@@ -480,18 +485,18 @@ class _ListItemState extends State<ListItem> {
                       //               name: list[index].data['postOwnerName'],
                       //             ))));
                     },
-                    child: new Container(
+                    child: Container(
                       height: 40.0,
                       width: 40.0,
-                      decoration: new BoxDecoration(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        image: new DecorationImage(
+                        image: DecorationImage(
                             fit: BoxFit.fill,
-                            image: new NetworkImage(widget.user.profileImage!)),
+                            image: NetworkImage(widget.user.profileImage!)),
                       ),
                     ),
                   ),
-                  new SizedBox(
+                  const SizedBox(
                     width: 10.0,
                   ),
                   Column(
@@ -506,22 +511,22 @@ class _ListItemState extends State<ListItem> {
                           //               name: list[index].data['postOwnerName'],
                           //             ))));
                         },
-                        child: new Text(
+                        child: Text(
                           widget.user.name!,
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
-                      widget.list[widget.index].data['location'] != null
-                          ? new Text(
-                              widget.list[widget.index].data['location'],
-                              style: TextStyle(color: Colors.grey),
+                      widget.list[widget.index]['location'] != null
+                          ? Text(
+                              widget.list[widget.index]['location'],
+                              style: const TextStyle(color: Colors.grey),
                             )
                           : Container(),
                     ],
                   )
                 ],
               ),
-              new IconButton(
+              const IconButton(
                 icon: Icon(Icons.more_vert),
                 onPressed: null,
               )
@@ -531,7 +536,7 @@ class _ListItemState extends State<ListItem> {
         Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: widget.list[widget.index].data['caption'] != null
+            child: widget.list[widget.index]['caption'] != null
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -541,8 +546,7 @@ class _ListItemState extends State<ListItem> {
                           //     style: TextStyle(fontWeight: FontWeight.bold)),
                           Padding(
                             padding: const EdgeInsets.only(left: 0.0),
-                            child:
-                                Text(widget.list[widget.index].data['caption']),
+                            child: Text(widget.list[widget.index]['caption']),
                           )
                         ],
                       ),
@@ -550,10 +554,10 @@ class _ListItemState extends State<ListItem> {
                   )
                 : commentWidget(widget.list[widget.index].reference)),
         CachedNetworkImage(
-          imageUrl: widget.list[widget.index].data['imgUrl'],
+          imageUrl: widget.list[widget.index]['imgUrl'],
           placeholder: ((context, s) => Center(
-                child: widget.list[widget.index].data['imgUrl'] == null
-                    ? CircularProgressIndicator()
+                child: widget.list[widget.index]['imgUrl'] == null
+                    ? const CircularProgressIndicator()
                     : Container(),
               )),
           width: 125.0,
@@ -568,11 +572,11 @@ class _ListItemState extends State<ListItem> {
             children: <Widget>[
               GestureDetector(
                   child: _isLiked
-                      ? Icon(
+                      ? const Icon(
                           Icons.favorite,
                           color: Colors.red,
                         )
-                      : Icon(
+                      : const Icon(
                           FontAwesomeIcons.heart,
                           color: null,
                         ),
@@ -611,7 +615,7 @@ class _ListItemState extends State<ListItem> {
                     // updateValues(
                     //     snapshot.data[index].reference);
                   }),
-              new SizedBox(
+              const SizedBox(
                 width: 16.0,
               ),
               GestureDetector(
@@ -625,14 +629,14 @@ class _ListItemState extends State<ListItem> {
                                 user: widget.user,
                               ))));
                 },
-                child: new Icon(
+                child: const Icon(
                   FontAwesomeIcons.comment,
                 ),
               ),
-              new SizedBox(
+              const SizedBox(
                 width: 16.0,
               ),
-              new Icon(FontAwesomeIcons.shareSquare),
+              const Icon(FontAwesomeIcons.shareFromSquare),
               // Row(
               //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
               //   children: <Widget>[
@@ -667,16 +671,17 @@ class _ListItemState extends State<ListItem> {
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: likesSnapshot.data!.length > 1
                           ? Text(
-                              "Liked by ${likesSnapshot.data![0].data['ownerName']} and ${(likesSnapshot.data!.length - 1).toString()} others",
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              "Liked by ${likesSnapshot.data![0]['ownerName']} and ${(likesSnapshot.data!.length - 1).toString()} others",
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             )
                           : Text(likesSnapshot.data!.length == 1
-                              ? "Liked by ${likesSnapshot.data![0].data['ownerName']}"
+                              ? "Liked by ${likesSnapshot.data![0]['ownerName']}"
                               : "0 Likes"),
                     ),
                   );
                 } else {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
               }),
             ),
@@ -688,33 +693,29 @@ class _ListItemState extends State<ListItem> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Text("$timeDiff", style: TextStyle(color: Colors.grey)),
+          child: Text("$timeDiff", style: const TextStyle(color: Colors.grey)),
         )
       ],
     );
   }
 
   void postLike(DocumentReference reference) {
-    var _like = Like(
+    var like = Like(
         ownerName: widget.user.name!,
         ownerPhotoUrl: widget.user.name!,
         ownerUid: widget.user.uid!,
         timeStamp: FieldValue.serverTimestamp());
     reference
         .collection('likes')
-        .document(widget.user.uid)
-        .setData(_like.toMap(_like))
+        .doc(widget.user.uid)
+        .set(like.toMap(like))
         .then((value) {
       print("Post Liked");
     });
   }
 
   void postUnlike(DocumentReference reference) {
-    reference
-        .collection("likes")
-        .document(widget.user.uid)
-        .delete()
-        .then((value) {
+    reference.collection("likes").doc(widget.user.uid).delete().then((value) {
       print("Post Unliked");
     });
   }

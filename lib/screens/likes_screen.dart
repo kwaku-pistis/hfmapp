@@ -7,26 +7,28 @@ import 'package:flutter/material.dart';
 class LikesScreen extends StatefulWidget {
   final DocumentReference documentReference;
   final User user;
-  LikesScreen({required this.documentReference, required this.user});
+  const LikesScreen(
+      {Key? key, required this.documentReference, required this.user})
+      : super(key: key);
 
   @override
-  _LikesScreenState createState() => _LikesScreenState();
+  State<LikesScreen> createState() => _LikesScreenState();
 }
 
 class _LikesScreenState extends State<LikesScreen> {
-  var _repository = Repository();
+  final _repository = Repository();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         elevation: 1,
-        backgroundColor: colortheme.primaryColor,
-        title: Text(
+        backgroundColor: colorTheme.primaryColor,
+        title: const Text(
           'Likes',
           style: TextStyle(color: Colors.white),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: FutureBuilder(
         future: _repository.fetchPostLikes(widget.documentReference),
@@ -48,8 +50,8 @@ class _LikesScreenState extends State<LikesScreen> {
                         // ));
                       },
                       child: Text(
-                        snapshot.data![index].data['ownerName'],
-                        style: TextStyle(
+                        snapshot.data![index]['ownerName'],
+                        style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
                             fontSize: 16.0),
@@ -66,7 +68,7 @@ class _LikesScreenState extends State<LikesScreen> {
                       },
                       child: CircleAvatar(
                         backgroundImage: NetworkImage(
-                            snapshot.data![index].data['ownerPhotoUrl']),
+                            snapshot.data![index]['ownerPhotoUrl']),
                         radius: 30.0,
                       ),
                     ),
@@ -79,11 +81,11 @@ class _LikesScreenState extends State<LikesScreen> {
               }),
             );
           } else if (snapshot.hasError) {
-            return Center(
+            return const Center(
               child: Text('No Likes found'),
             );
           } else {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }

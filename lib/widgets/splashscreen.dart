@@ -2,17 +2,15 @@ import 'dart:async';
 
 import 'package:HFM/screens/home.dart';
 import 'package:HFM/themes/colors.dart';
-import 'package:custom_splash/custom_splash.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:splashscreen/splashscreen.dart';
 
 import '../main.dart';
 
 class SplashScreenPage extends StatefulWidget {
+  const SplashScreenPage({Key? key}) : super(key: key);
+
   @override
-  _SplashScreenPageState createState() => _SplashScreenPageState();
+  State<SplashScreenPage> createState() => _SplashScreenPageState();
 }
 
 class _SplashScreenPageState extends State<SplashScreenPage> {
@@ -24,7 +22,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
     // _configureDidReceiveLocalNotificationSubject();
     // _configureSelectNotificationSubject();
 
-    Timer(Duration(seconds: 5), () {
+    Timer(const Duration(seconds: 5), () {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (BuildContext context) => Home(
                 user: null,
@@ -123,7 +121,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: double.infinity,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/adinkra_pattern.png'),
           fit: BoxFit.cover,
@@ -148,26 +146,26 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
           // ),
           Container(
             width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/images/hfm.png'),
                 fit: BoxFit.cover,
               ),
             ),
-            child: Image(
+            child: const Image(
               image: AssetImage('assets/images/hfm.png'),
               fit: BoxFit.cover,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 40,
           ),
-          Container(
+          SizedBox(
             width: MediaQuery.of(context).size.width,
             child: Text(
               'Eternal Life and Essential Living',
               style: TextStyle(
-                color: colortheme.accentColor,
+                color: colorTheme.primaryColorDark,
                 fontSize: 20,
               ),
               textAlign: TextAlign.center,

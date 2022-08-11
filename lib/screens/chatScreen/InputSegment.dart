@@ -17,25 +17,20 @@ class InputSegment extends StatefulWidget {
   final String id;
   final String groupId;
   final String friendId;
+
   InputSegment(
       {required this.id, required this.groupId, required this.friendId});
+
   @override
-  State<StatefulWidget> createState() =>
-      InputSegmentState(id, groupId, friendId);
+  State<StatefulWidget> createState() => InputSegmentState();
 }
 
-Firestore _firestore = Firestore.instance;
+FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 class InputSegmentState extends State<InputSegment> {
-  final String id;
-  final String groupId;
-  final String friendId;
-  InputSegmentState(this.id, this.groupId, this.friendId);
+  final TextEditingController _textEditingController = TextEditingController();
 
-  final TextEditingController _textEditingController =
-      new TextEditingController();
-
-  var _repository = Repository();
+  final _repository = Repository();
 
   @override
   void initState() {
@@ -53,7 +48,7 @@ class InputSegmentState extends State<InputSegment> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.transparent,
-      margin: EdgeInsets.all(8.0),
+      margin: const EdgeInsets.all(8.0),
       child: Row(
         children: <Widget>[
           Expanded(
@@ -64,7 +59,7 @@ class InputSegmentState extends State<InputSegment> {
                           BorderRadius.circular(INPUT_TEXT_FIELD_RADIUS)),
                   child: TextField(
                     autocorrect: true,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         contentPadding:
                             EdgeInsets.all(INPUT_TEXT_FIELD_PADDING),
                         border: InputBorder.none,
@@ -73,19 +68,19 @@ class InputSegmentState extends State<InputSegment> {
                             TextStyle(color: INPUT_TEXT_FIELD_HINT_COLOR)),
                     controller: _textEditingController,
                     textCapitalization: TextCapitalization.sentences,
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
                   ))),
           GestureDetector(
             child: Container(
-              padding: EdgeInsets.all(SEND_BUTTON_PADDING),
-              margin: EdgeInsets.all(SEND_BUTTON_MARGIN),
+              padding: const EdgeInsets.all(SEND_BUTTON_PADDING),
+              margin: const EdgeInsets.all(SEND_BUTTON_MARGIN),
               decoration: BoxDecoration(
-                color: colortheme.primaryColor,
+                color: colorTheme.primaryColor,
                 borderRadius: BorderRadius.circular(SEND_BUTTON_RADIUS),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.image,
                 color: PICK_BUTTON_ICON_COLOR,
               ),
@@ -94,13 +89,13 @@ class InputSegmentState extends State<InputSegment> {
           ),
           GestureDetector(
             child: Container(
-              padding: EdgeInsets.all(SEND_BUTTON_PADDING),
-              margin: EdgeInsets.all(SEND_BUTTON_MARGIN),
+              padding: const EdgeInsets.all(SEND_BUTTON_PADDING),
+              margin: const EdgeInsets.all(SEND_BUTTON_MARGIN),
               decoration: BoxDecoration(
-                color: colortheme.accentColor,
+                color: colorTheme.primaryColorDark,
                 borderRadius: BorderRadius.circular(SEND_BUTTON_RADIUS),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.send,
                 color: SEND_BUTTON_ICON_COLOR,
               ),
@@ -122,17 +117,17 @@ class InputSegmentState extends State<InputSegment> {
   }
 
   _pickImage() {
-    ImagePicker.pickImage(source: ImageSource.gallery).then((imageFile) {
+    ImagePicker().pickImage(source: ImageSource.gallery).then((imageFile) {
       Navigator.push(
           context,
           PageRouteBuilder(
               pageBuilder: (context, anim1, anim2) => SendMedia(
-                    imageFile: imageFile,
-                    groupId: groupId,
-                    id: id,
-                    friendId: friendId,
+                    imageFile: imageFile as File,
+                    groupId: widget.groupId,
+                    id: widget.id,
+                    friendId: widget.friendId,
                   ))).then((v) {
-        if (v[0]) _sendImage(imageFile);
+        if (v[0]) _sendImage(imageFile as File);
       });
     });
   }
@@ -143,11 +138,11 @@ class InputSegmentState extends State<InputSegment> {
       //upload image file
       FirebaseStorage.instance
           .ref()
-          .child('/media/images/$groupId/$id+$timeStamp')
+          .child('/media/images/${widget.groupId}/${widget.id}+$timeStamp')
           .putFile(compressedImage)
-          .events
+          .snapshotEvents
           .listen((events) {
-        if (events.type == StorageTaskEventType.success) {
+        if (events.state == TaskState.success) {
           _saveImageUri(timeStamp);
         }
       });
@@ -158,8 +153,8 @@ class InputSegmentState extends State<InputSegment> {
     final tempDir = await getTemporaryDirectory();
     final path = tempDir.path;
     int rand = Math.Random().nextInt(10000);
-    Im.Image image = Im.decodeImage(rawImage.readAsBytesSync());
-    Im.Image smallerImage = Im.copyResize(image, height: 640, width: 640);
+    Im.Image? image = Im.decodeImage(rawImage.readAsBytesSync());
+    Im.Image smallerImage = Im.copyResize(image!, height: 640, width: 640);
 
     return File('$path/$rand.jpg')
       ..writeAsBytesSync(Im.encodeJpg(smallerImage, quality: 70));
@@ -168,22 +163,22 @@ class InputSegmentState extends State<InputSegment> {
   _saveImageUri(String timeStamp) {
     FirebaseStorage.instance
         .ref()
-        .child('/media/images/$groupId/$id+$timeStamp')
+        .child('/media/images/${widget.groupId}/${widget.id}+$timeStamp')
         .getDownloadURL()
         .then((uri) {
       //save in cloud
       var fireStoreRef = _firestore
           .collection(MESSAGES_COLLECTION)
-          .document(groupId)
-          .collection(groupId)
-          .document(timeStamp);
+          .doc(widget.groupId)
+          .collection(widget.groupId)
+          .doc(timeStamp);
       _firestore.runTransaction((transaction) async {
         await transaction.set(fireStoreRef, {
           MESSAGE_CONTENT: uri,
           MESSAGE_TYPE: MESSAGE_TYPE_PHOTO,
           MESSAGE_TIMESTAMP: timeStamp,
-          MESSAGE_ID_FROM: id,
-          MESSAGE_ID_TO: friendId
+          MESSAGE_ID_FROM: widget.id,
+          MESSAGE_ID_TO: widget.friendId
         });
       });
     });
