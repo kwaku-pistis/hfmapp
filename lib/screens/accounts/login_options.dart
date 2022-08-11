@@ -41,15 +41,15 @@ class _LoginOptionsState extends State<LoginOptions>
   String phoneIsoCode = '';
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
-    _retrieveDynamicLink();
-    number = await PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber);
-    setState(() {
-      parsableNumber = number.parseNumber();
-    });
+    // _retrieveDynamicLink();
+    // number = PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber);
+    // setState(() {
+    //   parsableNumber = number.parseNumber();
+    // });
   }
 
   @override

@@ -1,7 +1,8 @@
 import 'package:HFM/screens/home.dart';
 import 'package:HFM/screens/messages.dart';
 import 'package:HFM/themes/colors.dart';
-import 'package:HFM/widgets/splashscreen.dart';
+import 'package:HFM/widgets/splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/rxdart.dart';
@@ -36,6 +37,7 @@ class ReceivedNotification {
 Future<void> main() async {
   // needed if you intend to initialize in the `main` function
   WidgetsFlutterBinding.ensureInitialized();
+  Firebase.initializeApp();
 
   notificationAppLaunchDetails = (await flutterLocalNotificationsPlugin
       .getNotificationAppLaunchDetails())!;
@@ -98,12 +100,12 @@ RouteFactory _routes() {
     Widget screen;
     switch (settings.name) {
       case initialRoute:
-        screen = Home(
+        screen = const Home(
           user: null,
         );
         break;
       case chatPage:
-        screen = Messages();
+        screen = const Messages();
         break;
       default:
         return null;
