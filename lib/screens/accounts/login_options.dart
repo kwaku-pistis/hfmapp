@@ -3,6 +3,7 @@ import 'package:HFM/screens/accounts/confirm_code.dart';
 import 'package:HFM/screens/home.dart';
 import 'package:HFM/screens/accounts/profile.dart';
 import 'package:HFM/themes/colors.dart';
+import 'package:HFM/widgets/progress_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +46,7 @@ class _LoginOptionsState extends State<LoginOptions>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    ToastContext().init(context);
 
     // _retrieveDynamicLink();
     // number = PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber);
@@ -70,18 +72,9 @@ class _LoginOptionsState extends State<LoginOptions>
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Text(
-                  'Welcome to HarvestFields',
-                  style: TextStyle(
-                    color: colorTheme.primaryColor,
-                    fontSize: 34,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 20),
                 Container(
-                  width: 150,
-                  height: 150,
+                  width: 180,
+                  height: 180,
                   decoration: const BoxDecoration(
                     // shape: BoxShape.circle,
                     image: DecorationImage(
@@ -152,11 +145,6 @@ class _LoginOptionsState extends State<LoginOptions>
                   ),
                   child: ElevatedButton(
                     onPressed: () {
-                      setState(() {
-                        _state = 1;
-                      });
-                      Toast.show('Loading...',
-                          gravity: Toast.bottom, duration: Toast.lengthShort);
                       _signInWithGoogle();
                     },
                     style: ButtonStyle(
@@ -170,7 +158,13 @@ class _LoginOptionsState extends State<LoginOptions>
                       ),
                       elevation: MaterialStateProperty.all(8),
                     ),
-                    child: _setUpDialogChild(),
+                    // child: _setUpDialogChild(),
+                    child: const Text(
+                      'SIGN IN WITH GOOGLE',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
                 Container(
@@ -463,72 +457,54 @@ class _LoginOptionsState extends State<LoginOptions>
   }
 
   _signInWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser!.authentication;
-
-    // final authHeaders = _googleSignIn.currentUser.authHeaders;
-    // final httpClient = GoogleHttpClient(authHeaders);
-
-    // var data = await PeopleApi(httpClient).people.connections.list(
-    //       'people/me',
-    //       personFields: 'names,addresses',
-    //       //pageToken: nextPageToken,
-    //       pageSize: 100,
-    //     );
-
-    //PeopleApi(httpClient).people.get(resourceName)
-
-    final AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    //final FirebaseUser user =
-    await _auth.signInWithCredential(credential).then((onValue) {
-      _repository.addDataToDb(onValue.user!).then((value) {
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) {
-          return const Home(user: null);
-        }));
-      });
+    _showProgressRing();
+    final GoogleSignInAccount? googleUser =
+        await _googleSignIn.signIn().catchError((e) {
+      print(e);
+      Toast.show(e.toString(),
+          duration: Toast.lengthLong, gravity: Toast.bottom);
+      Navigator.of(context).pop();
     });
-    //print("signed in " + user.displayName);
 
-    //FirebaseUser user = await _auth.currentUser();
-    // _repository.addDataToDb(user).then((value) {
-    //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-    //     return Home(user: null);
-    //   }));
-    // });
+    if (googleUser != null) {
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication.catchError((e) {
+        print(e);
+        Toast.show(e.toString(),
+            duration: Toast.lengthLong, gravity: Toast.bottom);
+        Navigator.of(context).pop();
+      });
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      //final FirebaseUser user =
+      await _auth.signInWithCredential(credential).then((onValue) {
+        _repository.addDataToDb(onValue.user!).then((value) {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) {
+            return Home(user: onValue.user!);
+          }));
+        });
+      });
+    } else {
+      Toast.show('Sign in failed',
+          duration: Toast.lengthLong, gravity: Toast.bottom);
+      // Navigator.of(context).pop();
+    }
   }
 
-  // _saveDataToFirebaseDB(AuthResult authResult) async {
-  //   //String downloadUrl = taskSnapshot != null ? await taskSnapshot.ref.getDownloadURL() : '';
-  //   DocumentReference storeReference = Firestore.instance
-  //       .collection('User Info')
-  //       .document(authResult.user.uid);
-  //   await storeReference.setData({
-  //     'Name': authResult.user.displayName,
-  //     'Email / Phone': authResult.user.email,
-  //     'Username': authResult.user.displayName,
-  //     'Gender': '',
-  //     'Profile Image': authResult.user.photoUrl,
-  //   }).then((onValue) {
-  //     _saveUserDetails(authResult.user);
-  //   });
-  // }
-
-  // _saveUserDetails(FirebaseUser user) async {
-  //   SharedPreferences preferences = await SharedPreferences.getInstance();
-  //   await preferences.setString('name', user.displayName);
-  //   await preferences.setString('emailOrPhone', user.email);
-  //   await preferences.setString('username', user.displayName);
-  //   await preferences.setString('profileImage', user.photoUrl);
-
-  //   Toast.show('Done', context,
-  //       gravity: Toast.BOTTOM, duration: Toast.LENGTH_SHORT);
-  //   Navigator.of(context).pushReplacement(
-  //       MaterialPageRoute(builder: (BuildContext context) => Home(user: user)));
-  // }
+  _showProgressRing() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const Dialog(
+          child: ProgressDialog(text: "Signing in. Please wait..."),
+        );
+      },
+    );
+  }
 }
