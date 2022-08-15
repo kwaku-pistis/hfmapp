@@ -66,13 +66,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         Tab(
           // set icon to the tab
           icon: Icon(
-            FontAwesomeIcons.iCursor,
+            FontAwesomeIcons.house,
             color: Colors.white,
           ),
         ),
         Tab(
           icon: Icon(
-            FontAwesomeIcons.house,
+            FontAwesomeIcons.addressBook,
             color: Colors.white,
           ),
         ),
@@ -106,11 +106,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SafeArea(
+        child: Scaffold(
       appBar: AppBar(
         title: const Text(
           'HarvestFields',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         elevation: 4,
         centerTitle: false,
@@ -126,6 +127,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         const Third(),
         const Fourth()
       ]),
-    );
+    ));
   }
 }

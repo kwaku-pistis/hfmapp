@@ -35,11 +35,14 @@ String packageName = '';
 
 class _FeedScreenState extends State<FeedScreen> {
   final _repository = Repository();
-  late User currentUser, user, followingUser;
+  User? currentUser = User();
+  User? user = User();
+  User? followingUser = User();
   late IconData icon;
   late Color color;
   List<User> usersList = [];
-  late Future<List<DocumentSnapshot>> _future, _userPosts;
+  Future<List<DocumentSnapshot>> _future = Future.value([]);
+  Future<List<DocumentSnapshot>> _userPosts = Future.value([]);
   // bool _isLiked = false;
   List<String> followingUIDs = [];
 
@@ -68,14 +71,14 @@ class _FeedScreenState extends State<FeedScreen> {
       print("DSDASDASD : ${followingUIDs[i]}");
       // _future = _repository.retrievePostByUID(followingUIDs[i]);
       this.user = await _repository.fetchUserDetailsById(followingUIDs[i]);
-      print("user : ${this.user.uid}");
-      usersList.add(this.user);
+      print("user : ${this.user!.uid}");
+      usersList.add(this.user!);
       print("USERS_LIST : ${usersList.length}");
 
       for (var i = 0; i < usersList.length; i++) {
         setState(() {
           followingUser = usersList[i];
-          print("FOLLOWING USER : ${followingUser.uid}");
+          print("FOLLOWING USER : ${followingUser!.uid}");
         });
       }
     }
@@ -183,7 +186,7 @@ class _FeedScreenState extends State<FeedScreen> {
       future: _future,
       builder: ((context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
         if (snapshot.hasData) {
-          print("FFFF : ${followingUser.uid}");
+          print("Followers Ids : ${followingUser!.uid}");
           if (snapshot.connectionState == ConnectionState.done) {
             return ListView.builder(
                 //shrinkWrap: true,
@@ -491,7 +494,7 @@ class _FeedScreenState extends State<FeedScreen> {
                   MaterialPageRoute(
                       builder: ((context) => CommentsScreen(
                             documentReference: reference,
-                            user: currentUser,
+                            user: currentUser!,
                           ))));
             },
           );
