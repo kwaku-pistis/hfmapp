@@ -90,7 +90,7 @@ class _FeedScreenState extends State<FeedScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xfff8faf8),
-        centerTitle: false,
+        centerTitle: true,
         elevation: 1.0,
         leading: const Icon(
           Icons.people,
@@ -98,7 +98,8 @@ class _FeedScreenState extends State<FeedScreen> {
         ),
         title: const Text(
           'Share a post or image from here...',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+          style: TextStyle(
+              fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
         ),
         actions: <Widget>[
           Padding(
@@ -118,12 +119,6 @@ class _FeedScreenState extends State<FeedScreen> {
           )
         ],
       ),
-      // floatingActionButton: UnicornDialer(
-      //   parentButtonBackground: colorTheme.primaryColorDark,
-      //   orientation: UnicornOrientation.VERTICAL,
-      //   parentButton: const Icon(Icons.search),
-      //   childButtons: _getProfileMenu(),
-      // ),
       floatingActionButton: AnimatedFloatingActionButton(
         fabButtons: _getProfileMenu(),
         animatedIconData: AnimatedIcons.menu_close,
@@ -131,7 +126,7 @@ class _FeedScreenState extends State<FeedScreen> {
       body: currentUser != null
           ? Padding(
               padding: const EdgeInsets.only(top: 4.0),
-              child: followingUIDs.isNotEmpty || _userPosts != null
+              child: followingUIDs.isNotEmpty
                   ? postImagesWidget()
                   : const Center(
                       child: Text(

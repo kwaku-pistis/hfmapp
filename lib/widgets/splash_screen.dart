@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:HFM/screens/accounts/login_options.dart';
 import 'package:HFM/screens/home.dart';
-import 'package:HFM/themes/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -42,13 +41,6 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
         );
       }
     });
-
-    // Timer(const Duration(seconds: 5), () {
-    //   Navigator.of(context).pushReplacement(MaterialPageRoute(
-    //       builder: (BuildContext context) => const Home(
-    //             user: null,
-    //           )));
-    // });
   }
 
   @override
@@ -72,7 +64,6 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
       ),
       child: Center(
         child: Container(
-            // width: MediaQuery.of(context).size.width,
             width: 150,
             height: 150,
             decoration: const BoxDecoration(
@@ -86,20 +77,6 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
               fit: BoxFit.cover,
             ),
           ),
-          // const SizedBox(
-          //   height: 40,
-          // ),
-          // SizedBox(
-          //   width: MediaQuery.of(context).size.width,
-          //   child: Text(
-          //     'Eternal Life and Essential Living',
-          //     style: TextStyle(
-          //       color: colorTheme.primaryColorDark,
-          //       fontSize: 20,
-          //     ),
-          //     textAlign: TextAlign.center,
-          //   ),
-          // ),
       ),
     );
   }
