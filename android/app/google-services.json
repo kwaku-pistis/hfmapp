@@ -1,34 +1,42 @@
 {
   "project_info": {
-    "project_number": "264632942434",
-    "firebase_url": "https://hfmapp-58334.firebaseio.com",
-    "project_id": "hfmapp-58334",
-    "storage_bucket": "hfmapp-58334.appspot.com"
+    "project_number": "254361182027",
+    "firebase_url": "https://hfmapp-1f3b4-default-rtdb.firebaseio.com",
+    "project_id": "hfmapp-1f3b4",
+    "storage_bucket": "hfmapp-1f3b4.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:264632942434:android:9750d55c802f8093b8f63b",
+        "mobilesdk_app_id": "1:254361182027:android:8e5e745a681b24006b12ce",
         "android_client_info": {
           "package_name": "com.ministry.hfmapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "264632942434-lerv4tva637ic99q6gsaclok9p43jghu.apps.googleusercontent.com",
+          "client_id": "254361182027-li06edc9cle1ncrvvemso1ljvndufhrl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ministry.hfmapp",
+            "certificate_hash": "c942a54a07f01a8f36a38d1f547d249a5ccf2ab4"
+          }
+        },
+        {
+          "client_id": "254361182027-g7a1jf9184smar6m90qp39nhn1kl0sol.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCAG0Npbbfmzga60ldaYD84BSF4hVoyLWI"
+          "current_key": "AIzaSyDraKHE9y-2felcM77CRgGukv9Gk9eF1aE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "264632942434-lerv4tva637ic99q6gsaclok9p43jghu.apps.googleusercontent.com",
+              "client_id": "254361182027-g7a1jf9184smar6m90qp39nhn1kl0sol.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
