@@ -62,7 +62,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: double.infinity,
+      height: MediaQuery.of(context).size.height,
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/adinkra_pattern.png'),
@@ -70,11 +70,11 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
         ),
         color: Colors.white,
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            width: MediaQuery.of(context).size.width,
+      child: Center(
+        child: Container(
+            // width: MediaQuery.of(context).size.width,
+            width: 150,
+            height: 150,
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/images/hfm.png'),
@@ -86,21 +86,20 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
               fit: BoxFit.cover,
             ),
           ),
-          const SizedBox(
-            height: 40,
-          ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: Text(
-              'Eternal Life and Essential Living',
-              style: TextStyle(
-                color: colorTheme.primaryColorDark,
-                fontSize: 20,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
+          // const SizedBox(
+          //   height: 40,
+          // ),
+          // SizedBox(
+          //   width: MediaQuery.of(context).size.width,
+          //   child: Text(
+          //     'Eternal Life and Essential Living',
+          //     style: TextStyle(
+          //       color: colorTheme.primaryColorDark,
+          //       fontSize: 20,
+          //     ),
+          //     textAlign: TextAlign.center,
+          //   ),
+          // ),
       ),
     );
   }
