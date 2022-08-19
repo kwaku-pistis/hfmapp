@@ -41,6 +41,7 @@ class _ConfirmCodeState extends State<ConfirmCode> {
         ),
         elevation: 0,
         centerTitle: true,
+        backgroundColor: colorTheme.primaryColor,
         iconTheme: const IconThemeData(
           color: Colors.white,
         ),

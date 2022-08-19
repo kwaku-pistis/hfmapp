@@ -244,8 +244,7 @@ class _LoginOptionsState extends State<LoginOptions>
                 textFieldController: numberTextController,
                 spaceBetweenSelectorAndTextField: 4,
                 formatInput: false,
-                keyboardType: const TextInputType.numberWithOptions(
-                    signed: true, decimal: true),
+                keyboardType: TextInputType.phone,
                 inputBorder: const OutlineInputBorder(),
                 onSaved: (PhoneNumber number) {
                   print('On Saved: $number');
